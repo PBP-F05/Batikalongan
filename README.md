@@ -31,30 +31,31 @@ Batikalongan menggunakan dukungan teknologi untuk memberikan **kemudahan** dan *
 
 ## 📦 **Daftar Modul**
 
-### **1. Batik**
+### **1. Catalog**
 Modul ini menyimpan **informasi lengkap** mengenai toko-toko batik di Kabupaten Pekalongan dan produk-produk yang dijual. Fitur yang tersedia:
 - **Admin** dapat menambahkan, memperbarui, atau menghapus toko dan produk.
 - **Pengguna** dapat melihat daftar toko dan produk lengkap dengan detail seperti **nama**, **harga**, dan **deskripsi**.
 
-### **2. Review**
+### **2. Event**
 Modul ini mencatat **ulasan** dan **penilaian** yang diberikan pelanggan terhadap toko dan produk batik. Fitur yang tersedia:
-- Pengguna dapat memberikan **rating** dan **komentar** pada produk atau toko.
-- Pengguna bisa memperbarui atau menghapus **review** yang sudah dibuat.
+- **Admin** dapat menambahkan, memperbarui, atau menghapus informasi event, termasuk tanggal, lokasi, dan deskripsi acara.
+- **Pengguna** dapat melihat daftar event batik yang akan datang dan mengikuti acara sesuai minat mereka.
 
-### **3. Galeri**
+### **3. Gallery**
 Modul ini menampilkan **gambar batik** beserta deskripsi **motifnya**, termasuk informasi asal-usul dan **makna motif**. Fitur yang tersedia:
 - **Admin** dapat menambahkan dan memperbarui gambar serta deskripsi motif batik.
-- Pengguna dapat menjelajahi galeri motif batik yang tersedia.
+- **Pengguna** dapat menjelajahi galeri motif batik yang tersedia.
 
-### **4. Artikel**
+### **4. Article**
 Modul ini berisi **artikel edukatif** seputar batik, mulai dari sejarah hingga teknik pembuatan batik. Fitur yang tersedia:
 - **Admin** dapat menambahkan, memperbarui, atau menghapus artikel.
-- Pengguna dapat membaca **artikel-artikel informatif** mengenai batik.
+- **Pengguna** dapat membaca **artikel-artikel informatif** mengenai batik.
 
-### **5. Profil**
-Modul ini menyimpan **koleksi batik** yang disimpan oleh pengguna dari produk yang ada di toko. Fitur yang tersedia:
-- Pengguna dapat menambahkan produk batik ke dalam **koleksi** mereka.
-- Pengguna bisa memperbarui atau menghapus **item** dari koleksi mereka.
+### **5. Timeline**
+Modul ini berfungsi sebagai ruang komunitas bagi pengguna untuk berbagi dan melihat update terkait batik. Fitur yang tersedia:
+- **Pengguna** dapat membuat posting tentang pengalaman, pertanyaan, atau informasi terbaru seputar batik.
+- **Pengguna** dapat melihat posting dari pengguna lain, termasuk komentar dan interaksi terkait.
+- **Pengguna** bisa menyukai dan berkomentar pada postingan pengguna lain.
 
 ---
 
