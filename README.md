@@ -82,6 +82,6 @@ Customer adalah individu yang ingin mencari **informasi produk batik** dan **tok
 ---
 
 ## 🚀 **Tautan Deployment**
-**Not Available**
+franky.raymarcell-batikalongan.pbp.cs.ui.ac.id
 
 ---
