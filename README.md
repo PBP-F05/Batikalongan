@@ -82,6 +82,6 @@ Customer adalah individu yang ingin mencari **informasi produk batik** dan **tok
 ---
 
 ## 🚀 **Tautan Deployment**
-**Not Available**
+Batikalongan dapat diakses melalui http://franky.raymarcell-batikalongan.pbp.cs.ui.ac.id
 
 ---
