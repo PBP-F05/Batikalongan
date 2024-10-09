@@ -1,5 +1,5 @@
 # Batikalongan
-Tugas Kelompok PBP Kelompok F05
+Tugas Kelompok PBP F05
 
 ## Anggota kelompok
 - Aileen Josephine Halim (2306165761)
