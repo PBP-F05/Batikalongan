@@ -62,7 +62,7 @@ Modul ini berfungsi sebagai ruang komunitas bagi pengguna untuk berbagi dan meli
 
 ## 📊 **Sumber Initial Dataset**
 
-Dataset awal diperoleh melalui proses **scraping E-Commerce Tokopedia** dengan menggunakan query **"Batik"**. Untuk memastikan akurasi dan relevansi data, hasil pencarian kemudian difilter khusus untuk **toko-toko** yang berlokasi di **Kabupaten** dan **Kota Pekalongan**, yang dikenal sebagai salah satu pusat produksi batik di Indonesia.
+Dataset awal diperoleh melalui proses **scraping E-Commerce Tokopedia** dengan menggunakan query **Batik**. Untuk memastikan akurasi dan relevansi data, hasil pencarian kemudian difilter khusus untuk **toko-toko** yang berlokasi di **Kabupaten** dan **Kota Pekalongan**, yang dikenal sebagai salah satu pusat produksi batik di Indonesia.
 
 Data yang diambil mencakup beragam produk batik, yang tidak hanya menampilkan **nama toko**, tetapi juga **deskripsi produk**, **harga**, dan **kategori batik**. Dengan data ini, Batikalongan mampu memberikan referensi batik yang autentik dan beragam kepada pengguna, sekaligus mendukung para pengrajin lokal agar produk mereka lebih dikenal oleh khalayak luas.
 
