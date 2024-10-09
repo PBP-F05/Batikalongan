@@ -1,7 +1,6 @@
-
 ![Banner](asset\banner.png)
 
-## **Anggota Kelompok**
+## 🎨 **Anggota Kelompok**
 - **Aileen Josephine Halim** (2306165761)
 - **Faiz Assabil Firdaus** (2306224356)
 - **Franky Raymarcell Sinaga** (2306227311)
@@ -10,7 +9,7 @@
 
 ---
 
-## **Deskripsi Aplikasi**
+## 🛠️ **Deskripsi Aplikasi**
 
 Dalam konteks pengembangan kota dan pelestarian **budaya lokal**, Batikalongan hadir sebagai aplikasi **informasi batik** di Kabupaten Pekalongan, menawarkan solusi bagi para pengguna untuk menemukan produk batik yang kaya akan **nilai sejarah dan seni**.
 
@@ -30,7 +29,7 @@ Batikalongan menggunakan dukungan teknologi untuk memberikan **kemudahan** dan *
 
 ---
 
-## **Daftar Modul**
+## 📦 **Daftar Modul**
 
 ### **1. Batik**
 Modul ini menyimpan **informasi lengkap** mengenai toko-toko batik di Kabupaten Pekalongan dan produk-produk yang dijual. Fitur yang tersedia:
@@ -58,7 +57,8 @@ Modul ini menyimpan **koleksi batik** yang disimpan oleh pengguna dari produk ya
 - Pengguna bisa memperbarui atau menghapus **item** dari koleksi mereka.
 
 ---
-## **Sumber Initial Dataset**
+
+## 📊 **Sumber Initial Dataset**
 
 Dataset awal diperoleh melalui proses **scraping E-Commerce Tokopedia** dengan menggunakan query **"Batik"**. Untuk memastikan akurasi dan relevansi data, hasil pencarian kemudian difilter khusus untuk **toko-toko** yang berlokasi di **Kabupaten** dan **Kota Pekalongan**, yang dikenal sebagai salah satu pusat produksi batik di Indonesia.
 
@@ -70,7 +70,7 @@ Proses ini bertujuan untuk memberikan dasar data yang **akurat**, **relevan**, d
 
 ---
 
-## **Role Pengguna**
+## 🧑‍🤝‍🧑 **Role Pengguna**
 
 ### **Customer**
 Customer adalah individu yang ingin mencari **informasi produk batik** dan **toko-toko batik** di Kabupaten Pekalongan. Mereka dapat berupa:
@@ -79,7 +79,7 @@ Customer adalah individu yang ingin mencari **informasi produk batik** dan **tok
 
 ---
 
-## **Tautan Deployment**
+## 🚀 **Tautan Deployment**
 **N/A**
 
---- 
+---
