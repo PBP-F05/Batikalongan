@@ -56,6 +56,7 @@ Modul ini berfungsi sebagai ruang komunitas bagi pengguna untuk berbagi dan meli
 - **Pengguna** dapat membuat posting tentang pengalaman, pertanyaan, atau informasi terbaru seputar batik.
 - **Pengguna** dapat melihat posting dari pengguna lain, termasuk komentar dan interaksi terkait.
 - **Pengguna** bisa menyukai dan berkomentar pada postingan pengguna lain.
+- **Admin** dapat melakukan filter terhadap postingan dari para pengguna.
 
 ---
 
