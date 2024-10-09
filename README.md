@@ -82,6 +82,6 @@ Customer adalah individu yang ingin mencari **informasi produk batik** dan **tok
 ---
 
 ## 🚀 **Tautan Deployment**
-**N/A**
+**Not Available**
 
 ---
