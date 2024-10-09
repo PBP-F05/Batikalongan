@@ -23,7 +23,7 @@ Modul ini menyimpan informasi mengenai toko-toko batik di Kabupaten Pekalongan s
 Modul ini mencatat ulasan dan penilaian yang diberikan pelanggan terhadap toko dan produk batik. Pengguna dapat membuat review baru dengan memberikan rating dan komentar, serta dapat membaca review dari pengguna lain. Pengguna yang telah menulis review bisa memperbarui ulasan mereka dan juga memiliki opsi untuk menghapus review tersebut.
 
 ### Galeri
-Modul ini menampilkan gambar batik beserta deskripsi motifnya, termasuk informasi asal-usul dan makna motif. Admin dapat menambahkan gambar batik baru beserta deskripsinya, pengguna bisa melihat galeri batik, admin dapat memperbarui deskripsi atau gambar, serta menghapus motif yang tidak lagi relevan.
+Modul ini menampilkan gambar batik beserta deskripsi motifnya, termasuk informasi asal-usul dan makna motif. Admin dapat menambahkan gambar batik baru beserta deskripsinya, pengguna bisa melihat galeri batik dan memberikan like serta komentar, admin dapat memperbarui deskripsi atau gambar, serta menghapus motif yang tidak lagi relevan.
 
 ### Artikel
 Modul ini berisi artikel edukatif tentang batik, mulai dari sejarah hingga teknik pembuatan. Admin dapat menambahkan artikel baru, pengguna dapat membaca artikel untuk menambah wawasan, dan admin dapat memperbarui atau menghapus artikel jika diperlukan.
