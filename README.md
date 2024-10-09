@@ -1,4 +1,4 @@
-![Banner](asset\banner.png)
+![Banner](asset/banner.png)
 
 ## 🎨 **Anggota Kelompok**
 - **Aileen Josephine Halim** (2306165761)
@@ -64,7 +64,7 @@ Dataset awal diperoleh melalui proses **scraping E-Commerce Tokopedia** dengan m
 
 Data yang diambil mencakup beragam produk batik, yang tidak hanya menampilkan **nama toko**, tetapi juga **deskripsi produk**, **harga**, dan **kategori batik**. Dengan data ini, Batikalongan mampu memberikan referensi batik yang autentik dan beragam kepada pengguna, sekaligus mendukung para pengrajin lokal agar produk mereka lebih dikenal oleh khalayak luas.
 
-![Dataset Preview](asset\tokopedia_dataset.png)
+![Dataset Preview](asset/tokopedia_dataset.png)
 
 Proses ini bertujuan untuk memberikan dasar data yang **akurat**, **relevan**, dan **berkualitas**, sehingga pengguna aplikasi Batikalongan dapat mengeksplorasi berbagai pilihan batik dari toko-toko terpercaya di Pekalongan.
 
