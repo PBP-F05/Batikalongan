@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a href="{% url 'article:article_list' %}" class="btn btn-light mb-3">Kembali</a>
+    <h1>{{ article.title }}</h1>
+    {% if article.image %}
+    <img src="{{ article.image.url }}" class="img-fluid mb-4" alt="{{ article.title }}">
+    {% endif %}
+    <div>
+        <h4>{{ article.introduction }}</h4>
+        <p>{{ article.content }}</p>
+    </div>
+
+    <!-- Tombol Edit Artikel -->
+    <a href="{% url 'article:edit_article' article.id %}?next=article_detail" class="btn btn-warning">Edit Artikel</a>
+</div>
+{% endblock %}

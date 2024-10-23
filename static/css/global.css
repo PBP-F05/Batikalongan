@@ -1,0 +1,22 @@
+/* global.css */
+
+@font-face {
+    font-family: 'Fabled';
+    src: url('../fonts/Fabled.otf');
+}
+
+.font-family-Fabled {
+    font-family: 'Fabled', !important; 
+}
+
+.bg-orange {
+    background-color: #d88e30; /* atau kode warna yang diinginkan */
+}
+
+.crop-image {
+    width: 290px; /* Lebar gambar */
+    height: 174px; /* Tinggi gambar */
+    object-fit: cover; /* Mengatur cara gambar ditampilkan */
+    border-radius: 8px; /* Sudut bulat, jika diinginkan */
+}
+

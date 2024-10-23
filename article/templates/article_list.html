@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Articles{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4 font-family-Fabled">Artikel Batik</h2>
+
+    <!-- List the articles -->
+    <div class="row">
+        {% for article in articles %}
+        <div class="col-md-4">
+            <div class="row justify-content-center align-items-center mb-4">
+                <div class="col-12 row align-items-end d-flex position-relative">
+                    {% if article.image %}
+                    <img class="rounded-4 col-12 crop-image" src="{{ article.image.url }}" alt="{{ article.title }}" />
+                    {% endif %}
+                    <!-- Buttons for Edit and Delete positioned inside the image -->
+                    <div class="position-absolute top-0 end-0 p-2">
+                        <a href="{% url 'article:edit_article' article.id %}" class="me-2">
+                            <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="img-fluid" />
+                        </a>
+                        <a href="{% url 'article:delete_article' article.id %}" onclick="return confirm('Yakin ingin menghapus artikel ini?');">
+                            <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="img-fluid" />
+                        </a>
+                    </div>
+                    <div class="px-1 col-12 row justify-content-end">
+                        <div class="position-relative">
+                            <div class="left-0 top-0 position-absolute bg-white rounded-circle col-12"></div>
+                            <div class="position-absolute col-6"></div>
+                        </div>
+                        <div class="position-relative">
+                            <div class="left-0 top-0 position-absolute bg-white rounded-circle col-12"></div>
+                            <div class="position-absolute col-6"></div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-black fs-6 fw-semibold font-family-Poppins col-12 m-0 px-3 py-2">{{ article.title }}</p>
+                <p class="text-black fs-6 fw-normal font-family-Poppins col-12 m-0 px-3 py-2">{{ article.introduction|truncatewords:20 }}</p>
+
+                <!-- Button Lihat Artikel -->
+                <div class="px-1 py-1 bg-orange rounded-3 row justify-content-center align-items-center">
+                    <a href="{% url 'article:article_detail' article.id %}" class="text-white fs-6 fw-semibold font-family-Poppins col-9 m-0 px-3 py-2 text-decoration-none">
+                        <p class="m-0">Lihat Artikel</p>
+                    </a>
+                    <div class="position-relative col-1"></div>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Button to add new article -->
+    <a href="{% url 'article:add_article' %}" class="btn btn-success">Tambah Artikel</a>
+</div>
+{% endblock %}
