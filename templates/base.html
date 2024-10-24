@@ -9,31 +9,13 @@
     <!-- Link ke file CSS -->
     <link href="{% static 'css/global.css' %}" rel="stylesheet">
 
-    <!-- Bootstrap CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
     {% block extra_head %}{% endblock %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+J4jsl5c9zdLKaUk5Ae5f5b1bw6AUn5f5v8FZJoMxm6f5cH1" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <div id="component" class="container-fluid bg-dark py-3">
-        <div class="px-1 py-1 row justify-content-between align-items-center">
-            <div class="col-xxl-6 row align-items-center d-flex">
-                <p class="text-white fs-4 fw-normal font-family-Fabled col-2 m-0 px-3 py-2">
-                    Batik Pekalongan
-                </p>                
-            </div>
-            <div class="col-xxl-4 row align-items-center d-flex">
-                <span class="text-white fs-6 fw-medium font-family-Poppins col-2 m-0 px-3 py-2">Catalog</span>
-                <span class="text-white fs-6 fw-medium font-family-Poppins col-1 m-0 px-3 py-2">Event</span>
-                <span class="text-white fs-6 fw-medium font-family-Poppins col-1 m-0 px-3 py-2">Gallery</span>
-                <a href="{% url 'article:article_list' %}" class="text-white fs-6 fw-medium font-family-Poppins col-1 m-0 px-3 py-2">Article</a>
-                <span class="text-white fs-6 fw-medium font-family-Poppins col-2 m-0 px-3 py-2">Timeline</span>
-            </div>
-        </div>
-    </div>
 
     <!-- Main Content -->
     {% block content %}{% endblock %}

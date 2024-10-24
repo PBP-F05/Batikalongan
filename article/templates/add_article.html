@@ -1,13 +1,39 @@
 {% extends 'base.html' %}
-{% block title %}Tambah Artikel{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="container">
-    <h1 class="my-4">Tambah Artikel</h1>
-    <form method="post" enctype="multipart/form-data">
+<div class="flex justify-center px-[80px]" style="margin-top: 150px; margin-bottom: 150px;">
+    <form method="POST" enctype="multipart/form-data" style="display: flex; width: 1064px; padding: 52px 40px; flex-direction: column; align-items: center; gap: 40px; border-radius: 20px; border: 1px solid rgba(217, 217, 217, 0.85);">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="text-black text-[40px] font-normal font-['Fabled'] leading-[56px]">Tambah Artikel</div>
+
+        <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
+            <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Judul Artikel</div>
+            <textarea name="title" class="h-[58px] w-full rounded-[8px] border border-[#D88E30]"></textarea>
+        </div>
+
+        <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
+            <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Foto</div>
+            <label class="flex items-center gap-[10px] px-[24px] py-[16px] rounded-[8px] border border-[#D88E30] cursor-pointer" style="align-self: flex-start;">
+                <input type="file" name="image" class="hidden" accept="image/*" onchange="this.nextElementSibling.innerText = this.files[0].name"/>
+                <img src="{% static 'images/upload.svg' %}" alt="Upload" class="w-6 h-6 relative"/>
+                <div class="text-black text-[16px] font-normal font-['Poppins'] leading-[22.4px]">Upload Foto</div>
+            </label>
+        </div>
+
+        <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
+            <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Pendahuluan</div>
+            <textarea name="introduction" class="h-[120px] w-full rounded-[8px] border border-[#D88E30]"></textarea>
+        </div>
+
+        <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
+            <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Isi Artikel</div>
+            <textarea name="content" class="h-[700px] w-full rounded-[8px] border border-[#D88E30]"></textarea>
+        </div>
+
+        <button type="submit" class="self-stretch flex justify-center items-center gap-[10px] px-[20px] py-[12px] rounded-[8px] bg-[#D88E30]">
+            <div class="text-white text-[16px] font-semibold font-['Poppins'] leading-[22.4px]">Submit</div>
+        </button>
     </form>
 </div>
 {% endblock %}
