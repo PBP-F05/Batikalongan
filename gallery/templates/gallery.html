@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+    <title>Galeri Batik</title>
+{% endblock meta %}
+
+{% block content %}
+    <h1 class="text-3xl font-bold mb-6">Galeri Batik</h1>
+
+    <!-- Mulai Galeri -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <!-- Loop untuk setiap item galeri -->
+        {% for item in gallery_data %}
+            <!-- Include card template -->
+            {% include 'cards_gallery_entry.html' with item=item %}
+        {% endfor %}
+    </div>
+{% endblock content %}
