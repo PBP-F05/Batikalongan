@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin: 0 auto; /* Memusatkan secara horizontal */
+    padding: 0 20px; /* Menambahkan padding agar tidak menempel di tepi layar */
+    background-color: #f9f9f9; /* Warna background halaman, jika diperlukan */
+}
+
+

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hapus Entri Galeri</title>
+</head>
+<body>
+
+    <h1>Hapus Entri Galeri</h1>
+
+    <p>Apakah Anda yakin ingin menghapus entri "<strong>{{ entry.nama_batik }}</strong>"?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Ya, Hapus</button>
+    </form>
+
+    <p><a href="{% url 'gallery:show_gallery' %}">Kembali ke Galeri</a></p>
+
+</body>
+</html>
