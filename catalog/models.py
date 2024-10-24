@@ -1,19 +1,23 @@
+# catalog/models.py
 from django.db import models
+import uuid
 
-# Create your models here.
-class Batik(models.Model):
-    # Defining the fields for Batik model
-    name = models.CharField(max_length=100, unique=True)  # Nama Batik
-    motif = models.CharField(max_length=200)  # Motif Batik
-    origin = models.CharField(max_length=100)  # Asal Batik (Kota / Provinsi)
-    price = models.DecimalField(max_digits=10, decimal_places=2)  # Harga Batik
-    stock = models.PositiveIntegerField()  # Stok Batik
-    description = models.TextField(blank=True, null=True)  # Deskripsi opsional
-    created_at = models.DateTimeField(auto_now_add=True)  # Waktu dibuat
-    updated_at = models.DateTimeField(auto_now=True)  # Waktu di-update terakhir
+class Store(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.TextField()
+    product_count = models.IntegerField()
 
     def __str__(self):
-        return self.name  # Menampilkan nama batik di admin panel
+        return self.name
 
-    class Meta:
-        ordering = ['-created_at']  # Mengurutkan berdasarkan waktu pembuatan (terbaru di atas)
+
+class Product(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    description = models.TextField()
+    image = models.ImageField(upload_to='products/')
+    
+    def __str__(self):
+        return self.name
