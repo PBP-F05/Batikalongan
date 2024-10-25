@@ -24,6 +24,7 @@ urlpatterns = [
     path('gallery/', include('gallery.urls')),
     path('catalog/', include('catalog.urls')),
     path('article/', include('article.urls')),
+    path('authentication/', include('authentication.urls')),
 ]
 
 # Ini digunakan untuk development mode
