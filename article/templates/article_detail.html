@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+<div class="h-full flex flex-col justify-start items-center gap-20 p-10">
+    <div class="self-stretch text-center text-[#d88e30] text-[52px] font-bold font-['Poppins'] leading-[67.60px]">
+        {{ article.title }}
+    </div>
+    
+    {% if article.image %}
+    <img class="w-[758.67px] h-[426.75px] rounded-[25.80px]" src="{{ article.image.url }}" alt="{{ article.title }}" />
+    {% endif %}
+    
+    <div class="self-stretch flex flex-col justify-start items-start gap-10">
+        <div class="self-stretch flex-col justify-start items-start gap-5">
+            <div class="self-stretch text-justify text-black text-xl font-normal font-['Poppins'] leading-[30px]">
+                {{ article.content|linebreaks }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tombol Kembali -->
+    <a href="{% url 'article:article_list' %}" class="btn btn-light mb-3">Kembali</a>
+    
+    <!-- Tombol Edit Artikel -->
+    <a href="{% url 'article:edit_article' article.id %}?next=article_detail" class="btn btn-warning">Edit Artikel</a>
+</div>
+{% endblock %}

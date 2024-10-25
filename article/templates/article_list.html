@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Articles{% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-[100px] mb-[150px]">
+    <div class="flex justify-between items-center mb-4">
+        <!-- Title with Fabled font -->
+        <h2 class="font-family-Fabled text-4xl">Artikel Batik</h2>
+        <!-- Button Tambah Artikel -->
+        <a href="{% url 'article:add_article' %}" class="flex justify-center items-center h-[46px] px-5 py-3 rounded-lg border-2 border-[#D88E30] text-[#D88E30] text-base font-semibold font-['Poppins'] hover:bg-[#D88E30] hover:text-white transition-colors">
+            Tambah Artikel
+        </a>
+    </div>
+
+    <!-- List the articles -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {% for article in articles %}
+        <div class="flex flex-col justify-between items-center w-[290px] h-[498px]">
+            <!-- Image -->
+            <div class="relative w-full h-[174px] flex-shrink-0">
+                {% if article.image %}
+                <div class="w-full h-full rounded-t-[20px] bg-cover bg-lightgray" style="background-image: url('{{ article.image.url }}');"></div>
+                {% endif %}
+                <!-- Buttons for Edit and Delete positioned inside the image -->
+                <div class="absolute top-5 right-0 flex justify-end items-start p-[0px_20px]">
+                    <a href="{% url 'article:delete_article' article.id %}" onclick="return confirm('Yakin ingin menghapus artikel ini?');" class="mr-2">
+                        <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="h-11 w-11" />
+                    </a>
+                    <a href="{% url 'article:edit_article' article.id %}">
+                        <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="h-11 w-11" />
+                    </a>
+                </div>
+            </div>
+
+            <!-- Box for Title and Introduction -->
+            <div class="flex flex-col justify-start items-center gap-4 p-5 border border-[#D9D9D9] rounded-b-[20px] w-full h-full">
+                <!-- Title -->
+                <div class="text-black text-[16px] font-semibold leading-[24px] w-full text-left font-['Poppins']">
+                    {{ article.title }}
+                </div>
+
+                <!-- Introduction -->
+                <div class="text-black text-[16px] font-normal leading-[24px] w-full text-left font-['Poppins']">
+                    {{ article.introduction|truncatewords:20 }}
+                </div>
+
+                <!-- Button Lihat Artikel -->
+                <a href="{% url 'article:article_detail' article.id %}" class="flex justify-between items-center gap-2 px-[20px] py-[12px] w-full bg-[#D88E30] text-white text-base font-semibold rounded-[8px] mt-auto">
+                    <span class="text-left w-full font-['Poppins']">Lihat Artikel</span>
+                    <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="h-4 w-4" />
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
