@@ -1,3 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ store.name }} - Store Details
+{% endblock title %}
+
+{% block content %}
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -18,9 +25,6 @@
           font-family: 'Roboto', sans-serif;
         }
       </style>
-      <p>User Role: {{ request.user.role }}</p>
-      <p>User Authenticated: {{ request.user.is_authenticated }}</p>
-      
     </head>
 
     <body class="bg-gray-50">
@@ -30,7 +34,7 @@
         <!-- Toko Batik Section -->
         <section>
           <div class="flex justify-between items-center">
-            <h2 class="text-3xl font-bold mb-4">Toko Batik</h2>
+            <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Toko Batik</div>
             {% if request.user.is_authenticated and request.user.role == "atmin" %}
             <button
               onclick="openAddStoreModal()"
@@ -45,37 +49,18 @@
             <button class="text-2xl absolute left-0 -ml-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 z-10">
               &lt;
             </button>
-            {% if not storeList %}
-            <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
-                <p class="text-center text-gray-600 mt-4">Belum ada toko pada Batikalongan.</p>
-            </div>
-            {% else %}
-            <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
-              {% for store in storeList %}
-                {% include 'catalog/card_product.html' with store=store %}
-              {% endfor %}
-          </div>
-            {% endif %}
             <div class="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-6 border border-gray-200 transform hover:scale-105 transition">
-              <!-- Store Image -->
-              <div class="flex-shrink-0 transform hover:scale-105 transition">
-                <img class="w-24 h-24 rounded-full object-cover" src="https://via.placeholder.com/97x97" alt="Batik Lestari Pekalongan" />
+              {% if not stores %}
+              <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+                  <p class="text-center text-gray-600 mt-4">Belum ada toko pada Batikalongan.</p>
               </div>
-              <div class="flex space-x-4 overflow-x-auto scroll-smooth p-4" id="storeList"></div>
-              <!-- Store Details -->
-              <div class = "flex-grow">
-                <!-- Store Name -->
-                <div class="text-black text-lg font-semibold" style="font-family: Poppins; line-height: 24px;">
-                  Batik Lestari Pekalongan
-                </div>
-                <!-- Store Address -->
-                <div class="text-black text-sm font-normal mt-2 max-w-xs" style="font-family: Poppins; line-height: 18px; word-wrap: break-word;">
-                  Jalan Melati No. 45, Kelurahan Kauman, Pekalongan Barat, Kota Pekalongan
-                </div>
-                <!-- Product Count -->
-                <div class="bg-orange-500 text-white text-sm font-semibold mt-4 inline-block px-4 py-2 rounded-full" style="font-family: Poppins; line-height: 18px;">
-                  100 Produk
-                </div>
+              {% else %}
+              <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
+                {% for store in stores %}
+                  {% include 'catalog/card_store.html' with store=store %}
+                {% endfor %}
+            </div>
+              {% endif %}
               </div>
               </div>
             </div>
@@ -89,7 +74,7 @@
 
         <!-- Produk Batik Section -->
         <section class="mt-8">
-          <h2 class="text-3xl font-bold mb-4">Produk Batik</h2>
+          <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Produk Batik</div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Loop through products -->
             {% for product in products %}
@@ -142,6 +127,7 @@
       id="addStoreModal"
       class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
       >
+
       <div class="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4" style="color: #000; font-family: Fabled; font-size: 40px;">
           Tambah Toko
@@ -177,6 +163,17 @@
             style="border-radius: 8px; border: 1px #D88E30 solid;"
           />
         </div>
+        <div id="uploadPhotoModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Upload Profile Photo</h2>
+            <form id="uploadPhotoForm" enctype="multipart/form-data">
+              <input type="file" id="profilePhoto" name="photo" accept="image/*" required>
+              <button type="submit">Upload</button>
+            </form>
+          </div>
+        </div>
+
 
         <div class="flex justify-between mt-6">
           <button
@@ -225,13 +222,14 @@ function closeAddStoreModal() {
 function addStore() {
   console.log("Tombol Tambah Toko diklik");
 
-  const formData = {
-    name: document.getElementById("storeName").value,
-    address: document.getElementById("storeAddress").value,
-    product_count: document.getElementById("productCount").value,
-  };
+  const formData = new FormData();
+  formData.append("name", document.getElementById("storeName").value);
+  formData.append("address", document.getElementById("storeAddress").value);
+  formData.append("product_count", document.getElementById("productCount").value);
+  formData.append("image", document.getElementById("profilePhoto").files[0]); // Get the actual file for the image
 
-  if (!formData.name || !formData.address || !formData.product_count) {
+  // Check required fields
+  if (!formData.get("name") || !formData.get("address") || !formData.get("product_count")) {
     alert("Semua field harus diisi!");
     return;
   }
@@ -239,10 +237,9 @@ function addStore() {
   fetch('/catalog/store/add/', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': '{{ csrf_token }}',
+      'X-CSRFToken': '{{ csrf_token }}',  // CSRF token for security
     },
-    body: JSON.stringify(formData),
+    body: formData, // Use FormData directly as the request body
   })
     .then((response) => {
       if (!response.ok) {
@@ -279,10 +276,7 @@ function addStore() {
       alert("Terjadi kesalahan. Silakan coba lagi.");
     });
 }
-
-
-
-
       </script>
     </body>
   </html>
+  {% endblock content %}
