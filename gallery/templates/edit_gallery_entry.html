@@ -1,21 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'base.html' %}
+
+{% block meta %}
     <title>Edit Entri Galeri</title>
-</head>
-<body>
+{% endblock meta %}
 
-    <h1>Edit Entri Galeri</h1>
+{% block content %}
+    <!-- Form Container -->
+    <div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
+        <h1 class="text-center font-family-Fabled text-black text-3xl mb-6">Edit Entri Galeri</h1>
 
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Simpan Perubahan</button>
-    </form>
+        <!-- Form untuk mengedit entri galeri -->
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-    <p><a href="{% url 'gallery:show_gallery' %}">Kembali ke Galeri</a></p>
+            <!-- Submit Button -->
+            <div class="mt-6">
+                <button type="submit" class="w-full bg-[#D88E30] text-white font-semibold py-3 rounded-lg">Simpan Perubahan</button>
+            </div>
+        </form>
 
-</body>
-</html>
+        <!-- Link Kembali ke Galeri -->
+        <p class="text-center mt-4">
+            <a href="{% url 'gallery:show_gallery' %}" class="text-[#D88E30] font-semibold hover:underline">Kembali ke Galeri</a>
+        </p>
+    </div>
+{% endblock content %}
