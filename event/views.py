@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from event.models import Event
-from event.forms import EventForm
+from .models import Event
+from .forms import EventForm
 
 def show_event(request):
     events = Event.objects.all()
@@ -9,7 +9,7 @@ def show_event(request):
     })
 
 def create_event(request):
-    form = EventForm(request.POST or None)
+    form = EventForm(request.POST or None, request.FILES or None)
 
     if form.is_valid() and request.method == "POST":
         form.save()
@@ -20,7 +20,7 @@ def create_event(request):
 
 def edit_event(request, id):
     event = Event.objects.get(pk = id)
-    form = EventForm(request.POST or None, instance=event)
+    form = EventForm(request.POST or None, request.FILES or None, instance=event)
 
     if form.is_valid() and request.method == "POST":
         form.save()
