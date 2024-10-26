@@ -30,6 +30,7 @@ urlpatterns = [
     # path('accounts/', include('allauth.urls')),
     path('timeline/', include('timeline.urls')),
     path('event/', include('event.urls')),
+    path('', include('main.urls')),
 ]
 
 # Ini digunakan untuk development mode
