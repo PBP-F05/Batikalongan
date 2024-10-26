@@ -32,23 +32,21 @@ def edit_gallery_entry(request, id):
         form = GalleryEntryForm(instance=entry)
     return render(request, 'edit_gallery_entry.html', {'form': form, 'entry': entry})
 
-# Fungsi untuk menghapus entri galeri
 def delete_gallery_entry(request, id):
-    entry = get_object_or_404(GalleryEntry, id=id)
-    if request.method == 'POST':
+    try:
+        # Fetch the entry by ID and delete it
+        entry = get_object_or_404(GalleryEntry, id=id)
         entry.delete()
-        return redirect('gallery:show_gallery')
-    return render(request, 'delete_gallery_entry.html', {'entry': entry})
+        return JsonResponse({'message': 'Deleted successfully'}, status=200)
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error deleting entry: {e}")
+        return JsonResponse({'error': 'Failed to delete entry'}, status=500)
 
 # Fungsi untuk mengembalikan semua entri galeri dalam format XML
 def show_gallery_xml(request):
     data = GalleryEntry.objects.all()
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
-
-# Fungsi untuk mengembalikan semua entri galeri dalam format JSON
-def show_gallery_json(request):
-    data = GalleryEntry.objects.all()
-    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 # Fungsi untuk mengembalikan entri galeri berdasarkan ID dalam format XML
 def show_gallery_xml_by_id(request, id):
@@ -63,6 +61,23 @@ def show_gallery_json_by_id(request, id):
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+
+def show_gallery_json(request):
+    page = int(request.GET.get('page', 1))
+    entries = GalleryEntry.objects.all()
+    paginator = Paginator(entries, 6)  # 6 entries per page
+    page_obj = paginator.get_page(page)
+
+    data = serializers.serialize("json", page_obj.object_list)
+
+    # Return data along with pagination details
+    return JsonResponse({
+        "entries": data,
+        "has_next": page_obj.has_next(),
+        "has_previous": page_obj.has_previous(),
+        "current_page": page_obj.number,
+        "num_pages": paginator.num_pages,
+    })
 
 @csrf_exempt
 @require_POST
