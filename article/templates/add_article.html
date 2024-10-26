@@ -2,38 +2,122 @@
 {% load static %}
 
 {% block content %}
-<div class="flex justify-center px-[80px]" style="margin-top: 150px; margin-bottom: 150px;">
-    <form method="POST" enctype="multipart/form-data" style="display: flex; width: 1064px; padding: 52px 40px; flex-direction: column; align-items: center; gap: 40px; border-radius: 20px; border: 1px solid rgba(217, 217, 217, 0.85);">
-        {% csrf_token %}
-        <div class="text-black text-[40px] font-normal font-['Fabled'] leading-[56px]">Tambah Artikel</div>
-
-        <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
-            <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Judul Artikel</div>
-            <textarea name="title" class="h-[58px] w-full rounded-[8px] border border-[#D88E30]"></textarea>
-        </div>
-
-        <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
-            <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Foto</div>
-            <label class="flex items-center gap-[10px] px-[24px] py-[16px] rounded-[8px] border border-[#D88E30] cursor-pointer" style="align-self: flex-start;">
-                <input type="file" name="image" class="hidden" accept="image/*" onchange="this.nextElementSibling.innerText = this.files[0].name"/>
-                <img src="{% static 'images/upload.svg' %}" alt="Upload" class="w-6 h-6 relative"/>
-                <div class="text-black text-[16px] font-normal font-['Poppins'] leading-[22.4px]">Upload Foto</div>
-            </label>
-        </div>
-
-        <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
-            <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Pendahuluan</div>
-            <textarea name="introduction" class="h-[120px] w-full rounded-[8px] border border-[#D88E30]"></textarea>
-        </div>
-
-        <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
-            <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Isi Artikel</div>
-            <textarea name="content" class="h-[700px] w-full rounded-[8px] border border-[#D88E30]"></textarea>
-        </div>
-
-        <button type="submit" class="self-stretch flex justify-center items-center gap-[10px] px-[20px] py-[12px] rounded-[8px] bg-[#D88E30]">
-            <div class="text-white text-[16px] font-semibold font-['Poppins'] leading-[22.4px]">Submit</div>
+<div id="add-article-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="relative bg-white w-[800px] p-8 rounded-lg max-h-[90vh] overflow-y-auto">
+        <button id="close-modal" class="absolute top-4 right-4">
+            <img src="{% static 'images/close.svg' %}" alt="Close" class="h-9 w-9"/>
         </button>
-    </form>
+        <a href="{% url 'article:add_article_fullscreen' %}" class="absolute top-4 left-4">
+            <img src="{% static 'images/fullscreen.svg' %}" alt="Fullscreen" class="h-9 w-9"/>
+        </a>
+        
+        <form id="add-article-form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="text-black text-[40px] font-normal font-['Fabled'] leading-[56px] text-center">Tambah Artikel</div>
+            <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
+                <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Judul Artikel</div>
+                <textarea name="title" class="h-[58px] w-full rounded-[8px] border border-[#D88E30]"></textarea>
+            </div>
+            <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
+                <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Foto</div>
+                <label class="flex flex-col items-center gap-[10px] px-[24px] py-[16px] rounded-[8px] border border-[#D88E30] cursor-pointer">
+                    <input type="file" name="image" class="hidden" accept="image/*" onchange="handleFileUpload(this)"/>
+                    <div id="file-upload-display" class="flex items-center">
+                        <img id="upload-icon" src="{% static 'images/upload.svg' %}" alt="Upload" class="w-6 h-6"/>
+                        <span id="file-name" class="text-black text-[16px] font-normal font-['Poppins'] leading-[22.4px]">Upload Foto</span>
+                    </div>
+                </label>
+                
+            </div>
+            <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
+                <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Pendahuluan</div>
+                <textarea name="introduction" class="h-[120px] w-full rounded-[8px] border border-[#D88E30]"></textarea>
+            </div>
+            <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
+                <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Isi Artikel</div>
+                <textarea name="content" class="h-[700px] w-full rounded-[8px] border border-[#D88E30]"></textarea>
+            </div>
+            <button type="submit" class="self-stretch flex justify-center w-full items-center gap-[10px] px-[20px] py-[12px] rounded-[8px] bg-[#D88E30] hover:bg-[#996522]" id="submit-article">
+                <div class="text-white text-[16px] font-semibold font-['Poppins'] leading-[22.4px]">Submit</div>
+            </button>            
+        </form>
+    </div>
 </div>
+
+<script>
+    document.getElementById('add-article-form').addEventListener('submit', function(event) {
+        event.preventDefault();  // Mencegah refresh halaman
+        const formData = new FormData(this);
+        
+        fetch("{% url 'article:add_article' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                'X-CSRFToken': "{{ csrf_token }}",
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Close modal and update articles
+                document.getElementById('add-article-modal').classList.add('hidden');
+                const articlesContainer = document.getElementById('article-list');
+                const newArticleHTML = `
+                    <div class="flex flex-col justify-between items-center w-[290px] h-[498px]">
+                        <div class="relative w-full h-[174px] flex-shrink-0">
+                            ${data.image_url ? `<div class="w-full h-full rounded-t-[20px] bg-cover bg-lightgray" style="background-image: url('${data.image_url}');"></div>` : ''}
+                            <div class="absolute top-5 right-0 flex justify-end items-start p-[0px_20px]">
+                                <a href="#" class="mr-2">
+                                    <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="h-11 w-11" />
+                                </a>
+                                <a href="#">
+                                    <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="h-11 w-11" />
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex flex-col justify-start items-center gap-4 p-5 border border-[#D9D9D9] rounded-b-[20px] w-full h-full">
+                            <div class="text-black text-[16px] font-semibold leading-[24px] w-full text-left font-['Poppins']">
+                                ${data.title}
+                            </div>
+                            <div class="text-black text-[16px] font-normal leading-[24px] w-full text-left font-['Poppins']">
+                                ${data.introduction}
+                            </div>
+                            <a href="/article/${data.id}" class="flex justify-between items-center gap-2 px-[20px] py-[12px] w-full bg-[#D88E30] text-white text-base font-semibold rounded-[8px] mt-auto">
+                                <span class="text-left w-full font-['Poppins']">Lihat Artikel</span>
+                                <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="h-4 w-4" />
+                            </a>
+                        </div>
+                    </div>
+                `;
+                articlesContainer.innerHTML += newArticleHTML;  // Append new article to the list
+
+                // Clear the form fields after submission
+                this.reset();  // Mengosongkan semua field dalam form
+            } else {
+                // Display errors in a user-friendly way
+                alert('Ada kesalahan saat menambahkan artikel: ' + data.errors.join(', '));  // Show a simple alert with errors
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+
+    document.getElementById('close-modal').onclick = function() {
+        document.getElementById('add-article-modal').classList.add('hidden');
+    };
+    
+    function handleFileUpload(input) {
+        const fileName = input.files[0] ? input.files[0].name : 'Upload Foto';
+        const fileNameDisplay = document.getElementById('file-name');
+        const uploadIcon = document.getElementById('upload-icon');
+        
+        // Update the file name display and hide the icon
+        fileNameDisplay.innerText = fileName;
+        uploadIcon.style.display = 'none';  // Hide the upload icon
+    }
+</script>
+
 {% endblock %}
