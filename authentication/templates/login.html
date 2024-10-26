@@ -1,27 +1,31 @@
 {% extends 'base.html' %}
-
 {% block content %}
+{% include 'navbar.html' %}
 <div class="bg-[url('/static/images/auth.svg')] bg-cover bg-center min-h-screen w-full flex justify-center items-center">
-
-    <!-- Card Login -->
     <div class="w-[662px] h-[546px] p-10 bg-white rounded-[20px] flex-col justify-start items-center gap-10 inline-flex shadow-lg">
         <div class="self-stretch h-[312px] flex-col justify-start items-center gap-5 flex">
             <div class="text-black text-6xl font-normal font-['Fabled'] leading-[84px]">Login</div>
-            <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
-                <div class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Username</div>
-                <input type="text" class="self-stretch h-[58px] rounded-lg border border-[#d88e30] px-4" placeholder="Enter your username">
-            </div>
-            <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
-                <div class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Password</div>
-                <input type="password" class="self-stretch h-[58px] rounded-lg border border-[#d88e30] px-4" placeholder="Enter your password">
-            </div>
-        </div>
-        <div class="self-stretch h-[46px] px-5 py-3 bg-[#d88e30] rounded-lg flex justify-center items-center gap-2.5 cursor-pointer hover:bg-[#bf7428]">
-            <span class="text-white text-base font-semibold font-['Poppins'] leading-snug">Submit</span>
+            <form method="POST" action="{% url 'authentication:login' %}">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+                <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+                    {{ form.password.errors }}
+                </div>
+                <button type="submit" class="self-stretch h-[46px] px-5 py-3 bg-[#d88e30] rounded-lg flex justify-center items-center gap-2.5 cursor-pointer hover:bg-[#bf7428]">
+                    <span class="text-white text-base font-semibold font-['Poppins'] leading-snug">Submit</span>
+                </button>
+            </form>
         </div>
         <div class="text-center">
             <span class="text-black text-xl font-normal font-['Poppins'] leading-7">Don’t have an account? </span>
-            <a href="{% url 'register' %}" class="text-[#d88e30] text-xl font-normal font-['Poppins'] underline leading-7 cursor-pointer">Sign Up</a>
+            <a href="{% url 'authentication:register' %}" class="text-[#d88e30] text-xl font-normal font-['Poppins'] underline leading-7 cursor-pointer">Sign Up</a>
         </div>
     </div>
 </div>

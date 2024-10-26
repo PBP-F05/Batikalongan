@@ -4,7 +4,7 @@ from django.db import models
 class User(AbstractUser):
     ROLE_CHOICES = [
         ("user", "User"),
-        ("atmin", "Atmin"),
+        ("admin", "Admin"),
     ]
 
     nama = models.CharField(max_length=255)
@@ -13,3 +13,11 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.nama
+
+    @property
+    def is_admin(self):
+        return self.role == "admin"
+
+    @property
+    def is_user(self):
+        return self.role == "user"
