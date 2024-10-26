@@ -62,19 +62,26 @@ def create_store(request):
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     try:
-        data = json.loads(request.body.decode('utf-8'))
-        store_name = strip_tags(data.get('name', '').strip())
-        address = strip_tags(data.get('address', '').strip())
-        product_count = data.get('product_count')
+        # Get data from request.POST and request.FILES
+        store_name = strip_tags(request.POST.get('name', '').strip())
+        address = strip_tags(request.POST.get('address', '').strip())
+        product_count = request.POST.get('product_count')
+        image = request.FILES.get('image')
 
+        # Validate required fields
         if not store_name or not address or product_count is None:
             return JsonResponse({"error": "All fields must be filled."}, status=400)
 
-        product_count = int(product_count)
-        if product_count < 0:
-            return JsonResponse({"error": "Product count must be a positive number."}, status=400)
+        # Validate product_count as a positive integer
+        try:
+            product_count = int(product_count)
+            if product_count < 0:
+                return JsonResponse({"error": "Product count must be a positive number."}, status=400)
+        except ValueError:
+            return JsonResponse({"error": "Product count must be an integer."}, status=400)
 
-        new_store = Store(name=store_name, address=address, product_count=product_count)
+        # Save the new store with the image
+        new_store = Store(name=store_name, address=address, product_count=product_count, image=image)
         new_store.save()
 
         return JsonResponse({
@@ -83,9 +90,13 @@ def create_store(request):
                 "id": str(new_store.id),
                 "name": new_store.name,
                 "address": new_store.address,
-                "product_count": new_store.product_count
+                "product_count": new_store.product_count,
+                "image_url": new_store.image.url if new_store.image else None
             }
         }, status=201)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid data."}, status=400)
@@ -93,59 +104,27 @@ def create_store(request):
         return JsonResponse({"error": str(e)}, status=500)
     
 
-@csrf_exempt
-@require_http_methods(["GET", "POST"])
-@login_required
 def edit_store(request, store_id):
-    if request.user.role != 'atmin':  
-        return JsonResponse({"error": "Permission denied."}, status=403)
-
-    store = get_object_or_404(Store, id=store_id)
-
-    if request.method == "GET":
-        # Send data to populate the modal
-        return JsonResponse({
-            "store": {
-                "id": store.id,
-                "name": store.name,
-                "address": store.address,
-                "product_count": store.product_count
-            }
-        }, status=200)
-
-    if request.method == "POST":
-        # Handle the store edit logic as before
+    if request.method == 'GET':
         try:
-            data = json.loads(request.body.decode('utf-8'))
-            store_name = strip_tags(data.get('name', '').strip())
-            address = strip_tags(data.get('address', '').strip())
-            product_count = data.get('product_count')
-
-            if not store_name or not address or product_count is None:
-                return JsonResponse({"error": "All fields must be filled."}, status=400)
-
-            product_count = int(product_count)
-            if product_count < 0:
-                return JsonResponse({"error": "Product count must be a positive number."}, status=400)
-
-            store.name = store_name
-            store.address = address
-            store.product_count = product_count
-            store.save()
-
+            store = Store.objects.get(id=store_id)
             return JsonResponse({
-                "message": "Store successfully updated.",
-                "store": {
-                    "id": store.id,
-                    "name": store.name,
-                    "address": store.address,
-                    "product_count": store.product_count
+                'store': {
+                    'name': store.name,
+                    'address': store.address,
+                    'product_count': store.product_count
                 }
-            }, status=200)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid data."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            })
+        except Store.DoesNotExist:
+            return JsonResponse({'error': 'Store not found'}, status=404)
+    elif request.method == 'POST':
+        data = json.loads(request.body)
+        store = Store.objects.get(id=store_id)
+        store.name = data['name']
+        store.address = data['address']
+        store.product_count = data['product_count']
+        store.save()
+        return JsonResponse({'message': 'Store updated successfully'})
 
 @csrf_exempt
 @require_POST
@@ -328,9 +307,8 @@ def show_xml(request):
     return HttpResponse(serializers.serialize("xml", data, data_store), content_type="application/xml")
 
 def show_json(request):
-    data = Product.objects.all()
     data_store = Store.objects.all()
-    return HttpResponse(serializers.serialize("json", data, data_store), content_type="application/json")
+    return HttpResponse(serializers.serialize("json", data_store), content_type="application/json")
 
 def show_xml_by_id(request, id):
     data = Product.objects.filter(pk=id)

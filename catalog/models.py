@@ -7,6 +7,7 @@ class Store(models.Model):
     name = models.CharField(max_length=100)
     address = models.TextField()
     product_count = models.IntegerField()
+    image = models.ImageField(upload_to='store/')
 
     def __str__(self):
         return self.name
