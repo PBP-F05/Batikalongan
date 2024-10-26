@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Store, Product
 from .forms import StoreForm, ProductForm
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed  
 from django.core import serializers
 from django.core.paginator import Paginator
 from django.utils.html import strip_tags
@@ -11,9 +11,8 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 import json
-
-def is_admin(user):
-    return user.is_staff
+import logging
+from django.views.decorators.http import require_http_methods
 
 def show_catalog(request):
     price_filter = request.GET.get('price_filter')
@@ -54,18 +53,16 @@ def store_detail(request, store_id):
         'products': products,
     }
     return render(request, 'catalog/store_detail.html', context)
+logger = logging.getLogger(__name__)  # untuk debugging
 
-@csrf_exempt
 @require_POST
 @login_required
 def create_store(request):
-    if not request.user.is_staff:  # Hanya admin yang bisa menambah toko
+    if request.user.role != 'atmin':
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     try:
         data = json.loads(request.body.decode('utf-8'))
-
-        # Ambil dan validasi data yang diterima dari AJAX
         store_name = strip_tags(data.get('name', '').strip())
         address = strip_tags(data.get('address', '').strip())
         product_count = data.get('product_count')
@@ -73,27 +70,17 @@ def create_store(request):
         if not store_name or not address or product_count is None:
             return JsonResponse({"error": "All fields must be filled."}, status=400)
 
-        # Validasi product_count agar merupakan angka positif
-        try:
-            product_count = int(product_count)
-            if product_count < 0:
-                return JsonResponse({"error": "Product count must be a positive number."}, status=400)
-        except ValueError:
-            return JsonResponse({"error": "Invalid product count."}, status=400)
+        product_count = int(product_count)
+        if product_count < 0:
+            return JsonResponse({"error": "Product count must be a positive number."}, status=400)
 
-        # Membuat toko baru
-        new_store = Store(
-            name=store_name,
-            address=address,
-            product_count=product_count
-        )
+        new_store = Store(name=store_name, address=address, product_count=product_count)
         new_store.save()
 
-        # Kirim respons sukses dalam format JSON
         return JsonResponse({
             "message": "Store successfully added.",
             "store": {
-                "id": new_store.id,
+                "id": str(new_store.id),
                 "name": new_store.name,
                 "address": new_store.address,
                 "product_count": new_store.product_count
@@ -105,43 +92,19 @@ def create_store(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     
+
 @csrf_exempt
-@require_POST
+@require_http_methods(["GET", "POST"])
 @login_required
 def edit_store(request, store_id):
-    if not request.user.is_staff:  # Hanya admin yang dapat mengedit toko
+    if request.user.role != 'atmin':  
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     store = get_object_or_404(Store, id=store_id)
 
-    try:
-        data = json.loads(request.body.decode('utf-8'))
-
-        # Ambil dan validasi data yang diterima dari AJAX
-        store_name = strip_tags(data.get('name', '').strip())
-        address = strip_tags(data.get('address', '').strip())
-        product_count = data.get('product_count')
-
-        if not store_name or not address or product_count is None:
-            return JsonResponse({"error": "All fields must be filled."}, status=400)
-
-        # Validasi product_count agar merupakan angka positif
-        try:
-            product_count = int(product_count)
-            if product_count < 0:
-                return JsonResponse({"error": "Product count must be a positive number."}, status=400)
-        except ValueError:
-            return JsonResponse({"error": "Invalid product count."}, status=400)
-
-        # Update data store
-        store.name = store_name
-        store.address = address
-        store.product_count = product_count
-        store.save()
-
-        # Kirim respons sukses dalam format JSON
+    if request.method == "GET":
+        # Send data to populate the modal
         return JsonResponse({
-            "message": "Store successfully updated.",
             "store": {
                 "id": store.id,
                 "name": store.name,
@@ -150,25 +113,51 @@ def edit_store(request, store_id):
             }
         }, status=200)
 
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid data."}, status=400)
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-    
-# Fungsi untuk menghapus toko
+    if request.method == "POST":
+        # Handle the store edit logic as before
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            store_name = strip_tags(data.get('name', '').strip())
+            address = strip_tags(data.get('address', '').strip())
+            product_count = data.get('product_count')
+
+            if not store_name or not address or product_count is None:
+                return JsonResponse({"error": "All fields must be filled."}, status=400)
+
+            product_count = int(product_count)
+            if product_count < 0:
+                return JsonResponse({"error": "Product count must be a positive number."}, status=400)
+
+            store.name = store_name
+            store.address = address
+            store.product_count = product_count
+            store.save()
+
+            return JsonResponse({
+                "message": "Store successfully updated.",
+                "store": {
+                    "id": store.id,
+                    "name": store.name,
+                    "address": store.address,
+                    "product_count": store.product_count
+                }
+            }, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid data."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
 @csrf_exempt
 @require_POST
 @login_required
 def delete_store(request, store_id):
-    if not request.user.is_staff:
+    if request.user.role != 'atmin':
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     store = get_object_or_404(Store, id=store_id)
 
     try:
         store.delete()
-
-        # Kirim respon sukses dalam format JSON
         return JsonResponse({"message": "Store successfully deleted."}, status=200)
 
     except Exception as e:
@@ -178,33 +167,31 @@ def delete_store(request, store_id):
 @require_POST
 @login_required
 def add_product_to_store(request, store_id):
-    if not request.user.is_staff:
+    if request.user.role != 'atmin':
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     try:
-        store = Store.objects.get(id=store_id)  # Get store by ID
-
+        store = Store.objects.get(id=store_id)
         data = json.loads(request.body.decode('utf-8'))
 
-        # Ekstrak data
+        # Get and sanitize data
         product_name = strip_tags(data.get('name', '').strip())
         price = data.get('price')
         description = strip_tags(data.get('description', '').strip())
         image_url = data.get('image_url', '')
 
-        # Cek data terisi
         if not product_name or not price or not description or not image_url:
             return JsonResponse({"error": "All fields must be filled."}, status=400)
 
-        # Validasi harga
+        # Validate price
         try:
             price = float(price)
             if price <= 0:
-                return JsonResponse({"error": "Harga harus bilangan positif."}, status=400)
+                return JsonResponse({"error": "Price must be a positive number."}, status=400)
         except ValueError:
-            return JsonResponse({"error": "Format harga tidak valid."}, status=400)
+            return JsonResponse({"error": "Invalid price format."}, status=400)
 
-        # Buat produk baru yang terhubung ke toko
+        # Create new product
         new_product = Product(
             name=product_name,
             price=price,
@@ -214,9 +201,8 @@ def add_product_to_store(request, store_id):
         )
         new_product.save()
 
-        # Pesan jika berhasil
         return JsonResponse({
-            "message": "Produk berhasil ditambahkan.",
+            "message": "Product added successfully.",
             "product": {
                 "id": str(new_product.id),
                 "name": new_product.name,
@@ -228,104 +214,109 @@ def add_product_to_store(request, store_id):
 
     except Store.DoesNotExist:
         return JsonResponse({"error": "Store not found."}, status=404)
-
     except json.JSONDecodeError:
-        return JsonResponse({"error": "Data format tidak valid."}, status=400)
-
+        return JsonResponse({"error": "Invalid data format."}, status=400)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
 
 @csrf_exempt
-@require_POST
 @login_required
 def edit_product(request, product_id):
-    # Mendapatkan produk berdasarkan ID
+    # Ambil produk berdasarkan ID, atau tampilkan 404 jika tidak ditemukan
     product = get_object_or_404(Product, id=product_id)
 
-    # Validasi apakah user adalah admin atau staff
-    if not request.user.is_staff:
+    # Hanya admin yang boleh mengakses
+    if request.user.role != 'atmin':
         return JsonResponse({"error": "Permission denied."}, status=403)
 
-    try:
-        data = json.loads(request.body.decode('utf-8'))
+    if request.method == 'GET':
+        # Kirim data produk dalam JSON untuk ditampilkan di form
+        product_data = {
+            "id": str(product.id),
+            "name": product.name,
+            "price": product.price,
+            "description": product.description,
+            "image": product.image.url if product.image else '',
+        }
+        return JsonResponse({"product": product_data}, status=200)
 
-        # Ambil data dari request dan lakukan sanitasi
-        product_name = data.get('name', '').strip()
-        price = data.get('price', '')
-        description = data.get('description', '').strip()
-        image_url = data.get('image_url', '')
-
-        # Validasi bahwa semua field diisi
-        if not product_name or not price or not description or not image_url:
-            return JsonResponse({"error": "Semua kolom harus diisi."}, status=400)
-
-        # Validasi format harga
+    elif request.method == 'POST':
         try:
-            price = float(price)
-            if price <= 0:
-                return JsonResponse({"error": "Harga harus berupa angka positif."}, status=400)
-        except ValueError:
-            return JsonResponse({"error": "Format harga tidak valid."}, status=400)
+            data = json.loads(request.body.decode('utf-8'))
+            product_name = strip_tags(data.get('name', '').strip())
+            price = data.get('price')
+            description = strip_tags(data.get('description', '').strip())
+            image_url = data.get('image_url', '')
 
-        # Update produk dengan data yang baru
-        product.name = product_name
-        product.price = price
-        product.description = description
-        product.image = image_url  # Menyimpan URL gambar (diasumsikan disediakan oleh frontend)
+            # Validasi semua field
+            if not product_name or not price or not description or not image_url:
+                return JsonResponse({"error": "All fields are required."}, status=400)
 
-        product.save()  # Simpan perubahan produk
+            # Validasi format harga
+            try:
+                price = float(price)
+                if price <= 0:
+                    return JsonResponse({"error": "Price must be a positive number."}, status=400)
+            except ValueError:
+                return JsonResponse({"error": "Invalid price format."}, status=400)
 
-        return JsonResponse({
-            "message": "Produk berhasil diperbarui.",
-            "product": {
-                "id": str(product.id),
-                "name": product.name,
-                "price": product.price,
-                "description": product.description,
-                "image": product.image.url
-            }
-        }, status=200)
+            # Perbarui produk dengan data baru
+            product.name = product_name
+            product.price = price
+            product.description = description
+            product.image = image_url
+            product.save()
 
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Data tidak valid."}, status=400)
+            # Kirim respons sukses
+            return JsonResponse({
+                "message": "Product updated successfully.",
+                "product": {
+                    "id": str(product.id),
+                    "name": product.name,
+                    "price": product.price,
+                    "description": product.description,
+                    "image": product.image.url
+                }
+            }, status=200)
 
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid data."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    else:
+        # Balas dengan metode tidak diizinkan jika selain GET atau POST
+        return HttpResponseNotAllowed(['GET', 'POST'])
 
 @csrf_exempt
 @login_required
 @require_POST
 def delete_product(request, product_id):
-    # Mendapatkan produk berdasarkan ID
     product = get_object_or_404(Product, id=product_id)
 
-    # Validasi apakah user adalah staff atau admin
-    if not request.user.is_staff:
+    if request.user.role != 'atmin':
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     try:
-        store_id = product.store.id  # Ambil ID toko terkait untuk keperluan pengalihan setelah penghapusan
-        product.delete()  # Menghapus produk
+        store_id = product.store.id
+        product.delete()
 
-        # Kirim respons sukses setelah penghapusan produk
         return JsonResponse({
-            "message": "Produk berhasil dihapus.",
+            "message": "Product deleted successfully.",
             "store_id": store_id
         }, status=200)
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-@login_required
 def store_detail(request, store_id):
     store = get_object_or_404(Store, id=store_id)
-    products = store.product_set.all()  # Mengambil semua produk yang terkait dengan toko
-    
-    context = {
+    products = Product.objects.filter(store=store)
+    return render(request, 'catalog/store_detail.html', {
         'store': store,
-        'products': products,
-    }
-    return render(request, 'catalog/store_detail.html', context)
+        'products': products
+    })
 
 def product_list(request):
     products = Product.objects.all()

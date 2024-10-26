@@ -18,6 +18,9 @@
           font-family: 'Roboto', sans-serif;
         }
       </style>
+      <p>User Role: {{ request.user.role }}</p>
+      <p>User Authenticated: {{ request.user.is_authenticated }}</p>
+      
     </head>
 
     <body class="bg-gray-50">
@@ -27,7 +30,7 @@
         <section>
           <div class="flex justify-between items-center">
             <h2 class="text-3xl font-bold mb-4">Toko Batik</h2>
-            {% if user.is_staff %}
+            {% if request.user.is_authenticated and request.user.role == "atmin" %}
             <button
               onclick="openAddStoreModal()"
               class="bg-orange-500 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-600 transition"
@@ -43,13 +46,12 @@
             </button>
             {% if not storeList %}
             <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
-                <img src="{% static 'image/sedih-banget.png' %}" alt="Sad face" class="w-32 h-32 mb-4"/>
                 <p class="text-center text-gray-600 mt-4">Belum ada toko pada Batikalongan.</p>
             </div>
             {% else %}
             <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
               {% for store in storeList %}
-                  {% include 'card-product.html' with store_name = store_name%}
+                {% include 'catalog/card_product.html' with store=store %}
               {% endfor %}
           </div>
             {% endif %}
@@ -136,57 +138,62 @@
 
       <!-- Add Store Modal -->
       <div
-        id="addStoreModal"
-        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
+      id="addStoreModal"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
       >
-        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-          <h2 class="text-xl font-bold mb-4" 
-          style="color: #000; font-family: Fabled; font-size: 40px;font-style: normal; font-weight: 400; line-height: 140%; /* 56px */">
-          Tambah Toko</h2>
-          <div class="space-y-4">
-            <label style="color: #000;
-            font-family: Poppins;
-            font-size: 20px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: 140%; /* 28px */">Nama Toko </label>
-            <input
-              id="storeName"
-              type="text"
-              class="w-full p-2 border border-gray-300 rounded focus:outline-none"
-              style="width: 100%; height: 100%; border-radius: 8px; border: 1px #D88E30 solid"
-            />
-            <label style="width: 100%; color: black; font-size: 20px; font-family: Poppins; font-weight: 400; line-height: 28px; word-wrap: break-word">Alamat</div>
-            <input
-              id="storeAddress"
-              type="text"
-              class="w-full p-2 border border-gray-300 rounded focus:outline-none"
-              style="width: 100%; height: 100%; border-radius: 8px; border: 1px #D88E30 solid"
-            />
-            <label style="width: 100%; color: black; font-size: 20px; font-family: Poppins; font-weight: 400; line-height: 28px; word-wrap: break-word">Produk</div>
-            <input
-              id="productCount"
-              type="number"
-              class="w-full p-2 border border-gray-300 rounded focus:outline-none"
-              style="width: 100%; height: 100%; border-radius: 8px; border: 1px #D88E30 solid"
-            />
-          </div>
-          <div class="flex justify-between mt-6">
-            <button
-              class="bg-gray-500 text-white px-4 py-2 rounded-lg"
-              onclick="closeAddStoreModal()"
-            >
-              Batal
-            </button>
-            <button
-              class="bg-orange-500 text-white px-4 py-2 rounded-lg"
-              onclick="addStore()"
-            >
-              Tambah Toko
-            </button>
-          </div>
+      <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-bold mb-4" style="color: #000; font-family: Fabled; font-size: 40px;">
+          Tambah Toko
+        </h2>
+        <div class="space-y-4">
+          <label style="color: #000; font-family: Poppins; font-size: 20px;">
+            Nama Toko
+          </label>
+          <input
+            id="storeName"
+            type="text"
+            class="w-full p-2 border border-gray-300 rounded focus:outline-none"
+            style="border-radius: 8px; border: 1px #D88E30 solid;"
+          />
+
+          <label style="color: black; font-size: 20px; font-family: Poppins;">
+            Alamat
+          </label>
+          <input
+            id="storeAddress"
+            type="text"
+            class="w-full p-2 border border-gray-300 rounded focus:outline-none"
+            style="border-radius: 8px; border: 1px #D88E30 solid;"
+          />
+
+          <label style="color: black; font-size: 20px; font-family: Poppins;">
+            Produk
+          </label>
+          <input
+            id="productCount"
+            type="number"
+            class="w-full p-2 border border-gray-300 rounded focus:outline-none"
+            style="border-radius: 8px; border: 1px #D88E30 solid;"
+          />
+        </div>
+
+        <div class="flex justify-between mt-6">
+          <button
+            class="bg-gray-500 text-white px-4 py-2 rounded-lg"
+            onclick="closeAddStoreModal()"
+          >
+            Batal
+          </button>
+          <button
+            class="bg-orange-500 text-white px-4 py-2 rounded-lg"
+            onclick="addStore()"
+          >
+            Tambah Toko
+          </button>
         </div>
       </div>
+      </div>
+
 
       <!-- Footer -->
       <footer class="bg-orange-500 text-white py-8">
@@ -204,61 +211,77 @@
 
       <!-- Scripts -->
       <script>
-        function openAddStoreModal() {
-          document.getElementById("addStoreModal").classList.remove("hidden");
-        }
+function openAddStoreModal() {
+  // Ensure the modal opens correctly
+  document.getElementById("addStoreModal").classList.remove("hidden");
+}
 
-        function closeAddStoreModal() {
-          document.getElementById("addStoreModal").classList.add("hidden");
-        }
+function closeAddStoreModal() {
+  // Close the modal by adding the hidden class
+  document.getElementById("addStoreModal").classList.add("hidden");
+}
 
-        function addStore() {
-          const formData = {
-            name: document.getElementById("storeName").value,
-            address: document.getElementById("storeAddress").value,
-            product_count: document.getElementById("productCount").value,
-          };
+function addStore() {
+  console.log("Tombol Tambah Toko diklik");
 
-          // AJAX request
-          fetch('/catalog/add-store/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': '{{ csrf_token }}', // Add your CSRF token here
-            },
-            body: JSON.stringify(formData),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              // Update UI dynamically after success
-              if (data.success) {
-                const storeList = document.getElementById('storeList');
-                const newStoreHTML = `
-                  <div
-                    class="bg-white p-4 rounded-lg shadow-md flex-shrink-0 w-80 transform hover:scale-105 transition"
-                  >
-                    <img
-                      alt="${formData.name}"
-                      class="rounded-full mb-4 mx-auto"
-                      height="100"
-                      src="${data.image_url}"  // If there's an image URL
-                      width="100"
-                    />
-                    <h3 class="text-xl font-bold text-center">${formData.name}</h3>
-                    <p class="text-center">${formData.address}</p>
-                    <span
-                      class="block text-center mt-2 bg-orange-500 text-white px-2 py-1 rounded-full"
-                      >${formData.product_count} Produk</span
-                    >
-                  </div>`;
-                storeList.insertAdjacentHTML('beforeend', newStoreHTML);
-                closeAddStoreModal();
-              }
-            })
-            .catch((error) => {
-              console.error('Error:', error);
-            });
-        }
+  const formData = {
+    name: document.getElementById("storeName").value,
+    address: document.getElementById("storeAddress").value,
+    product_count: document.getElementById("productCount").value,
+  };
+
+  if (!formData.name || !formData.address || !formData.product_count) {
+    alert("Semua field harus diisi!");
+    return;
+  }
+
+  fetch('/catalog/store/add/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token }}',
+    },
+    body: JSON.stringify(formData),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Request gagal dengan status " + response.status);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (data.store) {
+        const storeList = document.getElementById('storeList');
+        const newStoreHTML = `
+          <a href="/catalog/store/${data.store.id}/" class="block bg-white p-4 rounded-lg shadow-md w-80 transform hover:scale-105 transition">
+            <img
+              alt="${data.store.name}"
+              class="rounded-full mb-4 mx-auto"
+              src="${data.store.image_url || 'https://via.placeholder.com/100'}"
+              width="100" height="100"
+            />
+            <h3 class="text-xl font-bold text-center">${data.store.name}</h3>
+            <p class="text-center">${data.store.address}</p>
+            <span class="block text-center mt-2 bg-orange-500 text-white px-2 py-1 rounded-full">
+              ${data.store.product_count} Produk
+            </span>
+          </a>`;
+        storeList.insertAdjacentHTML('beforeend', newStoreHTML);
+
+        closeAddStoreModal();
+      } else {
+        alert("Gagal menambahkan toko. Silakan coba lagi.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("Terjadi kesalahan. Silakan coba lagi.");
+    });
+}
+
+
+
+
       </script>
     </body>
   </html>

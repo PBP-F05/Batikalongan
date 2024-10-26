@@ -6,27 +6,20 @@
 {% endblock title %}
 
 {% block content %}
-
-<form id="productForm">
-    <input type="text" id="product-name" placeholder="Product Name" required>
-    <input type="text" id="product-price" placeholder="Price" required>
-    <textarea id="product-description" placeholder="Description" required></textarea>
-    <input type="text" id="product-image-url" placeholder="Image URL" required>
-    <button type="button" onclick="addProduct({ store.id })">Add Product</button>
-</form>
-
-<form id="editProductForm">
-    <input type="text" id="product-name" value="{{ product.name }}" required>
-    <input type="text" id="product-price" value="{{ product.price }}" required>
-    <textarea id="product-description" required>{{ product.description }}</textarea>
-    <input type="text" id="product-image-url" value="{{ product.image.url }}" required>
-    <button type="button" onclick="updateProduct('{{ product.id }}')">Update Product</button>
-</form>
-
 <div class="container mx-auto p-8">
     <h1 class="text-3xl font-bold mb-4">{{ store.name }}</h1>
     <p><strong>Address:</strong> {{ store.address }}</p>
     <p><strong>Product Count:</strong> {{ store.product_count }}</p>
+    <div class="flex justify-end space-x-4">
+        <!-- Tombol Edit -->
+        <button onclick="openEditStoreModal({{ store.id }})" class="bg-blue-500 text-white px-4 py-2 rounded">
+            Edit Store
+        </button>
+        <!-- Tombol Delete -->
+        <button onclick="deleteStore({{ store.id }})" class="bg-red-500 text-white px-4 py-2 rounded">
+            Delete Store
+        </button>
+    </div>
 
     <h2 class="text-2xl font-bold mt-6 mb-4">Products</h2>
     <div class="grid grid-cols-3 gap-4">
@@ -36,72 +29,168 @@
             <h3 class="font-bold">{{ product.name }}</h3>
             <p>Price: Rp{{ product.price }}</p>
             <p>{{ product.description }}</p>
+            {% if request.user.is_authenticated and request.user.role == "atmin" %}
             <div class="flex space-x-4 mt-2">
-                <a href="{% url 'edit_product' product.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <button onclick="openEditModal('{{ product.id }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Edit
-                </a>
-                <a href="{% url 'delete_product' product.id %}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                </button>
+                <button onclick="deleteProduct('{{ product.id }}')" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                     Delete
-                </a>
+                </button>
             </div>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
 
-    <a href="{% url 'add_product_to_store' store.id %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4 inline-block">
+    <!-- Button to trigger modal -->
+    <button onclick="openProductModal()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4">
         Add New Product
-    </a>
-</div>
-{% if user.is_staff %}
-<button type="button" onclick="deleteProduct('{{ product.id }}')" class="text-red-500">
-    <i class="fas fa-trash-alt"></i> Hapus Produk
-</button>
-{% endif %}
+    </button>
 
-{% endblock content %}
+    <!-- Modal for adding product -->
+    <div id="productModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-4">Add New Product</h2>
+            <form id="productForm">
+                {% csrf_token %}
+                <input type="text" id="product-name" placeholder="Product Name" required class="border p-2 mb-2 w-full">
+                <input type="number" id="product-price" placeholder="Price" required class="border p-2 mb-2 w-full">
+                <textarea id="product-description" placeholder="Description" required class="border p-2 mb-2 w-full"></textarea>
+                <input type="text" id="product-image-url" placeholder="Image URL" required class="border p-2 mb-2 w-full">
+                <div class="flex justify-end space-x-2 mt-4">
+                    <button type="button" onclick="closeProductModal()" class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded">Cancel</button>
+                    <button type="button" onclick="addProduct(this)" data-store-id="{{ store.id }}" class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="editProductModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-4">Edit Product</h2>
+            <form id="editProductForm">
+                <input type="text" id="edit-product-name" placeholder="Product Name" required class="border p-2 mb-2 w-full">
+                <input type="number" id="edit-product-price" placeholder="Price" required class="border p-2 mb-2 w-full">
+                <textarea id="edit-product-description" placeholder="Description" required class="border p-2 mb-2 w-full"></textarea>
+                <input type="text" id="edit-product-image-url" placeholder="Image URL" required class="border p-2 mb-2 w-full">
+                <div class="flex justify-end space-x-2 mt-4">
+                    <button type="button" onclick="closeEditModal()" class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded">Cancel</button>
+                    <button type="button" onclick="saveProductChanges()" class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<!-- Modal for editing store -->
+<div id="editStoreModal" class="modal hidden">
+    <div class="modal-content">
+        <span onclick="closeEditStoreModal()" class="close">&times;</span>
+        <h2>Edit Store</h2>
+        <form id="editStoreForm">
+            <label for="edit-store-name">Name:</label>
+            <input type="text" id="edit-store-name" name="name">
+            <label for="edit-store-address">Address:</label>
+            <input type="text" id="edit-store-address" name="address">
+            <label for="edit-store-product-count">Product Count:</label>
+            <input type="number" id="edit-store-product-count" name="product_count">
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+    </div>
+    
+
+
+
+</div>
+
 
 <script>
-function editStore(storeId) {
-    const newStoreName = prompt("Enter the new store name:", "{{ store.name }}");
-    const newStoreAddress = prompt("Enter the new store address:", "{{ store.address }}");
-
-    if (newStoreName && newStoreAddress) {
-        const storeData = {
-            name: newStoreName,
-            address: newStoreAddress
-        };
-
-        fetch(`/catalog/edit_store/${storeId}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
-            body: JSON.stringify(storeData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                alert(data.error);
-            } else {
-                alert('Store updated successfully!');
-                location.reload();  // Reload the page to reflect changes
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
+function closeEditStoreModal() {
+    document.getElementById('editStoreModal').classList.add('hidden');
 }
 
-// Delete Store Function with AJAX
+    // Open Edit Store Modal
+function openEditStoreModal(storeId) {
+    fetch(`/catalog/store/edit/${storeId}/`, { 
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            // Populate form fields in the modal with store data
+            document.getElementById('edit-store-name').value = data.store.name;
+            document.getElementById('edit-store-address').value = data.store.address;
+            document.getElementById('edit-store-product-count').value = data.store.product_count;
+            document.getElementById('editStoreForm').dataset.storeId = storeId;
+            document.getElementById('editStoreModal').classList.remove('hidden');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Delete Store Function
 function deleteStore(storeId) {
-    if (confirm('Are you sure you want to delete this store? This action cannot be undone.')) {
-        fetch(`/catalog/delete_store/${storeId}/`, {
+    fetch(`/catalog/store/delete/${storeId}/`, { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            alert(data.message);
+            location.reload();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
+// Fungsi untuk menyimpan perubahan pada store
+function saveEditStore() {
+    const storeId = document.getElementById('editStoreForm').dataset.storeId;
+    const storeData = {
+        name: document.getElementById('edit-store-name').value,
+        address: document.getElementById('edit-store-address').value,
+        product_count: document.getElementById('edit-store-product-count').value,
+    };
+
+    fetch(`/catalog/store/edit/${storeId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(storeData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            alert(data.message);
+            // Perbarui tampilan toko jika berhasil
+            location.reload();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Fungsi untuk menghapus store
+function deleteStore(storeId) {
+    if (confirm('Are you sure you want to delete this store?')) {
+        fetch(`/catalog/store/delete/${storeId}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
+                'X-CSRFToken': getCookie('csrftoken')
             }
         })
         .then(response => response.json())
@@ -109,18 +198,46 @@ function deleteStore(storeId) {
             if (data.error) {
                 alert(data.error);
             } else {
-                alert('Store deleted successfully!');
-                window.location.href = '/catalog/';  // Redirect to the catalog page
-                location.reload()
+                alert(data.message);
+                // Redirect ke halaman utama setelah menghapus
+                window.location.href = '/catalog/';
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        .catch(error => console.error('Error:', error));
     }
 }
 
-    function addProduct(storeId) {
+// Fungsi untuk mendapatkan CSRF token dari cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    // CSRF token extraction from the form in Django
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    // Open modal for adding product
+    function openProductModal() {
+        document.getElementById("productModal").classList.remove("hidden");
+    }
+    
+    // Close modal for adding product
+    function closeProductModal() {
+        document.getElementById("productModal").classList.add("hidden");
+    }
+    
+    // Function to add a product via AJAX
+    function addProduct(button) {
+    const storeId = button.getAttribute('data-store-id');
     const productData = {
         name: document.getElementById('product-name').value,
         price: document.getElementById('product-price').value,
@@ -128,11 +245,11 @@ function deleteStore(storeId) {
         image_url: document.getElementById('product-image-url').value
     };
 
-    fetch(`/catalog/add_product_to_store/${storeId}/`, {
+    fetch(`/catalog/store/${storeId}/add_product_to_store/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken 
+            'X-CSRFToken': '{{ csrf_token }}'
         },
         body: JSON.stringify(productData)
     })
@@ -142,27 +259,54 @@ function deleteStore(storeId) {
             alert(data.error);
         } else {
             alert('Product added successfully!');
-            // Refresh produk   
+            closeProductModal();
+            location.reload();
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    .catch(error => console.error('Error:', error));
 }
 
-function updateProduct(productId) {
+function openEditStoreModal(storeId) {
+    console.log("Opening edit modal for store ID:", storeId);  // Debugging statement
+    fetch(`/catalog/store/edit/${storeId}/`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => {
+        console.log("Response status:", response.status);  // Debugging statement
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            console.log("Store data received:", data);  // Debugging statement
+            document.getElementById('edit-store-name').value = data.store.name;
+            document.getElementById('edit-store-address').value = data.store.address;
+            document.getElementById('edit-store-product-count').value = data.store.product_count;
+
+            // Display the modal by removing the hidden class
+            document.getElementById('editStoreModal').classList.remove('hidden');
+        }
+    })
+    .catch(error => console.error('Error fetching store data:', error));
+}
+
+    
+function saveProductChanges() {
+    const productId = document.getElementById('editProductForm').dataset.productId;
     const productData = {
-        name: document.getElementById('product-name').value,
-        price: document.getElementById('product-price').value,
-        description: document.getElementById('product-description').value,
-        image_url: document.getElementById('product-image-url').value
+        name: document.getElementById('edit-product-name').value,
+        price: document.getElementById('edit-product-price').value,
+        description: document.getElementById('edit-product-description').value,
+        image_url: document.getElementById('edit-product-image-url').value
     };
 
-    fetch(`/catalog/edit_product/${productId}/`, {
+    fetch(`/catalog/product/${productId}/edit/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken  // Pastikan CSRF token ditambahkan jika dibutuhkan
+            'X-CSRFToken': '{{ csrf_token }}'
         },
         body: JSON.stringify(productData)
     })
@@ -171,37 +315,42 @@ function updateProduct(productId) {
         if (data.error) {
             alert(data.error);
         } else {
-            alert('Produk berhasil diperbarui!');
-            // Optionally, update the UI with the new product data
+            alert('Product updated successfully!');
+            closeEditModal();
+            location.reload();  // Refresh halaman setelah perubahan
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    .catch(error => console.error('Error:', error));
 }
 
-function deleteProduct(productId) {
-    fetch(`/catalog/delete_product/${productId}/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken  // Tambahkan CSRF token
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert(data.error);
-        } else {
-            alert('Produk berhasil dihapus!');
-            // Arahkan pengguna ke halaman store_detail setelah produk dihapus
-            window.location.href = `/catalog/store_detail/${data.store_id}/`;
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+function closeEditModal() {
+    document.getElementById('editProductModal').classList.add('hidden');
 }
 
-
-</script>
+    // Function to delete a product via AJAX
+    function deleteProduct(productId) {
+        if (confirm("Are you sure you want to delete this product?")) {
+            fetch(`/catalog/product/${productId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('Product deleted successfully!');
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    }
+    </script>
+    
+{% endblock content %}
