@@ -99,3 +99,26 @@ def add_gallery_entry_ajax(request):
         new_entry.save()
         return JsonResponse({'message': 'CREATED'}, status=201)
     return JsonResponse({'message': 'FAILED'}, status=400)
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+@csrf_exempt
+@require_POST
+def edit_gallery_entry_ajax(request, id):
+    entry = get_object_or_404(GalleryEntry, id=id)
+    nama_batik = request.POST.get("nama_batik")
+    deskripsi = request.POST.get("deskripsi")
+    asal_usul = request.POST.get("asal_usul")
+    makna = request.POST.get("makna")
+    foto = request.FILES.get("foto")
+
+    # Update fields only if provided
+    if nama_batik: entry.nama_batik = nama_batik
+    if deskripsi: entry.deskripsi = deskripsi
+    if asal_usul: entry.asal_usul = asal_usul
+    if makna: entry.makna = makna
+    if foto: entry.foto = foto
+
+    entry.save()
+    return JsonResponse({'message': 'Updated successfully'}, status=200)

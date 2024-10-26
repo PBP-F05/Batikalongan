@@ -13,11 +13,13 @@
         <h1 class="font-family-Fabled text-left text-black" style="font-size: 40px; font-weight: 400; line-height: 60px;">
             Galeri Batik
         </h1>
-        <!-- Tombol Tambah Batik dengan Modal -->
         <button data-modal-target="crudModal" data-modal-toggle="crudModal" class="border-2 border-[#D88E30] text-[#D88E30] font-poppins font-semibold text-[16px] rounded-lg px-5 py-3" onclick="showModal();">
             Tambah Batik
         </button>
     </div>
+
+    <div id="gallery_entry_cards" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+    <div id="pagination-controls" class="flex justify-center space-x-2 mt-4"></div>
 
     <!-- Tempat untuk menampilkan daftar galeri dengan AJAX -->
     <div id="gallery_entry_cards" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
@@ -85,6 +87,51 @@
             </div>
         </div>
     </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out p-4">
+        <div id="editModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out border-4 border-[#D88E30] max-h-screen overflow-y-auto">
+            <button type="button" class="absolute top-4 right-4 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5" id="closeEditModalBtn">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+
+            <!-- Edit Modal body -->
+            <div class="px-6 py-4 space-y-6 form-style">
+                <h3 class="text-left font-family-Fabled text-gray-900" style="font-size: 24px; line-height: 32px;">
+                    Edit Batik
+                </h3>
+                <form id="editGalleryEntryForm">
+                    <input type="hidden" id="edit_entry_id" name="id" />
+                    <div class="mb-4">
+                        <label for="edit_nama_batik" class="block text-sm font-medium text-gray-700">Nama Batik</label>
+                        <input type="text" id="edit_nama_batik" name="nama_batik" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit_deskripsi" class="block text-sm font-medium text-gray-700">Deskripsi</label>
+                        <textarea id="edit_deskripsi" name="deskripsi" rows="3" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3 resize-none" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit_makna" class="block text-sm font-medium text-gray-700">Makna</label>
+                        <textarea id="edit_makna" name="makna" rows="3" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3 resize-none" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit_asal_usul" class="block text-sm font-medium text-gray-700">Asal-Usul</label>
+                        <textarea id="edit_asal_usul" name="asal_usul" rows="3" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3 resize-none" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit_foto" class="block text-sm font-medium text-gray-700">Foto</label>
+                        <input type="file" id="edit_foto" name="foto" class="mt-1 block w-full border-2 border-dashed border-[#D88E30] rounded-lg p-3">
+                    </div>
+                </form>
+            </div>
+            <div class="flex justify-center p-6 border-t border-gray-200 rounded-b">
+                <button type="submit" id="submitEditGalleryEntry" form="editGalleryEntryForm" class="bg-[#D88E30] hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg">Save Changes</button>
+            </div>
+        </div>
+    </div>
     
 
     
@@ -138,7 +185,7 @@
                     <div class="relative bg-white rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row mb-6 font-poppins text-black"
                         style="max-width: 600px; width: 100%; min-width: 300px;">
                         
-                       <!-- Edit and Delete buttons at the top right corner -->
+                    <!-- Edit and Delete buttons at the top right corner -->
                         <div class="absolute top-4 right-4 flex items-center space-x-2 z-10">
                             <!-- Delete button opens the delete confirmation modal via JavaScript -->
                             <button 
@@ -149,10 +196,13 @@
                                 <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="h-10 w-10" />
                             </button>
 
-                            <!-- Edit button links to the edit page -->
-                            <a href="/gallery/edit/${item.pk}" class="text-yellow-500 hover:text-yellow-600">
+                            <!-- Edit button opens the edit modal via JavaScript -->
+                            <button 
+                                class="text-yellow-500 hover:text-yellow-600"
+                                data-entry-id="${item.pk}" 
+                                onclick="handleEditClick(this)">
                                 <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="h-10 w-10" />
-                            </a>
+                            </button>
                         </div>
                         <!-- Bagian kiri: Foto -->
                         <div class="w-full md:w-1/3 self-stretch">
@@ -333,7 +383,108 @@
             e.preventDefault();
             addGalleryEntry();
         });
+
+        // Edit Modal
+        // Function to handle Edit button click
+        function handleEditClick(button) {
+    const entryId = button.getAttribute('data-entry-id');
+    console.log(`Edit button clicked for entry ID: ${entryId}`);
+    showEditModal(entryId);
+}
+
+
+// Function to show Edit Modal
+function showEditModal(entryId) {
+    console.log("Opening edit modal...");
+    editModal.classList.remove('hidden'); 
+
+    setTimeout(() => {
+        editModalContent.classList.remove('opacity-0', 'scale-95');
+        editModalContent.classList.add('opacity-100', 'scale-100');
+        console.log("Modal display animation completed.");
+    }, 50);
+
+    fetchEntryData(entryId);
+}
+// Function to hide Edit Modal
+function hideEditModal() {
+    console.log("Hiding edit modal...");
+    editModalContent.classList.remove('opacity-100', 'scale-100');
+    editModalContent.classList.add('opacity-0', 'scale-95');
+
+    setTimeout(() => {
+        editModal.classList.add('hidden');
+        console.log("Modal successfully hidden.");
+    }, 150);
+}
+
+// Close button click event listener for Edit Modal
+document.getElementById("closeEditModalBtn").addEventListener("click", hideEditModal);
+
+// Function to fetch entry data and populate the edit form
+async function fetchEntryData(entryId) {
+    console.log(`Fetching data for entry ID: ${entryId}`);
+    try {
+        const response = await fetch(`/gallery/json/${entryId}/`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch data for entry ID: ${entryId}`);
+        }
+        const data = await response.json();
+        const entry = data[0].fields;
+
+        // Populate form fields
+        document.getElementById("edit_entry_id").value = entryId;
+        document.getElementById("edit_nama_batik").value = entry.nama_batik;
+        document.getElementById("edit_deskripsi").value = entry.deskripsi;
+        document.getElementById("edit_makna").value = entry.makna;
+        document.getElementById("edit_asal_usul").value = entry.asal_usul;
+
+        console.log(`Data for entry ID ${entryId} populated in the form.`);
+    } catch (error) {
+        console.error("Error fetching entry data:", error);
+    }
+}
+
+// Submit edited entry
+async function submitEditGalleryEntry() {
+    const formData = new FormData(document.getElementById('editGalleryEntryForm'));
+    const entryId = document.getElementById("edit_entry_id").value;
+    const url = `/gallery/edit/${entryId}/ajax/`;
+
+    console.log(`Submitting edited data for entry ID: ${entryId}`);
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",  // Ensure CSRF token is included for Django
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to submit edited data for entry ID: ${entryId}`);
+        }
+
+        console.log(`Edited data for entry ID ${entryId} submitted successfully.`);
+        hideEditModal();
+        refreshGalleryEntries();
+    } catch (error) {
+        console.error("Error submitting edited entry:", error);
+    }
+}
+
+// Event listener for Edit form submission
+document.getElementById("editGalleryEntryForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    console.log("Edit form submission intercepted.");
+    submitEditGalleryEntry();
+});
       </script>
       
 {% endblock content %}
 
+
+    
+    
+
+    
