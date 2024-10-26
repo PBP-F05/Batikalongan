@@ -54,7 +54,7 @@
 
 body {
     font-family: 'Poppins', sans-serif; /* Mengatur default font Poppins */
-      font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -65,7 +65,7 @@ body {
     background-color: #f9f9f9; /* Warna background halaman, jika diperlukan */
 }
 
-
+/*
         [x-cloak] { 
             display: none !important; 
         }
@@ -288,3 +288,5 @@ body {
         #profile article p {
             @apply truncate leading-normal;
         }
+
+*/

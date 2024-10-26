@@ -5,6 +5,12 @@ from gallery.forms import GalleryEntryForm
 from django.core.paginator import Paginator
 from django.core import serializers
 
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+from .models import GalleryEntry
+
 # Fungsi untuk menampilkan galeri dengan pagination
 def show_gallery(request):
     return render(request, "gallery.html")
@@ -32,16 +38,7 @@ def edit_gallery_entry(request, id):
         form = GalleryEntryForm(instance=entry)
     return render(request, 'edit_gallery_entry.html', {'form': form, 'entry': entry})
 
-def delete_gallery_entry(request, id):
-    try:
-        # Fetch the entry by ID and delete it
-        entry = get_object_or_404(GalleryEntry, id=id)
-        entry.delete()
-        return JsonResponse({'message': 'Deleted successfully'}, status=200)
-    except Exception as e:
-        # Log the error for debugging
-        print(f"Error deleting entry: {e}")
-        return JsonResponse({'error': 'Failed to delete entry'}, status=500)
+
 
 # Fungsi untuk mengembalikan semua entri galeri dalam format XML
 def show_gallery_xml(request):
@@ -62,6 +59,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 
+
+
 def show_gallery_json(request):
     page = int(request.GET.get('page', 1))
     entries = GalleryEntry.objects.all()
@@ -79,8 +78,22 @@ def show_gallery_json(request):
         "num_pages": paginator.num_pages,
     })
 
+def is_admin(user):
+    return user.is_authenticated and user.is_admin
+
+@user_passes_test(is_admin)
+def delete_gallery_entry(request, id):
+    try:
+        entry = get_object_or_404(GalleryEntry, id=id)
+        entry.delete()
+        return JsonResponse({'message': 'Deleted successfully'}, status=200)
+    except Exception as e:
+        print(f"Error deleting entry: {e}")
+        return JsonResponse({'error': 'Failed to delete entry'}, status=500)
+
 @csrf_exempt
 @require_POST
+@user_passes_test(is_admin)
 def add_gallery_entry_ajax(request):
     nama_batik = request.POST.get("nama_batik")
     deskripsi = request.POST.get("deskripsi")
@@ -99,3 +112,23 @@ def add_gallery_entry_ajax(request):
         new_entry.save()
         return JsonResponse({'message': 'CREATED'}, status=201)
     return JsonResponse({'message': 'FAILED'}, status=400)
+
+@csrf_exempt
+@require_POST
+@user_passes_test(is_admin)
+def edit_gallery_entry_ajax(request, id):
+    entry = get_object_or_404(GalleryEntry, id=id)
+    nama_batik = request.POST.get("nama_batik")
+    deskripsi = request.POST.get("deskripsi")
+    asal_usul = request.POST.get("asal_usul")
+    makna = request.POST.get("makna")
+    foto = request.FILES.get("foto")
+
+    if nama_batik: entry.nama_batik = nama_batik
+    if deskripsi: entry.deskripsi = deskripsi
+    if asal_usul: entry.asal_usul = asal_usul
+    if makna: entry.makna = makna
+    if foto: entry.foto = foto
+
+    entry.save()
+    return JsonResponse({'message': 'Updated successfully'}, status=200)
