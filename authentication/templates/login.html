@@ -1,32 +1,28 @@
 {% extends 'base.html' %}
 
-{% block meta %}
-<title>Login</title>
-{% endblock meta %}
-
 {% block content %}
-<div class="login">
-  <h1>Login</h1>
+<div class="bg-[url('/static/images/auth.svg')] bg-cover bg-center min-h-screen w-full flex justify-center items-center">
 
-  <form method="POST" action="">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input class="btn login_btn" type="submit" value="Login" /></td>
-      </tr>
-    </table>
-  </form>
-
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %} Don't have an account yet?
-  <a href="{% url 'register' %}">Register Now</a>
+    <!-- Card Login -->
+    <div class="w-[662px] h-[546px] p-10 bg-white rounded-[20px] flex-col justify-start items-center gap-10 inline-flex shadow-lg">
+        <div class="self-stretch h-[312px] flex-col justify-start items-center gap-5 flex">
+            <div class="text-black text-6xl font-normal font-['Fabled'] leading-[84px]">Login</div>
+            <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                <div class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Username</div>
+                <input type="text" class="self-stretch h-[58px] rounded-lg border border-[#d88e30] px-4" placeholder="Enter your username">
+            </div>
+            <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                <div class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Password</div>
+                <input type="password" class="self-stretch h-[58px] rounded-lg border border-[#d88e30] px-4" placeholder="Enter your password">
+            </div>
+        </div>
+        <div class="self-stretch h-[46px] px-5 py-3 bg-[#d88e30] rounded-lg flex justify-center items-center gap-2.5 cursor-pointer hover:bg-[#bf7428]">
+            <span class="text-white text-base font-semibold font-['Poppins'] leading-snug">Submit</span>
+        </div>
+        <div class="text-center">
+            <span class="text-black text-xl font-normal font-['Poppins'] leading-7">Don’t have an account? </span>
+            <a href="{% url 'register' %}" class="text-[#d88e30] text-xl font-normal font-['Poppins'] underline leading-7 cursor-pointer">Sign Up</a>
+        </div>
+    </div>
 </div>
-
 {% endblock content %}
