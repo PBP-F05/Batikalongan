@@ -18,3 +18,13 @@ def create_event(request):
     context = { "form": form }
     return render(request, "create_event.html", context)
 
+def edit_event(request, id):
+    event = Event.objects.get(pk = id)
+    form = EventForm(request.POST or None, instance=event)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return redirect("event:show_event")
+
+    context = { "form": form }
+    return render(request, "edit_event.html", context)
