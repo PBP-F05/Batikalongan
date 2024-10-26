@@ -1,28 +1,49 @@
 {% extends 'base.html' %}
+{% load static %}  <!-- Load static template tag -->
 {% block title %}{{ article.title }}{% endblock %}
 
 {% block content %}
-<div class="h-full flex flex-col justify-start items-center gap-20 p-10">
-    <div class="self-stretch text-center text-[#d88e30] text-[52px] font-bold font-['Poppins'] leading-[67.60px]">
+<!-- Header Image with Back Button -->
+<div class="flex flex-col items-start justify-start w-full h-[129px] bg-[url('/static/images/back_header.svg')] bg-cover bg-no-repeat">
+    <div class="flex items-center gap-5 p-5">
+        <a href="{% url 'article:article_list' %}" class="flex items-center gap-4 mt-7 ml-20">
+            <img src="{% static 'images/back_icon.svg' %}" alt="Back" class="w-8 h-8" />
+            <span class="text-white text-[24px] font-normal leading-[31.2px] font-['Poppins']">Kembali</span>
+        </a>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="h-full flex flex-col justify-start items-center gap-10 px-[120px] py-10 mb-[150px]">  <!-- Add mb-[150px] here -->
+    
+    <!-- Edit Button positioned on top-right above the title -->
+    <div class="self-stretch flex justify-end">
+        <a href="{% url 'article:edit_article' article.id %}?next=article_detail" class="flex items-center justify-center gap-2 px-4 py-3 mr-10 border-2 border-[#D88E30] rounded-[8px] text-[#D88E30] font-['Poppins'] text-[16px] font-semibold leading-[22.4px] hover:bg-[#D88E30] hover:text-white transition-colors">
+            Edit
+        </a>
+    </div>
+
+    <!-- Article Title -->
+    <div class="self-stretch text-center text-[#d88e30] text-[52px] font-bold font-['Poppins'] leading-[67.6px]">
         {{ article.title }}
     </div>
-    
+
+    <!-- Article Image -->
     {% if article.image %}
-    <img class="w-[758.67px] h-[426.75px] rounded-[25.80px]" src="{{ article.image.url }}" alt="{{ article.title }}" />
+    <div class="w-[758.67px] h-[426.75px] rounded-[25.80px] bg-cover bg-lightgray bg-center" style="background-image: url('{{ article.image.url }}');">
+        <!-- Optional: You can keep this space empty for the image to show as a background -->
+    </div>
     {% endif %}
-    
+
+    <!-- Article Content -->
     <div class="self-stretch flex flex-col justify-start items-start gap-10">
         <div class="self-stretch flex-col justify-start items-start gap-5">
-            <div class="self-stretch text-justify text-black text-xl font-normal font-['Poppins'] leading-[30px]">
+            <div class="self-stretch text-justify text-black text-[20px] font-normal font-['Poppins'] leading-[30px]">
                 {{ article.content|linebreaks }}
             </div>
         </div>
     </div>
 
-    <!-- Tombol Kembali -->
-    <a href="{% url 'article:article_list' %}" class="btn btn-light mb-3">Kembali</a>
-    
-    <!-- Tombol Edit Artikel -->
-    <a href="{% url 'article:edit_article' article.id %}?next=article_detail" class="btn btn-warning">Edit Artikel</a>
 </div>
+{% include "footer.html" %}
 {% endblock %}

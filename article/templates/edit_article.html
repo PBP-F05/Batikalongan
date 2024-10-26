@@ -14,11 +14,12 @@
 
         <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
             <div class="self-stretch text-black text-[20px] font-normal font-['Poppins'] leading-[28px]">Foto</div>
-            <label class="flex items-center gap-[10px] px-[24px] py-[16px] rounded-[8px] border border-[#D88E30] cursor-pointer" style="align-self: flex-start;">
-                <input type="file" name="image" class="hidden" accept="image/*" onchange="this.nextElementSibling.innerText = this.files[0].name"/>
-                <img src="{% static 'images/upload.svg' %}" alt="Upload" class="w-6 h-6 relative"/>
-                <div class="text-black text-[16px] font-normal font-['Poppins'] leading-[22.4px]">Edit Foto</div>
+            <label class="flex items-center justify-center gap-[10px] px-[24px] py-[16px] rounded-[8px] border border-[#D88E30] cursor-pointer" style="align-self: flex-start;">
+                <input type="file" name="image" class="hidden" accept="image/*" onchange="updateFileName(this)" />
+                <img id="upload-icon" src="{% static 'images/upload.svg' %}" alt="Upload" class="w-6 h-6 relative" />
+                <div id="file-name" class="text-black text-[16px] font-normal font-['Poppins'] leading-[22.4px] text-center">Edit Foto</div>
             </label>
+            
         </div>
 
         <div class="self-stretch flex-col justify-start items-start gap-[8px] w-full">
@@ -31,9 +32,29 @@
             <textarea name="content" class="h-[700px] w-full rounded-[8px] border border-[#D88E30]">{{ form.content.value }}</textarea>
         </div>
 
-        <button type="submit" class="self-stretch flex justify-center items-center gap-[10px] px-[20px] py-[12px] rounded-[8px] bg-[#D88E30]">
+        <button type="submit" class="self-stretch flex justify-center items-center gap-[10px] px-[20px] py-[12px] rounded-[8px] bg-[#D88E30] hover:bg-[#996522]">
             <div class="text-white text-[16px] font-semibold font-['Poppins'] leading-[22.4px]">Edit</div>
         </button>
     </form>
 </div>
+
+<script>
+    function updateFileName(input) {
+        const fileNameElement = document.getElementById('file-name');
+        const uploadIcon = document.getElementById('upload-icon');
+
+        if (input.files.length > 0) {
+            // Menampilkan nama file yang diupload
+            fileNameElement.innerText = input.files[0].name;
+            // Menyembunyikan ikon upload
+            uploadIcon.style.display = 'none';
+        } else {
+            // Mengembalikan ke teks default jika tidak ada file yang diupload
+            fileNameElement.innerText = "Edit Foto";
+            // Menampilkan ikon upload kembali jika tidak ada file
+            uploadIcon.style.display = 'block';
+        }
+    }
+</script>
+{% include "footer.html" %}
 {% endblock %}

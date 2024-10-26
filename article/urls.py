@@ -1,18 +1,17 @@
 from django.urls import path
-from article.views import home, article_list, add_article, article_detail, edit_article, delete_article
+from article.views import home, article_list, add_article, add_article_fullscreen, article_detail, edit_article, delete_article
 from django.conf import settings
 from django.conf.urls.static import static
 
 app_name = 'article'
 
 urlpatterns = [
-    path('', home, name='home'),
-    path('article/', article_list, name='article_list'),
-    path('article/<int:id>/', article_detail, name='article_detail'),
-    path('article/add/', add_article, name='add_article'),
-    path('article/<int:id>/', article_detail, name='article_detail'), 
-    path('article/edit/<int:id>/', edit_article, name='edit_article'),
-    path('article/delete/<int:id>/', delete_article, name='delete_article'),
+    path('', article_list, name='article_list'),
+    path('<int:id>', article_detail, name='article_detail'),
+    path('add', add_article, name='add_article'),
+    path('add/fullscreen', add_article_fullscreen, name='add_article_fullscreen'),
+    path('edit/<int:id>', edit_article, name='edit_article'),
+    path('delete/<int:id>', delete_article, name='delete_article'),
 ]
 
 if settings.DEBUG:

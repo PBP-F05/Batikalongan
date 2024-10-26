@@ -8,15 +8,15 @@
         <!-- Title with Fabled font -->
         <h2 class="font-family-Fabled text-4xl">Artikel Batik</h2>
         <!-- Button Tambah Artikel -->
-        <a href="{% url 'article:add_article' %}" class="flex justify-center items-center h-[46px] px-5 py-3 rounded-lg border-2 border-[#D88E30] text-[#D88E30] text-base font-semibold font-['Poppins'] hover:bg-[#D88E30] hover:text-white transition-colors">
+        <button id="open-modal" class="flex justify-center items-center h-[46px] px-5 py-3 rounded-lg border-2 border-[#D88E30] text-[#D88E30] text-base font-semibold font-['Poppins'] hover:bg-[#D88E30] hover:text-white transition-colors">
             Tambah Artikel
-        </a>
+        </button>
     </div>
 
-    <!-- List the articles -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <!-- Add margin top to the article list for more space -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-10" id="article-list">
         {% for article in articles %}
-        <div class="flex flex-col justify-between items-center w-[290px] h-[498px]">
+        <div class="flex flex-col justify-between items-center w-full max-w-xs h-[498px] mx-auto">
             <!-- Image -->
             <div class="relative w-full h-[174px] flex-shrink-0">
                 {% if article.image %}
@@ -24,11 +24,11 @@
                 {% endif %}
                 <!-- Buttons for Edit and Delete positioned inside the image -->
                 <div class="absolute top-5 right-0 flex justify-end items-start p-[0px_20px]">
-                    <a href="{% url 'article:delete_article' article.id %}" onclick="return confirm('Yakin ingin menghapus artikel ini?');" class="mr-2">
-                        <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="h-11 w-11" />
+                    <a href="{% url 'article:delete_article' article.id %}" onclick="return confirm('Yakin ingin menghapus artikel ini?');" class="mr-2 group">
+                        <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="h-11 w-11 transition-transform duration-300 ease-in-out group-hover:scale-110" />
                     </a>
-                    <a href="{% url 'article:edit_article' article.id %}">
-                        <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="h-11 w-11" />
+                    <a href="{% url 'article:edit_article' article.id %}" class="group">
+                        <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="h-11 w-11 transition-transform duration-300 ease-in-out group-hover:scale-110" />
                     </a>
                 </div>
             </div>
@@ -46,7 +46,7 @@
                 </div>
 
                 <!-- Button Lihat Artikel -->
-                <a href="{% url 'article:article_detail' article.id %}" class="flex justify-between items-center gap-2 px-[20px] py-[12px] w-full bg-[#D88E30] text-white text-base font-semibold rounded-[8px] mt-auto">
+                <a href="{% url 'article:article_detail' article.id %}" class="flex justify-between items-center gap-2 px-[20px] py-[12px] w-full bg-[#D88E30] text-white text-base font-semibold rounded-[8px] mt-auto hover:bg-[#996522] transition-colors duration-300">
                     <span class="text-left w-full font-['Poppins']">Lihat Artikel</span>
                     <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="h-4 w-4" />
                 </a>
@@ -55,4 +55,16 @@
         {% endfor %}
     </div>
 </div>
+
+
+<!-- Include the modal for adding articles -->
+{% include 'add_article.html' %}
+
+<!-- AJAX and Modal Handling -->
+<script>
+    document.getElementById('open-modal').addEventListener('click', function() {
+        document.getElementById('add-article-modal').classList.remove('hidden');
+    });
+</script>
+{% include "footer.html" %}
 {% endblock %}

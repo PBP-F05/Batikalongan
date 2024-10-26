@@ -1,0 +1,29 @@
+{% load static %}
+<footer class="flex flex-col md:flex-row items-center justify-between px-10 py-10 bg-[url('/static/images/footer_bg.svg')] bg-cover bg-center w-full">
+    <!-- Frame Kiri -->
+    <div class="flex flex-col items-start gap-4 md:flex-1">
+        <!-- Logo dan Nama -->
+        <div class="flex items-center gap-2">
+            <img src="{% static 'images/logo.svg' %}" alt="Logo" class="w-12 h-12">
+            <span class="text-white text-[48px] font-[400] font-[Fabled] leading-[140%] text-shadow">
+                Batikalongan
+            </span>
+        </div>
+        <!-- Hak Cipta -->
+        <div>
+            <span class="text-white text-[20px] font-[400] font-[Poppins] leading-[140%]">
+                © 2024 Batikalongan
+            </span>
+        </div>
+    </div>
+
+    <!-- Frame Kanan -->
+    <div class="flex-1 text-right mt-6 md:mt-0">
+        <p class="text-white text-[16px] font-[400] font-[Poppins] leading-[165%]">
+            Batikalongan adalah platform untuk menjelajahi batik Pekalongan,<br>
+            menemukan toko berkualitas, dan melestarikan budaya lokal<br>
+            dengan teknologi modern.
+        </p>
+    </div>
+    
+</footer>
