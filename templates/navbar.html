@@ -1,16 +1,64 @@
 {% load static %}
-<nav class="sticky top-0 z-10 w-[1440px] h-[71px] px-20 py-4 flex justify-between items-center bg-[url('/static/images/image_navbar.svg')] bg-cover bg-center">
-    <div class="grow shrink basis-0 h-[39px] flex justify-start items-center gap-4">
-        <a href="" class="flex items-center">
-            <img src="/static/images/logo.svg" alt="Logo Batikalongan" class="h-[39px]"> <!-- Logo di sini -->
-            <div class="text-white text-[28px] font-normal font-['Fabled'] leading-[39.20px] ml-4">Batikalongan</div> <!-- Menambahkan margin-left -->
+<nav class="sticky top-0 z-10 w-full h-[71px] px-6 md:px-20 py-4 flex items-center justify-between bg-[url('/static/images/image_navbar.svg')] bg-cover bg-center shadow-lg">
+    <!-- Left: Logo and Brand Name -->
+    <div class="flex items-center gap-4">
+        <a href="{% url 'main:main_landing_page' %}" class="flex items-center">
+            <img src="{% static 'images/logo.svg' %}" alt="Logo Batikalongan" class="h-8 md:h-10">
+            <span class="text-white text-lg md:text-[28px] font-normal font-['Fabled'] leading-tight ml-3">Batikalongan</span>
         </a>
     </div>
-    <div class="flex justify-start items-center gap-[60px]">
-        <a href="{% url 'catalog:show_catalog' %}" class="text-white text-base font-medium font-['Poppins'] leading-snug cursor-pointer hover:text-[#996522]">Catalog</a>
-        <div class="text-white text-base font-medium font-['Poppins'] leading-snug cursor-default">Event</div>
-        <a href="{% url 'gallery:show_gallery' %}" class="text-white text-base font-medium font-['Poppins'] leading-snug cursor-pointer hover:text-[#996522]">Gallery</a>
-        <a href="{% url 'article:article_list' %}" class="text-white text-base font-medium font-['Poppins'] leading-snug cursor-pointer hover:text-[#996522]">Article</a>
-        <div class="text-white text-base font-medium font-['Poppins'] leading-snug cursor-default">Timeline</div>
+
+    <!-- Middle: Links -->
+    <div class="hidden md:flex items-center gap-[40px]">
+        <a href="{% url 'catalog:show_catalog' %}" class="text-white text-base font-medium font-['Poppins'] hover:text-[#996522]">Catalog</a>
+        <a href="{% url 'event:show_event' %}" class="text-white text-base font-medium font-['Poppins'] hover:text-[#996522]">Event</a>
+        <a href="{% url 'gallery:show_gallery' %}" class="text-white text-base font-medium font-['Poppins'] hover:text-[#996522]">Gallery</a>
+        <a href="{% url 'article:article_list' %}" class="text-white text-base font-medium font-['Poppins'] hover:text-[#996522]">Article</a>
+        <a href="{% url 'timeline:home' %}" class="text-white text-base font-medium font-['Poppins'] hover:text-[#996522]">Timeline</a>
+    </div>
+
+    <!-- Right: User Authentication Links -->
+    <div class="flex items-center gap-4">
+        {% if user.is_authenticated %}
+            <!-- Display username and logout link if logged in -->
+            <span class="text-white text-base font-medium font-['Poppins']">Hello, {{ user.nama }}</span>
+            <a href="{% url 'authentication:logout' %}" class="text-white text-base font-medium font-['Poppins'] hover:text-[#996522]">Logout</a>
+        {% else %}
+            <!-- Show login link if not logged in -->
+            <a href="{% url 'authentication:login' %}" class="text-white text-base font-medium font-['Poppins'] hover:text-[#996522]">Login</a>
+        {% endif %}
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <div class="md:hidden flex items-center">
+        <button id="menu-button" onclick="toggleMobileMenu()" class="text-white focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="absolute top-[71px] left-0 w-full bg-[#333333cc] text-white text-center py-4 hidden md:hidden flex-col space-y-4">
+        <a href="{% url 'catalog:show_catalog' %}" class="block text-base font-medium font-['Poppins'] hover:text-[#996522]">Catalog</a>
+        <a href="{% url 'event:show_event' %}" class="block text-base font-medium font-['Poppins'] hover:text-[#996522]">Event</a>
+        <a href="{% url 'gallery:show_gallery' %}" class="block text-base font-medium font-['Poppins'] hover:text-[#996522]">Gallery</a>
+        <a href="{% url 'article:article_list' %}" class="block text-base font-medium font-['Poppins'] hover:text-[#996522]">Article</a>
+        <a href="{% url 'timeline:home' %}" class="block text-base font-medium font-['Poppins'] hover:text-[#996522]">Timeline</a>
+
+        {% if user.is_authenticated %}
+            <span class="block text-base font-medium font-['Poppins']">Hello, {{ user.nama }}</span>
+            <a href="{% url 'authentication:logout' %}" class="block text-base font-medium font-['Poppins'] hover:text-[#996522]">Logout</a>
+        {% else %}
+            <a href="{% url 'authentication:login' %}" class="block text-base font-medium font-['Poppins'] hover:text-[#996522]">Login</a>
+        {% endif %}
     </div>
 </nav>
+
+<script>
+    // Function to toggle the mobile menu visibility
+    function toggleMobileMenu() {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+    }
+</script>
