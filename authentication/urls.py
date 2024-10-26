@@ -1,8 +1,10 @@
 from django.urls import path
-from . import views
-from django.contrib.auth import views as auth_views
+from .views import register, login_view, logout_user
+
+app_name = 'authentication'
 
 urlpatterns = [
-    path('register/', views.register, name='register'),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('login/', login_view, name='login'),
+    path('register/', register, name='register'),
+    path('logout/', logout_user, name='logout'),  # Use custom logout view
 ]
