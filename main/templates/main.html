@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% include "navbar.html" %}
+<div class="w-[1280px] h-[auto] flex-col justify-start items-center gap-[40px] inline-flex pt-[40px] pb-[135px]">
+    <div class="self-stretch h-[228px] flex-col justify-start items-center gap-10 flex">
+        <div class="self-stretch text-center">
+            <span class="text-black text-[80px] font-normal font-['Fabled'] leading-[80px]">Eksplorasi </span>
+            <span class="text-[#d88e30] text-[80px] font-normal font-['Fabled'] leading-[80px]">Batik Pekalongan</span>
+            <span class="text-black text-[80px] font-normal font-['Fabled'] leading-[80px]"> Tanpa Batas</span>
+        </div>
+        <div class="w-[1029px] text-center">
+            <span class="text-black text-xl font-semibold font-['Poppins'] leading-9">Batikalongan</span>
+            <span class="text-black text-xl font-normal font-['Poppins'] leading-9"> memudahkan Anda menjelajahi berbagai motif batik khas Pekalongan, menemukan toko batik berkualitas, dan mendukung pelestarian budaya lokal dengan teknologi modern.</span>
+        </div>
+    </div>
+    <div class="self-stretch justify-start items-center gap-5 inline-flex">
+        <div class="grow shrink basis-0 h-[334px] p-5 bg-[url('/static/images/batik1.svg')] bg-cover bg-center rounded-[20px] flex-col justify-start items-start gap-2 inline-flex">
+            <div class="text-white text-2xl font-semibold font-['Poppins'] leading-9">Catalog</div>
+            <div class="self-stretch grow shrink basis-0 text-white text-base font-normal font-['Poppins'] leading-normal">Koleksi lengkap toko batik Pekalongan dengan detail produk, harga, dan deskripsi menarik.</div>
+            <div class="self-stretch px-5 py-3 bg-[#d88e30] rounded-lg justify-center items-center gap-2.5 inline-flex hover:bg-[#996522] transition duration-300">
+                <a href="{% url 'catalog:show_catalog' %}" class="grow shrink basis-0 text-white text-base font-semibold font-['Poppins'] leading-snug flex items-center justify-between">
+                    Lihat
+                    <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="w-6 h-6 ml-2">
+                </a>
+            </div>
+        </div>
+        <div class="grow shrink basis-0 h-[334px] p-5 bg-[url('/static/images/batik2.svg')] bg-cover bg-center rounded-[20px] flex-col justify-start items-start gap-2 inline-flex">
+            <div class="text-white text-2xl font-semibold font-['Poppins'] leading-9">Event</div>
+            <div class="self-stretch grow shrink basis-0 text-white text-base font-normal font-['Poppins'] leading-normal">Informasi lengkap event batik mendatang di Pekalongan, termasuk jadwal dan lokasi acara.</div>
+            <div class="self-stretch px-5 py-3 bg-[#d88e30] rounded-lg justify-center items-center gap-2.5 inline-flex">
+                <span class="grow shrink basis-0 text-white text-base font-semibold font-['Poppins'] leading-snug">Lihat</span>
+                <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="w-6 h-6">
+            </div>
+        </div>
+        
+        <div class="grow shrink basis-0 h-[334px] p-5 bg-[url('/static/images/batik3.svg')] bg-cover bg-center rounded-[20px] flex-col justify-start items-start gap-2 inline-flex">
+            <div class="text-white text-2xl font-semibold font-['Poppins'] leading-9">Gallery</div>
+            <div class="self-stretch grow shrink basis-0 text-white text-base font-normal font-['Poppins'] leading-normal">Galeri motif batik dengan deskripsi makna dan sejarah di balik setiap motif.</div>
+            <div class="self-stretch px-5 py-3 bg-[#d88e30] rounded-lg justify-center items-center gap-2.5 inline-flex hover:bg-[#996522] transition duration-300">
+                <a href="{% url 'gallery:show_gallery' %}" class="grow shrink basis-0 text-white text-base font-semibold font-['Poppins'] leading-snug flex items-center justify-between">
+                    Lihat
+                    <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="w-6 h-6 ml-2">
+                </a>
+            </div>
+        </div>
+        <div class="grow shrink basis-0 h-[334px] p-5 bg-[url('/static/images/batik4.svg')] bg-cover bg-center rounded-[20px] flex-col justify-start items-start gap-2 inline-flex">
+            <div class="text-white text-2xl font-semibold font-['Poppins'] leading-9">Article</div>
+            <div class="self-stretch grow shrink basis-0 text-white text-base font-normal font-['Poppins'] leading-normal">Artikel seputar batik, mencakup sejarah, teknik pembuatan, dan nilai budaya.</div>
+            <div class="self-stretch px-5 py-3 bg-[#d88e30] rounded-lg justify-center items-center gap-2.5 inline-flex hover:bg-[#996522] transition duration-300">
+                <a href="{% url 'article:article_list' %}" class="grow shrink basis-0 text-white text-base font-semibold font-['Poppins'] leading-snug flex items-center justify-between">
+                    Lihat
+                    <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="w-6 h-6 ml-2">
+                </a>
+            </div>
+        </div>
+        <div class="grow shrink basis-0 h-[334px] p-5 bg-[url('/static/images/batik5.svg')] bg-cover bg-center rounded-[20px] flex-col justify-start items-start gap-2 inline-flex">
+            <div class="text-white text-2xl font-semibold font-['Poppins'] leading-9">Timeline</div>
+            <div class="self-stretch grow shrink basis-0 text-white text-base font-normal font-['Poppins'] leading-normal">Komunitas batik untuk berbagi pengalaman dan melihat update terbaru dari pengguna lain.</div>
+            <div class="self-stretch px-5 py-3 bg-[#d88e30] rounded-lg justify-center items-center gap-2.5 inline-flex">
+                <span class="grow shrink basis-0 text-white text-base font-semibold font-['Poppins'] leading-snug">Lihat</span>
+                <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="w-6 h-6">
+            </div>
+        </div>
+    </div>
+</div>
+{% include "footer.html" %}
+{% endblock %}
