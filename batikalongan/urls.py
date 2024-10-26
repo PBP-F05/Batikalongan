@@ -21,11 +21,11 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('main.urls')),
     path('gallery/', include('gallery.urls')),
     path('catalog/', include('catalog.urls')),
     path('article/', include('article.urls')),
     path('authentication/', include('authentication.urls')),
+    path('event/', include('event.urls')),
 ]
 
 # Ini digunakan untuk development mode
