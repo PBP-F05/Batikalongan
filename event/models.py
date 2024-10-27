@@ -7,4 +7,4 @@ class Event(models.Model):
     deskripsi = models.TextField()
     tanggal = models.DateField()
     lokasi = models.CharField(max_length=50)
-    foto = models.ImageField(upload_to="images/", blank=True)
+    foto = models.ImageField(upload_to="images/", blank=True, null=True)
