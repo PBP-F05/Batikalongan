@@ -13,22 +13,27 @@
    </p>
    <div x-data="{ repliesOpen: false }" class="flex items-center justify-between flex-wrap text-sm px-2">
       <a @click="repliesOpen = !repliesOpen" class="font-bold hover:underline cursor-pointer">
+         {% if comment.replies.count or user.is_authenticated %}
          <div class="inline-block" x-bind:class="repliesOpen && 'rotate-90 duration-300'">
             <svg transform ="rotate(90)" width="9" height="9" viewBox="0 0 25 25">
                   <path d="M24 22h-24l12-20z"/>
             </svg>
          </div>
-         {% if comment.replies.count %}
-         {% if user.is_authenticated %}Replies{% endif %}
-         
-         <span class="font-light text-gray-500 ml-1">{{ comment.replies.count }}</span>
-         <!-- {{ else }} -->
          {% endif %}
+            
+         {% if comment.replies.count %}
+         Replies
+         <span id="repliescount-{{ comment.id }}" class="font-light text-gray-500 ml-1">{{ comment.replies.count }}</span>
+            {% if user.is_authenticated %}
+               Add Reply
+            {% endif %}
+         {% endif %}
+      
       </a>
       <div class="flex items-center gap-4 [&>a:hover]:underline">
          {% include 'snip/likes_comment.html' %}   
          {% if user.is_authenticated and comment.author == user %}
-         <a href="{% url 'comment-delete' comment.id %}">Delete</a>
+         <a href="{% url 'timeline:comment-delete' comment.id %}">Delete</a>
          {% endif %}
 
       </div>
@@ -39,7 +44,7 @@
          {% include 'posts/reply.html' %}
          {% endfor %}
 
-         <form method="POST" action="{% url 'reply-sent' comment.id %}" class="replyform flex justify-between" autocomplete="off">
+         <form method="POST" action="{% url 'timeline:reply-sent' comment.id %}" class="replyform flex justify-between" autocomplete="off">
             {% csrf_token %}
             {{ replyform }}
             <!-- <input type="text" name="reply" placeholder="Add reply ..." maxlength="150"> -->
