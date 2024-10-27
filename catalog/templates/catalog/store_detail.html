@@ -5,21 +5,57 @@
 {% endblock title %}
 
 {% block content %}
-<div class="container mx-auto p-8">
 
-    <h1 class="text-3xl font-bold mb-4">{{ store.name }}</h1>
-    <p><strong>Address:</strong> {{ store.address }}</p>
-    <p><strong>Product Count:</strong> {{ store.product_count }}</p>
-    <div class="flex justify-end space-x-4">
-        <!-- Tombol Edit -->
-        <button onclick="openEditStoreModal('{{ store.id }}')" class="bg-blue-500 text-white px-4 py-2 rounded">
-            Edit Store
-        </button>
-        <!-- Tombol Delete -->
+<div class="container mx-auto p-8">
+    <div class="w-[1440px] h-[152px] justify-end items-start gap-10 inline-flex">
+        <!-- Store Image -->
+        <img class="w-[152px] h-[152px] rounded-full" src="{{ store.image.url }}" alt="{{ store.name }}">
+        
+        <!-- Store Info -->
+        <div class="grow shrink basis-0 self-stretch flex-col justify-center items-start gap-5 inline-flex">
+            <div class="self-stretch h-[72px] flex-col justify-start items-start flex">
+                <!-- Store Name -->
+                <div class="self-stretch text-black text-[28px] font-semibold font-['Poppins'] leading-[42px]">
+                    {{ store.name }}
+                </div>
+                <!-- Store Address -->
+                <div class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-[30px]">
+                    {{ store.address }}
+                </div>
+            </div>
+            <!-- Product Count -->
+            <div class="px-5 py-2 bg-[#d88e30] rounded-[90.08px] justify-center items-center gap-5 inline-flex">
+                <div class="text-white text-xl font-semibold font-['Poppins'] leading-[30px]">
+                    {{ store.product_count }} Produk
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Button (Styled according to the new design) -->
+        <div onclick="openEditStoreModal('{{ store.id }}')" class="px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 flex cursor-pointer">
+            <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">
+                Edit
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Button -->
+    <div class="flex justify-end mt-4">
         <button onclick="deleteStore('{{ store.id }}')" class="bg-red-500 text-white px-4 py-2 rounded">
             Delete Store
         </button>
     </div>
+        <!-- Add New Product Button -->
+    <div class="h-[46px] flex-col justify-center items-end gap-2.5 inline-flex mt-4">
+        <div onclick="openProductModal()" class="px-5 py-3 rounded-lg border-2 border-[#d88e30] cursor-pointer justify-center items-center gap-2.5 inline-flex">
+            <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">
+                Tambah Produk
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
     <h2 class="text-2xl font-bold mt-6 mb-4">Products</h2>
     <div class="grid grid-cols-3 gap-4">
@@ -29,7 +65,7 @@
             <h3 class="font-bold">{{ product.name }}</h3>
             <p>Price: Rp{{ product.price }}</p>
             <p>{{ product.description }}</p>
-            {% if request.user.is_authenticated and request.user.role == "atmin" %}
+            {% if request.session.is_admin %}
             <div class="flex space-x-4 mt-2">
                 <button onclick="openEditModal('{{ product.id }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Edit
@@ -43,26 +79,55 @@
         {% endfor %}
     </div>
 
-    <!-- Button to trigger modal -->
-    <button onclick="openProductModal()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4">
-        Add New Product
-    </button>
+
+    <!-- Modal -->
+    <div id="productModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden px-6 py-4">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full form-style">
+            <!-- Title with adjustable font size -->
+            <h3 class="text-left font-family-Fabled text-gray-900" style="font-size: 24px; line-height: 32px;">
+                Tambah Produk
+            </h3>
+            <form id="productForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="product-name" class="block text-sm font-medium text-gray-700">Nama Batik</label>
+                    <input type="text" id="product-name" name="nama_produk" placeholder="Masukkan nama batik" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" required>
+                </div>
+                <div class="mb-4">
+                    <label for="product-price" class="block text-sm font-medium text-gray-700">Harga</label>
+                    <input type="number" id="product-price" name="harga" placeholder="Masukkan harga batik" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" required min="1">
+                </div>
+                <div class="mb-4">
+                    <label for="product-description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
+                    <textarea id="product-description" name="deskripsi" placeholder="Masukkan deskripsi batik" rows="3" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3 resize-none" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="foto" class="block text-sm font-medium text-gray-700">Foto</label>
+                    <input type="file" id="foto" name="foto" class="mt-1 block w-full border-2 border-dashed border-[#D88E30] rounded-lg p-3" required accept="image/*">
+                </div>
+                <div class="flex justify-end space-x-2 mt-4">
+                    <button type="button" onclick="closeProductModal()" class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded">Cancel</button>
+                    <button type="button" onclick="addProduct(this)" data-store-id="{{ store.id }}" class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
 
     <!-- Modal for adding product -->
-    <div id="productModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-            <h2 class="text-2xl font-bold mb-4">Add New Product</h2>
-            <form id="productForm">
+            <h2 class="text-2xl font-bold mb-4">Tambah Produk</h2>
+            <form id="productModal">
                 {% csrf_token %}
                 <input type="text" id="product-name" placeholder="Product Name" required class="border p-2 mb-2 w-full">
                 <input type="number" id="product-price" placeholder="Price" required class="border p-2 mb-2 w-full">
                 <textarea id="product-description" placeholder="Description" required class="border p-2 mb-2 w-full"></textarea>
-                <input type="text" id="product-ia-url" placeholder="Image URL" required class="border p-2 mb-2 w-full">
                 <div id="uploadPhotoModal" class="modal">
                     <div class="modal-content">
                       <span class="close">&times;</span>
-                      <h2>Upload Profile Photo</h2>
-                      <form id="uploadPhotoForm" enctype="multipart/form-data">
+                      <h2>Foto</h2>
+                      <form id="product-image" enctype="multipart/form-data">
                         <input type="file" id="product-image" name="photo" accept="image/*" required>
                         <button type="submit">Upload</button>
                       </form>
@@ -91,26 +156,39 @@
             </form>
         </div>
     </div>
+    halo
 
     <!-- Edit Store Modal -->
-    <div id="editStoreModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden ">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-            <span onclick="closeEditStoreModal()" class="close">&times;</span>
-            <h2 class="text-2xl font-bold mb-4">Edit Store</h2>
-            <form id="editStoreForm">
-                <label for="edit-store-name">Store Name:</label>
-                <input type="text" id="edit-store-name" required>
-                
-                <label for="edit-store-address">Address:</label>
-                <input type="text" id="edit-store-address" required>
-                
-                <label for="edit-store-product-count">Product Count:</label>
-                <input type="number" id="edit-store-product-count" required>
-                
-                <button type="button" onclick="saveEditStore()">Save</button>
-            </form>
+    <div id="editStoreModal" class="px-6 py-4 space-y-6 form-style fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <span onclick="closeEditStoreModal()" class="close">&times;</span>
+        <h3 class="text-left font-family-Fabled text-gray-900" style="font-size: 24px; line-height: 32px;">
+            Edit Toko
+        </h3>
+        <form id="editStoreForm">
+            <input type="hidden" id="edit_entry_id" name="id" />
+            <div class="mb-4">
+                <label for="edit-store-name" class="block text-sm font-medium text-gray-700">Nama Toko</label>
+                <input type="text" id="edit-store-name" name="nama_toko" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" required>
+            </div>
+            <div class="mb-4">
+                <label for="edit-store-address" class="block text-sm font-medium text-gray-700">Alamat</label>
+                <textarea id="edit-store-address" name="alamat" rows="3" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3 resize-none" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="edit-store-product-count" class="block text-sm font-medium text-gray-700">Total Produk</label>
+                <input type="number" id="edit-store-product-count" name="produk" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" min="1" required>
+            </div>
+            <div class="mb-4">
+                <label for="edit-product-image-url" class="block text-sm font-medium text-gray-700">Foto</label>
+                <input type="file" id="edit-product-image-url" name="foto" class="mt-1 block w-full border-2 border-dashed border-[#D88E30] rounded-lg p-3">
+            </div>
+        </form>
+        <div class="flex justify-center p-6 border-t border-gray-200 rounded-b">
+            <button type="button" onclick="saveEditStore()" class="bg-[#D88E30] hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg">Edit</button>
         </div>
     </div>
+</div>
+
 </div>
 
 
@@ -120,8 +198,8 @@ function closeEditStoreModal() {
     document.getElementById('editStoreModal').classList.add('hidden');
 }
 
-    // Open Edit Store Modal
-    function openEditStoreModal(storeId) {
+// Open Edit Store Modal
+function openEditStoreModal(storeId) {
     fetch(`/catalog/store/edit/${storeId}/`, { 
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
@@ -143,10 +221,18 @@ function closeEditStoreModal() {
 
 function saveEditStore() {
     const storeId = document.getElementById('editStoreForm').dataset.storeId;
+    const productCount = parseInt(document.getElementById('edit-store-product-count').value);
+
+    // Ensure product count is a positive integer
+    if (isNaN(productCount) || productCount <= 0) {
+        alert("Total Produk harus berupa bilangan bulat positif.");
+        return;
+    }
+
     const storeData = {
         name: document.getElementById('edit-store-name').value,
         address: document.getElementById('edit-store-address').value,
-        product_count: document.getElementById('edit-store-product-count').value,
+        product_count: productCount,
     };
 
     fetch(`/catalog/store/edit/${storeId}/`, {
@@ -168,7 +254,6 @@ function saveEditStore() {
     })
     .catch(error => console.error('Error:', error));
 }
-
 
 // Delete Store Function
 function deleteStore(storeId) {
@@ -230,33 +315,43 @@ function getCookie(name) {
     // CSRF token extraction from the form in Django
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     
-    // Open modal for adding product
-    function openProductModal() {
-        document.getElementById("productModal").classList.remove("hidden");
-    }
-    
-    // Close modal for adding product
-    function closeProductModal() {
-        document.getElementById("productModal").classList.add("hidden");
-    }
-    
-    // Function to add a product via AJAX
-    function addProduct(button) {
+// Open modal for adding product
+function openProductModal() {
+    document.getElementById("productModal").classList.remove("hidden");
+}
+
+// Close modal for adding product
+function closeProductModal() {
+    document.getElementById("productModal").classList.add("hidden");
+}
+
+// Function to add product with form data and validation
+function addProduct(button) {
     const storeId = button.getAttribute('data-store-id');
-    const productData = {
-        name: document.getElementById('product-name').value,
-        price: document.getElementById('product-price').value,
-        description: document.getElementById('product-description').value,
-        image_url: document.getElementById('product-image').files[0],
-    };
+    const productName = document.getElementById('product-name').value;
+    const productPrice = document.getElementById('product-price').value;
+    const productDescription = document.getElementById('product-description').value;
+    const productImage = document.getElementById('foto').files[0];
+
+    // Validate price to be a positive integer
+    if (!Number.isInteger(parseFloat(productPrice)) || parseInt(productPrice) <= 0) {
+        alert("Harga harus berupa bilangan bulat positif.");
+        return;
+    }
+
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('name', productName);
+    formData.append('price', productPrice);
+    formData.append('description', productDescription);
+    formData.append('foto', productImage);
 
     fetch(`/catalog/store/${storeId}/add_product_to_store/`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             'X-CSRFToken': '{{ csrf_token }}'
         },
-        body: JSON.stringify(productData)
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
