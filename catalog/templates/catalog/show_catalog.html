@@ -80,47 +80,17 @@
           <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Produk Batik</div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Loop through products -->
-            {% for product in products %}
-            <div class="relative">
-              <!-- Decorative Lines -->
-              <div class="absolute top-2 left-1/2 transform -translate-x-1/2 flex items-center space-x-2">
-                <div class="w-8 h-1 bg-gray-300 rounded rotate-45"></div>
-                <div class="w-8 h-1 bg-gray-300 rounded -rotate-45"></div>
-              </div>
-
-              <!-- Product Card -->
-              <div
-                class="relative bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition duration-300"
-              >
-                <div class="bg-indigo-100 p-4">
-                  <h3 class="font-bold text-xl mb-2">{{ product.name }}</h3>
-                  <p class="text-gray-600">{{ product.store_name }}</p>
-                </div>
-                <div class="p-4">
-                  <p class="font-semibold text-lg mb-2">Price</p>
-                  <p class="text-orange-500">Rp{{ product.price }}</p>
-                  <p class="text-gray-700 font-semibold mt-2">Description</p>
-                  <p class="text-gray-700">{{ product.description }}</p>
-                </div>
-
-                <!-- Edit/Delete Icons -->
-                <div class="absolute top-2 right-2 space-x-2 flex">
-                  <a
-                    href="{% url 'main:edit_product' product.id %}"
-                    class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition duration-300"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </a>
-                  <a
-                    href="{% url 'main:delete_product' product.id %}"
-                    class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300"
-                  >
-                    <i class="fas fa-trash-alt"></i>
-                  </a>
-                </div>
-              </div>
+            {% if not products %}
+            <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+              <p class="text-center text-gray-600 mt-4">Belum ada produk pada Batikalongan.</p>
             </div>
-            {% endfor %}
+            {% else %}
+                <div id="store-content" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6 space-y-6 w-full">
+                  {% for product in products %}
+                    {% include 'catalog/card_product.html' %}
+                  {% endfor %}
+                </div>
+              {% endif %}
           </div>
         </section>
         <div id="gallery_entry_cards" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
