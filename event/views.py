@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 from .models import Event
 from .forms import EventForm
+from .decorators import admin_required
 
 def show_event(request):
     events = Event.objects.all()
@@ -10,6 +11,7 @@ def show_event(request):
         "events": events,
     })
 
+@admin_required
 def create_event(request):
     form = EventForm(request.POST or None, request.FILES or None)
 
@@ -20,6 +22,7 @@ def create_event(request):
     context = { "form": form }
     return render(request, "create_event.html", context)
 
+@admin_required
 def edit_event(request, id):
     event = Event.objects.get(pk = id)
     form = EventForm(request.POST or None, request.FILES or None, instance=event)
@@ -31,6 +34,7 @@ def edit_event(request, id):
     context = { "form": form }
     return render(request, "edit_event.html", context)
 
+@admin_required
 def delete_event(request, id):
     event = Event.objects.get(pk = id)
     event.delete()

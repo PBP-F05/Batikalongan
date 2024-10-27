@@ -11,7 +11,7 @@ class PostCreateForm(ModelForm):
       }
       widgets = {
          'body' : forms.Textarea(attrs={'rows': 3, 'class': 'font5 text-4xl'}),
-         'url' : forms.TextInput(attrs={'placeholder': 'Add urls ...'}),
+         # 'url' : forms.TextInput(attrs={'placeholder': 'Add urls ...'}),
       }
 
 class PostEditForm(ModelForm):
