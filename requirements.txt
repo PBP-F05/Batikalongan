@@ -8,3 +8,4 @@ python-dotenv
 pillow
 django-allauth
 bs4
+flask
