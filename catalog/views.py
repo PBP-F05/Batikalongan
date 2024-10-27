@@ -13,6 +13,7 @@ from django.template.loader import render_to_string
 import json
 import logging
 from django.views.decorators.http import require_http_methods
+from.decorators import admin_required
 
 def show_catalog(request):
     price_filter = request.GET.get('price_filter')
@@ -58,10 +59,8 @@ logger = logging.getLogger(__name__)  # untuk debugging
 
 @require_POST
 @login_required
+@admin_required
 def create_store(request):
-    if request.user.role != 'admin':
-        return JsonResponse({"error": "Permission denied."}, status=403)
-
     try:
         # Get data from request.POST and request.FILES
         store_name = strip_tags(request.POST.get('name', '').strip())
@@ -104,7 +103,7 @@ def create_store(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     
-
+@admin_required
 def edit_store(request, store_id):
     if request.method == 'GET':
         try:
@@ -130,10 +129,8 @@ def edit_store(request, store_id):
 @csrf_exempt
 @require_POST
 @login_required
+@admin_required
 def delete_store(request, store_id):
-    if request.user.role != 'admin':
-        return JsonResponse({"error": "Permission denied."}, status=403)
-
     store = get_object_or_404(Store, id=store_id)
 
     try:
@@ -142,25 +139,22 @@ def delete_store(request, store_id):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-
 @csrf_exempt
 @require_POST
 @login_required
+@admin_required
 def add_product_to_store(request, store_id):
-    if request.user.role != 'admin':
-        return JsonResponse({"error": "Permission denied."}, status=403)
-
     try:
         store = Store.objects.get(id=store_id)
-        data = json.loads(request.body.decode('utf-8'))
 
-        # Get and sanitize data
-        product_name = strip_tags(data.get('name', '').strip())
-        price = data.get('price')
-        description = strip_tags(data.get('description', '').strip())
-        image_url = data.get('image_url', '')
+        # Get and sanitize text fields
+        product_name = strip_tags(request.POST.get('name', '').strip())
+        price = request.POST.get('price')
+        description = strip_tags(request.POST.get('description', '').strip())
+        image = request.FILES.get('foto')
 
-        if not product_name or not price or not description or not image_url:
+        # Check for missing fields
+        if not product_name or not price or not description or not image:
             return JsonResponse({"error": "All fields must be filled."}, status=400)
 
         # Validate price
@@ -171,16 +165,17 @@ def add_product_to_store(request, store_id):
         except ValueError:
             return JsonResponse({"error": "Invalid price format."}, status=400)
 
-        # Create new product
+        # Create and save the new product
         new_product = Product(
             name=product_name,
             price=price,
             store=store,
             description=description,
-            image=image_url
+            image=image
         )
         new_product.save()
 
+        # Send a success response
         return JsonResponse({
             "message": "Product added successfully.",
             "product": {
@@ -194,22 +189,15 @@ def add_product_to_store(request, store_id):
 
     except Store.DoesNotExist:
         return JsonResponse({"error": "Store not found."}, status=404)
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid data format."}, status=400)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-
 @csrf_exempt
 @login_required
+@admin_required
 def edit_product(request, product_id):
     # Ambil produk berdasarkan ID, atau tampilkan 404 jika tidak ditemukan
     product = get_object_or_404(Product, id=product_id)
-
-    # Hanya admin yang boleh mengakses
-    if request.user.role != 'admin':
-        return JsonResponse({"error": "Permission denied."}, status=403)
-
     if request.method == 'GET':
         # Kirim data produk dalam JSON untuk ditampilkan di form
         product_data = {
@@ -272,12 +260,9 @@ def edit_product(request, product_id):
 @csrf_exempt
 @login_required
 @require_POST
+@admin_required
 def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-
-    if request.user.role != 'admin':
-        return JsonResponse({"error": "Permission denied."}, status=403)
-
     try:
         store_id = product.store.id
         product.delete()

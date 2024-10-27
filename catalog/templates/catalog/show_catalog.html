@@ -38,7 +38,7 @@
         <section>
           <div class="flex justify-between items-center">
             <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Toko Batik</div>
-            {% if request.user.is_authenticated and request.user.role == "admin" %}
+            {% if request.session.is_admin %}
             <button
               onclick="openAddStoreModal()"
               class="h-[46px] px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 inline-flex"
@@ -123,6 +123,13 @@
             {% endfor %}
           </div>
         </section>
+        <div id="gallery_entry_cards" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+        <div id="pagination-controls" class="flex justify-center space-x-2 mt-4"></div>
+    
+        <!-- Tempat untuk menampilkan daftar galeri dengan AJAX -->
+        <div id="gallery_entry_cards" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+        
+        <div id="pagination-controls" class="flex justify-center space-x-2 mt-4"></div>
       </main>
 
       <!-- Add Store Modal -->
