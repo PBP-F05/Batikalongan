@@ -20,7 +20,7 @@
    <div class="flex items-center gap-4 [&>a:hover]:underline">
       {% include 'snip/likes_reply.html' %}   
       {% if user.is_authenticated and reply.author == user %}                    
-      <a href="{% url 'reply-delete' reply.id %}">Delete</a>
+      <a href="{% url 'timeline:reply-delete' reply.id %}">Delete</a>
       {% endif %}                    
 
    </div>

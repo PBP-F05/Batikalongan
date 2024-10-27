@@ -1,5 +1,7 @@
 from django.urls import path
 from timeline.views import *
+from django.conf.urls.static import static
+# from .import views
 
 app_name = 'timeline'
 
@@ -17,3 +19,6 @@ urlpatterns = [
     path('reply/delete/<pk>/', reply_delete_view, name='reply-delete'),
     path('reply/like/<pk>/', like_reply, name='like-reply'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
