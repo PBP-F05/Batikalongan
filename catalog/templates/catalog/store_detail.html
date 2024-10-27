@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-
 {% block title %}
 {{ store.name }} - Store Details
 {% endblock title %}
 
 {% block content %}
+{% load static %}
+{% include "navbar.html" %}
 
 <div class="container mx-auto p-8">
     <div class="w-[1440px] h-[152px] justify-end items-start gap-10 inline-flex">
@@ -57,11 +58,12 @@
 
 
 
-    <h2 class="text-2xl font-bold mt-6 mb-4">Products</h2>
+    <div class="h-[60px] justify-start items-start inline-flex">
+        <div class="grow shrink basis-0 text-black text-[40px] font-normal font-['Fabled'] leading-[60px]">Produk Batik</div>
+    </div>
     <div class="grid grid-cols-3 gap-4">
-        {% for product in products %}
-        {% include 'catalog/card_product.html' %}
-        {% endfor %}
+        <div id="product_cards" class="grid grid-cols-4 gap-6 mb-8"></div>
+        <div id="pagination-controls" class="flex justify-center mt-8"></div>
     </div>
 
 
@@ -128,10 +130,10 @@
 
 
     <!-- Modal Edit Produk -->
-<div id="editProductModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-10">
-    <div class="w-[848px] h-[700px] px-10 py-[52px] rounded-[20px] bg-white border border-[#d9d9d9]/90 flex-col justify-start items-center gap-10 inline-flex">
-        <div class="self-stretch h-[510px] flex-col justify-start items-center gap-5 flex">
-            <div class="text-black text-[40px] font-normal font-['Fabled'] leading-[56px]">Edit Produk</div>
+    <div id="editProductModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-10">
+        <div class="w-[848px] h-[700px] px-10 py-[52px] rounded-[20px] bg-white border border-[#d9d9d9]/90 flex-col justify-start items-center gap-10 inline-flex">
+            <div class="self-stretch h-[510px] flex-col justify-start items-center gap-5 flex">
+                <div class="text-black text-[40px] font-normal font-['Fabled'] leading-[56px]">Edit Produk</div>
 
             <form id="editProductForm" class="self-stretch flex-col gap-5">
                 <input type="hidden" id="edit-product-id">
@@ -219,6 +221,113 @@
 
 
 <script>
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return parseInt(urlParams.get(param)) || 1;  // Default ke 1
+    }
+
+    // Inisialisasi halaman saat ini
+    let currentPage = getQueryParam("page");
+
+    // Fungsi untuk mengambil data produk
+    async function getProducts(page = 1) {
+        const url = `{% url 'catalog:product_list_json' %}?page=${page}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        return data;
+    }
+
+    // Fungsi untuk memperbarui tampilan produk dan pagination
+    async function refreshProducts(page = currentPage) {
+        currentPage = page;
+        document.getElementById("product_cards").innerHTML = "";
+
+        // Update URL tanpa reload
+        window.history.replaceState(null, null, `?page=${currentPage}`);
+
+        const data = await getProducts(currentPage);
+        const products = data.products;
+
+        let htmlString = "";
+
+        if (products.length === 0) {
+            htmlString = `
+                <div class="flex items-center justify-center min-h-[24rem]">
+                    <p class="text-gray-600 text-lg">Belum ada produk di katalog.</p>
+                </div>`;
+        } else {
+            products.forEach((item) => {
+                const imagePath = item.fields.image;
+                htmlString += `
+                    <div class="border rounded-lg shadow-md p-4 flex flex-col">
+                        <img src="${imagePath}" alt="${item.fields.name}" 
+                             class="w-full h-48 object-cover rounded-md mb-4">
+                        <h2 class="text-xl font-semibold">${item.fields.name}</h2>
+                        <p class="text-gray-700">${item.fields.description}</p>
+                        <p class="text-lg font-bold mt-2">Rp ${item.fields.price.toLocaleString()}</p>
+                    </div>`;
+            });
+        }
+
+        document.getElementById("product_cards").innerHTML = htmlString;
+
+        // Render kontrol pagination
+        renderPaginationControls(data, currentPage);
+    }
+
+    // Fungsi untuk menampilkan kontrol pagination
+    function renderPaginationControls(data, page) {
+        let controls = '<div class="flex border rounded-lg overflow-hidden">';
+
+        // Tombol Previous
+        if (data.has_previous) {
+            controls += `
+                <a href="#" onclick="refreshProducts(${page - 1}); return false;" 
+                   class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-r">
+                    <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
+                    Previous
+                </a>`;
+        } else {
+            controls += `
+                <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold border-r">
+                    <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
+                    Previous
+                </span>`;
+        }
+
+        // Nomor halaman
+        for (let num = 1; num <= data.num_pages; num++) {
+            if (num === page) {
+                controls += `<span class="px-3 py-2 bg-[#D88E30] text-white font-semibold">${num}</span>`;
+            } else {
+                controls += `
+                    <a href="#" onclick="refreshProducts(${num}); return false;" 
+                       class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l">${num}</a>`;
+            }
+        }
+
+        // Tombol Next
+        if (data.has_next) {
+            controls += `
+                <a href="#" onclick="refreshProducts(${page + 1}); return false;" 
+                   class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l">
+                    Next
+                    <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
+                </a>`;
+        } else {
+            controls += `
+                <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold border-l">
+                    Next
+                    <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
+                </span>`;
+        }
+
+        controls += '</div>';
+        document.getElementById("pagination-controls").innerHTML = controls;
+    }
+
+    // Inisialisasi tampilan produk saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => refreshProducts());
 function closeEditStoreModal() {
     document.getElementById('editStoreModal').classList.add('hidden');
 }
@@ -496,5 +605,6 @@ function closeEditModal() {
         }
     }
     </script>
-    
+
+{% include "footer.html" %}
 {% endblock content %}

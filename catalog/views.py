@@ -5,7 +5,7 @@ from .models import Store, Product
 from .forms import StoreForm, ProductForm
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed  
 from django.core import serializers
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.utils.html import strip_tags
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -15,6 +15,37 @@ import logging
 from django.views.decorators.http import require_http_methods
 from.decorators import admin_required
 from flask import Flask, jsonify, request
+
+def product_list_json(request):
+    products = Product.objects.all().order_by('id')  # Urutkan berdasarkan ID
+    page = request.GET.get('page', 1)  # Ambil nomor halaman
+    paginator = Paginator(products, 16)  # 16 produk per halaman
+
+    try:
+        products_page = paginator.page(page)
+    except Exception:
+        products_page = paginator.page(1)
+
+    products_data = [
+        {
+            'pk': product.pk,
+            'fields': {
+                'name': product.name,
+                'description': product.description,
+                'price': product.price,
+                'image': product.image.url if product.image else '',
+            }
+        }
+        for product in products_page
+    ]
+
+    return JsonResponse({
+        'products': products_data,
+        'has_previous': products_page.has_previous(),
+        'has_next': products_page.has_next(),
+        'num_pages': paginator.num_pages,
+        'current_page': products_page.number,
+    })
 
 app = Flask(__name__)
 
@@ -248,10 +279,10 @@ def add_product_to_store(request, store_id):
 @login_required
 @admin_required
 def edit_product(request, product_id):
-    # Ambil produk berdasarkan ID, atau tampilkan 404 jika tidak ditemukan
     product = get_object_or_404(Product, id=product_id)
+
     if request.method == 'GET':
-        # Kirim data produk dalam JSON untuk ditampilkan di form
+        # Kirim data produk dalam JSON
         product_data = {
             "id": str(product.id),
             "name": product.name,
@@ -263,17 +294,14 @@ def edit_product(request, product_id):
 
     elif request.method == 'POST':
         try:
-            data = json.loads(request.body.decode('utf-8'))
-            product_name = strip_tags(data.get('name', '').strip())
-            price = data.get('price')
-            description = strip_tags(data.get('description', '').strip())
-            image_url = data.get('image_url', '')
+            product_name = strip_tags(request.POST.get('name', '').strip())
+            price = request.POST.get('price')
+            description = strip_tags(request.POST.get('description', '').strip())
+            image_file = request.FILES.get('image')
 
-            # Validasi semua field
-            if not product_name or not price or not description or not image_url:
+            if not product_name or not price or not description:
                 return JsonResponse({"error": "All fields are required."}, status=400)
 
-            # Validasi format harga
             try:
                 price = float(price)
                 if price <= 0:
@@ -281,14 +309,15 @@ def edit_product(request, product_id):
             except ValueError:
                 return JsonResponse({"error": "Invalid price format."}, status=400)
 
-            # Perbarui produk dengan data baru
             product.name = product_name
             product.price = price
             product.description = description
-            product.image = image_url
+
+            if image_file:
+                product.image = image_file
+
             product.save()
 
-            # Kirim respons sukses
             return JsonResponse({
                 "message": "Product updated successfully.",
                 "product": {
@@ -296,17 +325,14 @@ def edit_product(request, product_id):
                     "name": product.name,
                     "price": product.price,
                     "description": product.description,
-                    "image": product.image.url
+                    "image": product.image.url if product.image else '',
                 }
             }, status=200)
 
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid data."}, status=400)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
     else:
-        # Balas dengan metode tidak diizinkan jika selain GET atau POST
         return HttpResponseNotAllowed(['GET', 'POST'])
 
 @csrf_exempt
@@ -336,7 +362,35 @@ def store_detail(request, store_id):
     })
 
 def product_list(request):
-    products = Product.objects.all()
+    product_list = Product.objects.all()  # Ambil semua produk
+    page = request.GET.get('page', 1)  # Ambil nomor halaman dari query params
+    paginator = Paginator(product_list, 16)  # 16 produk per halaman
+
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Cek jika request AJAX
+        products_data = [
+            {
+                'id': product.id,
+                'name': product.name,
+                'price': product.price,
+                'image_url': product.image.url if product.image else '',
+            }
+            for product in products
+        ]
+        return JsonResponse({
+            'products': products_data,
+            'has_next': products.has_next(),
+            'has_previous': products.has_previous(),
+            'num_pages': paginator.num_pages,
+            'current_page': products.number,
+        })
+
     return render(request, 'catalog/product_list.html', {'products': products})
 
 def show_xml(request):
