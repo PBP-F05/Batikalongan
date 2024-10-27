@@ -24,12 +24,10 @@
          {% if comment.replies.count %}
          Replies
          <span id="repliescount-{{ comment.id }}" class="font-light text-gray-500 ml-1">{{ comment.replies.count }}</span>
-            <!-- {% else %} -->
             {% if user.is_authenticated %}
                Add Reply
             {% endif %}
          {% endif %}
-         <!-- {% if user.is_authenticated %}Replies{% endif %} -->
       
       </a>
       <div class="flex items-center gap-4 [&>a:hover]:underline">
