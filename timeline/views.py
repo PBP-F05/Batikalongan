@@ -12,25 +12,26 @@ def home_view(request):
    return render(request, 'posts/home.html', {'posts' : posts})
 
 def post_create_view(request):
-   if request.method == 'POST':
-      form = PostCreateForm(request.POST, request.FILES)
-      if form.is_valid():
-         post = form.save(commit=False)
-         post.author = request.user
-         post.save()
-         return redirect('home')
+    form = PostCreateForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        post = form.save(commit=False)
+        post.author = request.user
+        post.save()
+        return redirect('home') 
+    
+    return render(request, 'posts/post_create.html', {'form': form})
 
-   return render(request, 'posts/post_create.html', {'form' : form })
+def post_delete_view(request):
+   # print("hello")
+   return render(request, 'posts/post_delete.html')
+   # post = get_object_or_404(Post, id=pk)
 
-def post_delete_view(request, pk):
-   post = Post.objects.get(id=pk)
-
-   if request.method == 'POST':
-      post.delete()
-      messages.success(request, 'Post deleted')
-      return redirect('home')
+   # if request.method == 'POST':
+   #    post.delete()
+   #    messages.success(request, 'Post deleted')
+   #    return redirect('home')
       
-   return render(request, 'posts/post_delete.html', {'post' : post })
+   # return render(request, 'posts/post_delete.html', {'post' : post })
 
 def post_edit_view(request, pk):
    post = Post.objects.get(id=pk)

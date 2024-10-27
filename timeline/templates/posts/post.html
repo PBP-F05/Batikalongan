@@ -2,7 +2,13 @@
 
 <article class="card">
    <figure>
-      <a href="{% url 'post' post.id %}"><img class="w-full" src="{{ post.image }}"></a>
+      <a href="">
+         <!-- Cek apakah post.files memiliki file yang diunggah -->
+         <!-- Jika post.files berisi file, tampilkan post.files.url -->
+         <!-- Jika post.files kosong, tampilkan post.image sebagai fallback -->
+         <img class="w-full" src="{% if post.files %}{{ post.files.url }}{% else %}{{ post.image }}{% endif %}" alt="Post Image">
+      </a>
+      <!-- <a href=""><img class="w-full" src="{{ post.image }}"></a> -->
    </figure>
    <div class="p-4 pb-2">
       <a class="flex items-center gap-1 mb-4" href="">
@@ -12,11 +18,11 @@
       </a>
       <p class="text-5xl mb-10 px-4 font1">{{ post.body }}</p>
       <div class="flex items-center gap-2 text-sm mb-5 flex-wrap">
-         <a href="" class="bg-gray-200 rounded-full px-3 py-1 hover:bg-gray-800 hover:text-white">Animals</a>
-         <a href="" class="bg-gray-200 rounded-full px-3 py-1 hover:bg-gray-800 hover:text-white">Black & White</a>
+         <!-- <a href="" class="bg-gray-200 rounded-full px-3 py-1 hover:bg-gray-800 hover:text-white">Animals</a>
+         <a href="" class="bg-gray-200 rounded-full px-3 py-1 hover:bg-gray-800 hover:text-white">Black & White</a> -->
       </div>
       <div class="flex items-center justify-between text-sm px-2">
-         <a class="font-bold hover:underline" href="{% url 'post' post.id %}">
+         <a class="font-bold hover:underline" href="">
             {% if post.comments.count %}
             Comments
             <span class="font-light text-gray-500 ml-1">{{ post.comments.count }}</span>
@@ -31,8 +37,8 @@
             {% include 'snip/likes.html' %}   
       
             {% if user.is_authenticated and user == post.author %}
-            <a href="{% url 'post-edit' post.id %}">Edit</a>
-            <a href="{% url 'post-delete' post.id %}">Delete</a>
+            <a href="">Edit</a>
+            <a href="">Delete</a>
             {% endif %}
 
          </div>
