@@ -32,6 +32,7 @@ def show_catalog(request):
     page_number = request.GET.get('page')  # Ambil nomor halaman dari query params
     page_obj = paginator.get_page(page_number)  # Ambil objek halaman saat ini
     
+    
     # Jika permintaan AJAX, kita kembalikan data JSON saja
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         products_html = render_to_string('catalog/products_list.html', {'page_obj': page_obj})
@@ -58,7 +59,7 @@ logger = logging.getLogger(__name__)  # untuk debugging
 @require_POST
 @login_required
 def create_store(request):
-    if request.user.role != 'atmin':
+    if request.user.role != 'admin':
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     try:
@@ -91,7 +92,7 @@ def create_store(request):
                 "name": new_store.name,
                 "address": new_store.address,
                 "product_count": new_store.product_count,
-                "image_url": new_store.image.url if new_store.image else None
+                "image_url": new_store.image.url
             }
         }, status=201)
 
@@ -130,7 +131,7 @@ def edit_store(request, store_id):
 @require_POST
 @login_required
 def delete_store(request, store_id):
-    if request.user.role != 'atmin':
+    if request.user.role != 'admin':
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     store = get_object_or_404(Store, id=store_id)
@@ -146,7 +147,7 @@ def delete_store(request, store_id):
 @require_POST
 @login_required
 def add_product_to_store(request, store_id):
-    if request.user.role != 'atmin':
+    if request.user.role != 'admin':
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     try:
@@ -206,7 +207,7 @@ def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
     # Hanya admin yang boleh mengakses
-    if request.user.role != 'atmin':
+    if request.user.role != 'admin':
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     if request.method == 'GET':
@@ -274,7 +275,7 @@ def edit_product(request, product_id):
 def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
-    if request.user.role != 'atmin':
+    if request.user.role != 'admin':
         return JsonResponse({"error": "Permission denied."}, status=403)
 
     try:
