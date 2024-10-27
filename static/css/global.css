@@ -59,9 +59,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 40px;
     margin: 0 auto; /* Memusatkan secara horizontal */
-    padding: 0 20px; /* Menambahkan padding agar tidak menempel di tepi layar */
     background-color: #f9f9f9; /* Warna background halaman, jika diperlukan */
 }
 

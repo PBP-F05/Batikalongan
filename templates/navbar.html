@@ -21,11 +21,19 @@
     <div class="flex items-center gap-4">
         {% if user.is_authenticated %}
             <!-- Display username and logout link if logged in -->
-            <span class="text-white text-base font-medium font-['Poppins']">Hello, {{ user.nama }}</span>
-            <a href="{% url 'authentication:logout' %}" class="text-white text-base font-medium font-['Poppins'] hover:text-[#996522]">Logout</a>
+            {% if request.session.is_admin %}
+                <span class="text-white text-base font-medium font-['Poppins']">Hello, Admin</span>
+            {% else %}
+                <span class="text-white text-base font-medium font-['Poppins']">Hello, {{ user.nama }}</span>
+            {% endif %}
+            <a href="{% url 'authentication:logout' %}" class="h-[46px] px-5 py-3 rounded-lg border-2 border-white justify-center items-center gap-2.5 inline-flex text-white text-base font-semibold font-['Poppins'] leading-snug hover:text-[#996522]">
+                Logout
+            </a>
         {% else %}
-            <!-- Show login link if not logged in -->
-            <a href="{% url 'authentication:login' %}" class="text-white text-base font-medium font-['Poppins'] hover:text-[#996522]">Login</a>
+            <!-- Show login button if not logged in -->
+            <a href="{% url 'authentication:login' %}" class="h-[46px] px-5 py-3 rounded-lg border-2 border-white justify-center items-center gap-2.5 inline-flex text-white text-base font-semibold font-['Poppins'] leading-snug hover:text-[#996522]">
+                Login
+            </a>
         {% endif %}
     </div>
 
@@ -47,7 +55,11 @@
         <a href="{% url 'timeline:home' %}" class="block text-base font-medium font-['Poppins'] hover:text-[#996522]">Timeline</a>
 
         {% if user.is_authenticated %}
-            <span class="block text-base font-medium font-['Poppins']">Hello, {{ user.nama }}</span>
+            {% if request.session.is_admin %}
+                <span class="block text-base font-medium font-['Poppins']">Hello, Admin</span>
+            {% else %}
+                <span class="block text-base font-medium font-['Poppins']">Hello, {{ user.full_name }}</span>
+            {% endif %}
             <a href="{% url 'authentication:logout' %}" class="block text-base font-medium font-['Poppins'] hover:text-[#996522]">Logout</a>
         {% else %}
             <a href="{% url 'authentication:login' %}" class="block text-base font-medium font-['Poppins'] hover:text-[#996522]">Login</a>

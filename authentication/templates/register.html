@@ -1,56 +1,56 @@
 {% extends 'base.html' %}
 {% block content %}
 {% include 'navbar.html' %}
-<div class="bg-[url('/static/images/auth.svg')] bg-cover bg-center min-h-screen w-full flex justify-center items-center px-4 py-12">
-    <div class="w-full max-w-lg p-8 md:p-12 bg-white rounded-lg flex-col justify-start items-center gap-6 shadow-lg">
-        <div class="flex flex-col justify-center items-center mb-6">
-            <h1 class="text-black text-4xl md:text-5xl font-normal font-['Fabled'] leading-tight mb-4">Sign Up</h1>
-            <p class="text-gray-600 text-lg md:text-xl font-normal font-['Poppins'] text-center">Create your account below</p>
-        </div>
+<form method="post" action="{% url 'authentication:register' %} " class="w-full">
+    {% csrf_token %}
+    <div class="bg-[url('/static/images/authe.svg')] bg-cover bg-center min-h-screen w-full flex justify-center items-center px-4 py-32">
+        <div class="w-[662px] h-[888px] p-10 bg-white rounded-[20px] flex-col justify-start items-center gap-10 inline-flex">
+            <div class="self-stretch h-[654px] flex-col justify-start items-center gap-5 flex">
+                <div class="text-black text-6xl font-normal font-['Fabled'] leading-[84px]">Sign Up</div>
 
-        <form method="POST" action="{% url 'authentication:register' %}" class="w-full space-y-6">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            
-            <div class="flex flex-col">
-                {{ form.nama.label_tag }}
-                {{ form.nama }}
-                {{ form.nama.errors }}
+                <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                    <div class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">{{ form.nama.label }}</div>
+                    <div class="self-stretch h-[58px] rounded-lg border border-[#d88e30] flex items-center pl-3"> 
+                        {{ form.nama }}
+                    </div>
+                    {{ form.nama.errors }}
+                </div>
+
+                <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                    <div class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">{{ form.username.label }}</div>
+                    <div class="self-stretch h-[58px] rounded-lg border border-[#d88e30] flex items-center pl-3"> 
+                        {{ form.username }}
+                    </div>
+                    {{ form.username.errors }}
+                </div>
+
+                <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                    <div class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">{{ form.password1.label }}</div>
+                    <div class="self-stretch h-[58px] rounded-lg border border-[#d88e30] flex items-center pl-3"> 
+                        {{ form.password1 }}
+                    </div>
+                    {{ form.password1.errors }}
+                </div>
+
+                <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                    <div class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">{{ form.password2.label }}</div>
+                    <div class="self-stretch h-[58px] rounded-lg border border-[#d88e30] flex items-center pl-3"> 
+                        {{ form.password2 }}
+                    </div>
+                    {{ form.password2.errors }}
+                </div>
             </div>
 
-            <div class="flex flex-col">
-                {{ form.username.label_tag }}
-                {{ form.username }}
-                {{ form.username.errors }}
+            <button type="submit" class="self-stretch h-[46px] bg-[#d88e30] rounded-lg flex justify-center items-center hover:bg-[#bf7428] transition duration-200">
+                <div class="text-white text-base font-semibold font-['Poppins'] leading-snug">Register</div>
+            </button>        
+
+            <div class="text-center">
+                <span class="text-black text-lg font-normal font-['Poppins']">Already have an account? </span>
+                <a href="{% url 'authentication:login' %}" class="text-[#d88e30] text-lg font-normal font-['Poppins'] underline hover:text-[#5B3C14] transition duration-200">Login</a>
             </div>
-
-            <div class="flex flex-col">
-                {{ form.password1.label_tag }}
-                {{ form.password1 }}
-                {{ form.password1.errors }}
-            </div>
-
-            <div class="flex flex-col">
-                {{ form.password2.label_tag }}
-                {{ form.password2 }}
-                {{ form.password2.errors }}
-            </div>
-
-            <div class="flex flex-col">
-                {{ form.role.label_tag }}
-                {{ form.role }}
-                {{ form.role.errors }}
-            </div>
-
-            <button type="submit" class="w-full h-12 bg-[#d88e30] rounded-lg flex justify-center items-center text-white text-base font-semibold font-['Poppins'] hover:bg-[#bf7428] transition duration-200">
-                Register
-            </button>
-        </form>
-
-        <div class="text-center mt-4">
-            <span class="text-black text-lg font-normal font-['Poppins']">Already have an account?</span>
-            <a href="{% url 'authentication:login' %}" class="text-[#d88e30] text-lg font-normal font-['Poppins'] underline hover:text-[#bf7428] transition duration-200">Login</a>
         </div>
     </div>
-</div>
+</form>
+
 {% endblock content %}

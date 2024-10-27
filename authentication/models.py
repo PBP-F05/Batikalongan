@@ -8,7 +8,7 @@ class User(AbstractUser):
     ]
 
     nama = models.CharField(max_length=255)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=20, default="user")  # Default role set to user
     deskripsi = models.TextField(blank=True, null=True)
 
     def __str__(self):
