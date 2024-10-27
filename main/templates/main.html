@@ -29,8 +29,10 @@
             <div class="text-white text-2xl font-semibold font-['Poppins'] leading-9">Event</div>
             <div class="self-stretch grow shrink basis-0 text-white text-base font-normal font-['Poppins'] leading-normal">Informasi lengkap event batik mendatang di Pekalongan, termasuk jadwal dan lokasi acara.</div>
             <div class="self-stretch px-5 py-3 bg-[#d88e30] rounded-lg justify-center items-center gap-2.5 inline-flex">
-                <span class="grow shrink basis-0 text-white text-base font-semibold font-['Poppins'] leading-snug">Lihat</span>
-                <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="w-6 h-6">
+                <a href="{% url 'event:show_event' %}" class="grow shrink basis-0 text-white text-base font-semibold font-['Poppins'] leading-snug flex items-center justify-between">
+                    Lihat
+                    <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="w-6 h-6 ml-2">
+                </a>
             </div>
         </div>
         
@@ -58,8 +60,10 @@
             <div class="text-white text-2xl font-semibold font-['Poppins'] leading-9">Timeline</div>
             <div class="self-stretch grow shrink basis-0 text-white text-base font-normal font-['Poppins'] leading-normal">Komunitas batik untuk berbagi pengalaman dan melihat update terbaru dari pengguna lain.</div>
             <div class="self-stretch px-5 py-3 bg-[#d88e30] rounded-lg justify-center items-center gap-2.5 inline-flex">
-                <span class="grow shrink basis-0 text-white text-base font-semibold font-['Poppins'] leading-snug">Lihat</span>
-                <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="w-6 h-6">
+                <a href="{% url 'timeline:home' %}" class="grow shrink basis-0 text-white text-base font-semibold font-['Poppins'] leading-snug flex items-center justify-between">
+                    Lihat
+                    <img src="{% static 'images/arrow.svg' %}" alt="Arrow" class="w-6 h-6 ml-2">
+                </a>
             </div>
         </div>
     </div>

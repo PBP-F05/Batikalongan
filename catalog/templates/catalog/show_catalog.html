@@ -34,99 +34,69 @@
         <div style="width: 100%; height: 100%; position: relative">
           <div style="width: 9.75px; height: 19.50px; left: 14.62px; top: 9.75px; position: absolute; border: 3.25px black solid"></div>
         </div>
-        <!-- Toko Batik Section -->
-        <section>
-          <div class="flex justify-between items-center">
-            <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Toko Batik</div>
-            {% if request.session.is_admin %}
-            <button
-              onclick="openAddStoreModal()"
-              class="h-[46px] px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 inline-flex"
-            >
-              <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">Tambah Toko</div>
-            </button>
-            {% endif %}
-          </div>
-          <div class="flex justify-between items-center space-x-4 relative w-full">
-            <!-- Scroll Button Left -->
-            <button class="text-2xl absolute left-0 -ml-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 z-10">
-              &lt;
-            </button>
-            <div class="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-6 border border-gray-200">
+      <!-- Toko Batik Section -->
+      <section>
+        <div class="flex justify-between items-center">
+          <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Toko Batik</div>
+          {% if request.session.is_admin %}
+          <button onclick="openAddStoreModal()" class="h-[46px] px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 inline-flex">
+            <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">Tambah Toko</div>
+          </button>
+          {% endif %}
+        </div>
+
+        <div class="flex justify-between items-center space-x-4 relative w-full mt-4">
+          <!-- Scroll Button Left -->
+          <button id="prev-page" class="text-gray-500 px-3 py-2 rounded-full border border-gray-300 hover:bg-gray-200">
+            &lt;
+          </button>
+
+          <div class="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-6 border border-gray-200 w-full">
+            <div id="store-container" class="flex space-x-4 w-full overflow-hidden">
               {% if not stores %}
-              <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+                <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
                   <p class="text-center text-gray-600 mt-4">Belum ada toko pada Batikalongan.</p>
-              </div>
+                </div>
               {% else %}
-              <div class="columns-1 sm:columns-3 lg:columns-3 gap-6 space-y-6 w-full">
-                {% for store in stores %}
-                  {% include 'catalog/card_store.html' with store=store %}
-                {% endfor %}
+                <div id="store-content" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6 space-y-6 w-full">
+                  {% for store in stores %}
+                    {% include 'catalog/card_store.html' with store=store %}
+                  {% endfor %}
                 </div>
               {% endif %}
-              </div>
-              </div>
             </div>
-            
-            <!-- Scroll Button Right -->
-            <button class="text-2xl absolute right-0 -mr-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 z-10">
-              &gt;
-            </button>
           </div>
-        </section>
+          
+          <!-- Scroll Button Right -->
+          <button id="next-page" class="text-gray-500 px-3 py-2 rounded-full border border-gray-300 hover:bg-gray-200">
+            &gt;
+          </button>
+        </div>
+      </section>
+
 
         <!-- Produk Batik Section -->
         <section class="mt-8">
           <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Produk Batik</div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Loop through products -->
-            {% for product in products %}
-            <div class="relative">
-              <!-- Decorative Lines -->
-              <div class="absolute top-2 left-1/2 transform -translate-x-1/2 flex items-center space-x-2">
-                <div class="w-8 h-1 bg-gray-300 rounded rotate-45"></div>
-                <div class="w-8 h-1 bg-gray-300 rounded -rotate-45"></div>
-              </div>
-
-              <!-- Product Card -->
-              <div
-                class="relative bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition duration-300"
-              >
-                <div class="bg-indigo-100 p-4">
-                  <h3 class="font-bold text-xl mb-2">{{ product.name }}</h3>
-                  <p class="text-gray-600">{{ product.store_name }}</p>
-                </div>
-                <div class="p-4">
-                  <p class="font-semibold text-lg mb-2">Price</p>
-                  <p class="text-orange-500">Rp{{ product.price }}</p>
-                  <p class="text-gray-700 font-semibold mt-2">Description</p>
-                  <p class="text-gray-700">{{ product.description }}</p>
-                </div>
-
-                <!-- Edit/Delete Icons -->
-                <div class="absolute top-2 right-2 space-x-2 flex">
-                  <a
-                    href="{% url 'main:edit_product' product.id %}"
-                    class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition duration-300"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </a>
-                  <a
-                    href="{% url 'main:delete_product' product.id %}"
-                    class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300"
-                  >
-                    <i class="fas fa-trash-alt"></i>
-                  </a>
-                </div>
-              </div>
+            {% if not products %}
+            <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+              <p class="text-center text-gray-600 mt-4">Belum ada produk pada Batikalongan.</p>
             </div>
-            {% endfor %}
+            {% else %}
+                <div id="store-content" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6 space-y-6 w-full">
+                  {% for product in products %}
+                    {% include 'catalog/card_product.html' %}
+                  {% endfor %}
+                </div>
+              {% endif %}
           </div>
         </section>
         <div id="gallery_entry_cards" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
         <div id="pagination-controls" class="flex justify-center space-x-2 mt-4"></div>
     
-        <!-- Tempat untuk menampilkan daftar galeri dengan AJAX -->
+        <!-- Tempat untuk menampilkan daftar produk dengan AJAX -->
         <div id="gallery_entry_cards" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
         
         <div id="pagination-controls" class="flex justify-center space-x-2 mt-4"></div>
@@ -206,6 +176,96 @@
       {% include "footer.html" %}
       <!-- Scripts -->
       <script>
+document.addEventListener("DOMContentLoaded", function() {
+  let currentPage = 1;
+
+  function loadStores(page) {
+    fetch(`/stores?page=${page}`)
+      .then(response => response.json())
+      .then(data => {
+        const storeContainer = document.getElementById("store-content");
+        storeContainer.innerHTML = "";
+
+        if (data.stores && data.stores.length > 0) {
+          data.stores.forEach(store => {
+            const storeHTML = `
+              <div class="rounded-[20px] border border-[#d9d9d9] p-4">
+                <img src="${store.image_url}" alt="${store.name}" class="rounded-lg w-full mb-4">
+                <h3 class="text-lg font-semibold">${store.name}</h3>
+                <p class="text-sm text-gray-600">${store.address}</p>
+                <div class="mt-2 text-sm bg-[#d88e30] text-white rounded-full px-3 py-1 inline-block">
+                  ${store.product_count} Produk
+                </div>
+              </div>`;
+            storeContainer.insertAdjacentHTML("beforeend", storeHTML);
+          });
+        } else {
+          storeContainer.innerHTML = "<p class='text-center text-gray-600 mt-4'>Belum ada toko pada halaman ini.</p>";
+        }
+
+        currentPage = page;
+      })
+      .catch(error => console.error("Error loading stores:", error));
+  }
+
+  document.getElementById("prev-page").addEventListener("click", function() {
+    if (currentPage > 1) {
+      loadStores(currentPage - 1);
+    }
+  });
+
+  document.getElementById("next-page").addEventListener("click", function() {
+    loadStores(currentPage + 1);
+  });
+
+  // Initial load
+  loadStores(currentPage);
+});
+
+
+        let currentPage = 1;
+
+function loadStores(page) {
+    $.ajax({
+        url: `/getStores?page=${page}`, // Pastikan route ini dikonfigurasi di backend
+        method: 'GET',
+        success: function(data) {
+            $('#store-container').html('');
+            data.stores.forEach(store => {
+                $('#store-container').append(`
+                    <div class="store-card border p-4 rounded-lg">
+                        <img src="${store.image}" alt="${store.name}" class="rounded-full w-16 h-16 mb-2">
+                        <h3 class="font-bold">${store.name}</h3>
+                        <p class="text-sm text-gray-500">${store.address}</p>
+                        <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs">
+                            ${store.product_count} Produk
+                        </span>
+                    </div>
+                `);
+            });
+        },
+        error: function(error) {
+            console.error("Failed to load stores:", error);
+        }
+    });
+}
+
+// Event listener untuk tombol 'next' dan 'prev'
+$('#next-page').on('click', function() {
+    currentPage++;
+    loadStores(currentPage);
+});
+
+$('#prev-page').on('click', function() {
+    if (currentPage > 1) {
+        currentPage--;
+        loadStores(currentPage);
+    }
+});
+
+// Load data awal ketika halaman pertama kali dimuat
+loadStores(currentPage);
+
 function openAddStoreModal() {
   // Ensure the modal opens correctly
   document.getElementById("addStoreModal").classList.remove("hidden");
