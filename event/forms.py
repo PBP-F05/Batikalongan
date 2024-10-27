@@ -5,7 +5,7 @@ class EventForm(ModelForm):
     tanggal = DateField(input_formats=["%Y-%m-%d"])
     tanggal.widget.input_type = "date"
 
-    foto = ImageField()
+    foto = ImageField(required=False)
     foto.widget.input_type = "file"
 
     class Meta:
