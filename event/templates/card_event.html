@@ -1,0 +1,32 @@
+{% load static %}
+
+<div class="card" style="width: 32rem;">
+    {% if event.foto %}
+    <img src="{{ event.foto.url }}" class="card-img-top" style="height: 15rem; object-fit: cover;" alt="Placeholder">
+    {% else %}
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNoKfjbJuH_h1cwBxBFCWmIwdJ1DLP_2akQ&s" class="card-img-top" style="height: 15rem; object-fit: cover;" alt="Placeholder">
+    {% endif %}
+
+    <div class="card-body d-flex flex-column gap-1">
+        <div class="card-title"><b>{{ event.nama }}</b></div>
+        <p class="card-text">{{ event.deskripsi }}</p>
+        <div class="d-flex flex-fill gap-1">
+            <span class="tag d-flex align-items-center gap-1 px-2">
+                <img src="{% static 'images/calendar-range.svg' %}" style="width: 15px;">
+                {{ event.tanggal }}
+            </span>
+            <span class="tag d-flex align-items-center gap-1 px-2">
+                <img src="{% static 'images/map-marker-outline.svg' %}" style="width: 15px;">
+                {{ event.lokasi }}
+            </span>
+        </div>
+        <a href="#" class="btn btn-primary form-control" style="background-color: #D88E30 !important; border: 0px solid black;">Daftar</a>
+    </div>
+
+    {% if request.session.is_admin %}
+    <div class="position-absolute d-flex gap-2" style="right: 10px; top: 10px;">
+        <a href="{% url 'event:edit_event' event.pk %}"><img src="{% static 'images/edit_icon.svg' %}"></a>
+        <a href="{% url 'event:delete_event' event.pk %}"><img src="{% static 'images/delete_icon.svg' %}"></a>
+    </div>
+    {% endif %}
+</div>
