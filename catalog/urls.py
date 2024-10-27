@@ -17,4 +17,5 @@ urlpatterns = [
     path('json/', views.show_json, name='show_json'),
     path('xml/<str:id>/', views.show_xml_by_id, name='show_xml_by_id'),
     path('json/<str:id>/', views.show_json_by_id, name='show_json_by_id'),
+    path('products/json/', views.product_list_json, name='product_list_json'),
 ]

@@ -85,11 +85,8 @@
               <p class="text-center text-gray-600 mt-4">Belum ada produk pada Batikalongan.</p>
             </div>
             {% else %}
-                <div id="store-content" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6 space-y-6 w-full">
-                  {% for product in products %}
-                    {% include 'catalog/card_product.html' %}
-                  {% endfor %}
-                </div>
+          <div id="product_cards" class="grid grid-cols-4 gap-6 mb-8"></div>
+          <div id="pagination-controls" class="flex justify-center mt-8"></div>
               {% endif %}
           </div>
         </section>
@@ -176,8 +173,117 @@
       {% include "footer.html" %}
       <!-- Scripts -->
       <script>
+
 document.addEventListener("DOMContentLoaded", function() {
-  let currentPage = 1;
+
+// Fungsi untuk mendapatkan parameter dari URL
+function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return parseInt(urlParams.get(param)) || 1;  // Default ke 1
+    }
+
+    // Inisialisasi halaman saat ini
+    let currentPage = getQueryParam("page");
+
+    // Fungsi untuk mengambil data produk
+    async function getProducts(page = 1) {
+        const url = `{% url 'catalog:product_list_json' %}?page=${page}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        return data;
+    }
+
+    // Fungsi untuk memperbarui tampilan produk dan pagination
+    async function refreshProducts(page = currentPage) {
+        currentPage = page;
+        document.getElementById("product_cards").innerHTML = "";
+
+        // Update URL tanpa reload
+        window.history.replaceState(null, null, `?page=${currentPage}`);
+
+        const data = await getProducts(currentPage);
+        const products = data.products;
+
+        let htmlString = "";
+
+        if (products.length === 0) {
+            htmlString = `
+                <div class="flex items-center justify-center min-h-[24rem]">
+                    <p class="text-gray-600 text-lg">Belum ada produk di katalog.</p>
+                </div>`;
+        } else {
+            products.forEach((item) => {
+                const imagePath = item.fields.image;
+                htmlString += `
+                    <div class="border rounded-lg shadow-md p-4 flex flex-col">
+                        <img src="${imagePath}" alt="${item.fields.name}" 
+                             class="w-full h-48 object-cover rounded-md mb-4">
+                        <h2 class="text-xl font-semibold">${item.fields.name}</h2>
+                        <p class="text-gray-700">${item.fields.description}</p>
+                        <p class="text-lg font-bold mt-2">Rp ${item.fields.price.toLocaleString()}</p>
+                    </div>`;
+            });
+        }
+
+        document.getElementById("product_cards").innerHTML = htmlString;
+
+        // Render kontrol pagination
+        renderPaginationControls(data, currentPage);
+    }
+
+    // Fungsi untuk menampilkan kontrol pagination
+    function renderPaginationControls(data, page) {
+        let controls = '<div class="flex border rounded-lg overflow-hidden">';
+
+        // Tombol Previous
+        if (data.has_previous) {
+            controls += `
+                <a href="#" onclick="refreshProducts(${page - 1}); return false;" 
+                   class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-r">
+                    <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
+                    Previous
+                </a>`;
+        } else {
+            controls += `
+                <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold border-r">
+                    <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
+                    Previous
+                </span>`;
+        }
+
+        // Nomor halaman
+        for (let num = 1; num <= data.num_pages; num++) {
+            if (num === page) {
+                controls += `<span class="px-3 py-2 bg-[#D88E30] text-white font-semibold">${num}</span>`;
+            } else {
+                controls += `
+                    <a href="#" onclick="refreshProducts(${num}); return false;" 
+                       class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l">${num}</a>`;
+            }
+        }
+
+        // Tombol Next
+        if (data.has_next) {
+            controls += `
+                <a href="#" onclick="refreshProducts(${page + 1}); return false;" 
+                   class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l">
+                    Next
+                    <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
+                </a>`;
+        } else {
+            controls += `
+                <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold border-l">
+                    Next
+                    <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
+                </span>`;
+        }
+
+        controls += '</div>';
+        document.getElementById("pagination-controls").innerHTML = controls;
+    }
+
+    // Inisialisasi tampilan produk saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => refreshProducts());
 
   function loadStores(page) {
     fetch(`/stores?page=${page}`)
@@ -340,7 +446,7 @@ function renderPaginationControls(data, page) {
             // Previous button
             if (data.has_previous) {
                 paginationControls += `
-                    <a href="#" onclick="refreshGalleryEntries(${page - 1}); return false;" class="px-3 py-2 bg-white text-[#D88E30] font-semibold flex items-center border-r border-[#D88E30]">
+                    <a href="#" onclick="refereshCatalogEntries(${page - 1}); return false;" class="px-3 py-2 bg-white text-[#D88E30] font-semibold flex items-center border-r border-[#D88E30]">
                         <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
                         Previous
                     </a>
@@ -391,6 +497,64 @@ function renderPaginationControls(data, page) {
         // Initialize the gallery with the current page from the URL
         refreshGalleryEntries();
 
+   // Fungsi untuk memuat produk melalui AJAX
+   function loadProducts(page = 1) {
+        fetch(`/products/?page=${page}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Render produk di grid
+            const productGrid = document.getElementById('product-grid');
+            productGrid.innerHTML = data.products.map(product => `
+                <div class="border rounded-lg p-4 shadow-md">
+                    <img src="${product.image_url}" alt="${product.name}" 
+                         class="w-full h-48 object-cover rounded-t-lg mb-4" />
+                    <h3 class="text-lg font-semibold">${product.name}</h3>
+                    <p class="text-gray-500">Rp${product.price}</p>
+                </div>
+            `).join('');
+
+            // Render kontrol pagination
+            const paginationControls = document.getElementById('pagination-controls');
+            paginationControls.innerHTML = generatePagination(data.current_page, data.num_pages);
+        })
+        .catch(error => console.error('Error fetching products:', error));
+    }
+
+    // Fungsi untuk membuat pagination HTML
+    function generatePagination(currentPage, numPages) {
+        let buttons = '';
+
+        if (currentPage > 1) {
+            buttons += `<button onclick="loadProducts(${currentPage - 1})" 
+                            class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded-md">
+                            Previous
+                        </button>`;
+        }
+
+        for (let i = 1; i <= numPages; i++) {
+            buttons += `
+                <button onclick="loadProducts(${i})" 
+                        class="px-4 py-2 ${i === currentPage ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-black'} rounded-md">
+                    ${i}
+                </button>`;
+        }
+
+        if (currentPage < numPages) {
+            buttons += `<button onclick="loadProducts(${currentPage + 1})" 
+                            class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded-md">
+                            Next
+                        </button>`;
+        }
+
+        return buttons;
+    }
+
+    // Muat produk pertama kali saat halaman dibuka
+    document.addEventListener('DOMContentLoaded', () => loadProducts());
 
       </script>
     </body>

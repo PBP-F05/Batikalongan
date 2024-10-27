@@ -40,3 +40,131 @@
       </div>
   </div>
 </div>
+
+<div>
+<!-- Modal Edit Produk -->
+<div id="editProductModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-10">
+    <div class="w-[848px] h-[700px] px-10 py-[52px] rounded-[20px] bg-white border border-[#d9d9d9]/90 flex-col justify-start items-center gap-10 inline-flex">
+        <div class="self-stretch h-[510px] flex-col justify-start items-center gap-5 flex">
+            <div class="text-black text-[40px] font-normal font-['Fabled'] leading-[56px]">Edit Produk</div>
+
+        <form id="editProductForm" class="self-stretch flex-col gap-5">
+            <input type="hidden" id="edit-product-id" name="id">
+
+            <!-- Nama Batik -->
+            <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                <label for="edit-product-name" class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Nama Batik</label>
+                <div class="self-stretch h-[58px] rounded-lg border border-[#d88e30]">
+                    <input type="text" id="edit-product-name" class="w-full h-full px-4 rounded-lg border-none outline-none">
+                </div>
+            </div>
+
+            <!-- Harga -->
+            <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                <label for="edit-product-price" class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Harga</label>
+                <div class="self-stretch h-[58px] rounded-lg border border-[#d88e30]">
+                    <input type="number" id="edit-product-price" class="w-full h-full px-4 rounded-lg border-none outline-none">
+                </div>
+            </div>
+
+            <!-- Deskripsi -->
+            <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
+                <label for="edit-product-description" class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Deskripsi</label>
+                <div class="self-stretch h-[58px] px-6 rounded-lg border border-[#d88e30] flex-col justify-center items-end gap-2.5 flex">
+                    <textarea id="edit-product-description" class="w-full h-full px-4 rounded-lg border-none outline-none"></textarea>
+                </div>
+            </div>
+
+            <!-- Foto -->
+            <div class="self-stretch h-[92px] flex-col justify-start items-start gap-2 flex">
+                <label for="edit-product-image" class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Foto</label>
+                <div class="px-6 py-4 rounded-lg border border-[#d88e30] justify-end items-center gap-2.5 inline-flex">
+                    <input type="file" id="edit-product-image" class="hidden">
+                    <button onclick="document.getElementById('edit-product-image').click()" type="button" class="text-black text-base font-normal font-['Poppins'] leading-snug">Edit Foto</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tombol Save dan Cancel -->
+    <div class="self-stretch h-[46px] px-5 flex justify-end gap-4">
+        <button type="button" onclick="closeEditModal()" class="bg-gray-500 text-white py-2 px-4 rounded-lg">Cancel</button>
+        <button type="button" onclick="saveProductChanges()" class="bg-[#d88e30] text-white py-2 px-4 rounded-lg">Save Changes</button>
+    </div>
+</div>
+</div>
+
+<script>
+function openEditModal(productId) {
+    fetch(`/catalog/product/${productId}/edit/`)
+        .then(response => response.json())
+        .then(data => {
+            const product = data.product;
+
+            // Isi form dengan data produk yang diambil dari server
+            document.getElementById('edit-product-id').value = product.id;
+            document.getElementById('edit-product-name').value = product.name || '';
+            document.getElementById('edit-product-price').value = product.price || '';
+            document.getElementById('edit-product-description').value = product.description || '';
+
+            // Tampilkan modal edit
+            document.getElementById('editProductModal').classList.remove('hidden');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Gagal memuat data produk.');
+        });
+}
+
+function closeEditModal() {
+    // Sembunyikan modal dan kosongkan form untuk mencegah data tertinggal
+    document.getElementById('editProductModal').classList.add('hidden');
+    document.getElementById('editProductForm').reset();
+}
+
+
+    function closeEditModal() {
+        document.getElementById('editProductModal').classList.add('hidden');
+    }
+
+    function saveProductChanges() {
+        const productId = document.getElementById('edit-product-id').value;
+        const name = document.getElementById('edit-product-name').value;
+        const price = document.getElementById('edit-product-price').value;
+        const description = document.getElementById('edit-product-description').value;
+        const imageFile = document.getElementById('edit-product-image').files[0];
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('price', price);
+        formData.append('description', description);
+        if (imageFile) {
+            formData.append('image', imageFile);
+        }
+
+        fetch(`/catalog/product/${productId}/edit/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')  // Pastikan CSRF token disertakan
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert(data.message);
+                location.reload();  // Reload page to reflect changes
+            }
+        })
+        .catch(error => console.error('Error:', error));
+
+        closeEditModal();
+    }
+
+function closeEditModal() {
+    document.getElementById('editProductModal').classList.add('hidden');
+}
+
+</script>
