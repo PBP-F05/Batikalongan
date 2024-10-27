@@ -141,6 +141,8 @@
         </div>
     </div>
 
+
+    <!-- Modal fo Edit Product-->
     <div id="editProductModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
             <h2 class="text-2xl font-bold mb-4">Edit Product</h2>
@@ -148,7 +150,7 @@
                 <input type="text" id="edit-product-name" placeholder="Product Name" required class="border p-2 mb-2 w-full">
                 <input type="number" id="edit-product-price" placeholder="Price" required class="border p-2 mb-2 w-full">
                 <textarea id="edit-product-description" placeholder="Description" required class="border p-2 mb-2 w-full"></textarea>
-                <input type="text" id="edit-product-image-url" placeholder="Image URL" required class="border p-2 mb-2 w-full">
+                <input type="text" id="" placeholder="Image URL" required class="border p-2 mb-2 w-full">
                 <div class="flex justify-end space-x-2 mt-4">
                     <button type="button" onclick="closeEditModal()" class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded">Cancel</button>
                     <button type="button" onclick="saveProductChanges()" class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">Save Changes</button>
@@ -156,10 +158,10 @@
             </form>
         </div>
     </div>
-    halo
 
     <!-- Edit Store Modal -->
-    <div id="editStoreModal" class="px-6 py-4 space-y-6 form-style fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div id="editStoreModal" class="px-6 py-4 space-y-6 form-style fixed inset-0 border-[#d9d9d9]/90 flex-col justify-start flex items-center justify-center hidden" >
+        <div class="w-[400px] h-[600px] px-10 py-[52px] rounded-[20px] border border-[#d9d9d9]/90 flex-col justify-start items-center gap-2 bg-white inline-flex">
         <span onclick="closeEditStoreModal()" class="close">&times;</span>
         <h3 class="text-left font-family-Fabled text-gray-900" style="font-size: 24px; line-height: 32px;">
             Edit Toko
@@ -179,13 +181,14 @@
                 <input type="number" id="edit-store-product-count" name="produk" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" min="1" required>
             </div>
             <div class="mb-4">
-                <label for="edit-product-image-url" class="block text-sm font-medium text-gray-700">Foto</label>
-                <input type="file" id="edit-product-image-url" name="foto" class="mt-1 block w-full border-2 border-dashed border-[#D88E30] rounded-lg p-3">
+                <label for="edit-store-image-url" class="block text-sm font-medium text-gray-700">Foto</label>
+                <input type="file" id="edit-store-image-url" name="foto" class="mt-1 block w-full border-2 border-dashed border-[#D88E30] rounded-lg p-3">
             </div>
         </form>
         <div class="flex justify-center p-6 border-t border-gray-200 rounded-b">
             <button type="button" onclick="saveEditStore()" class="bg-[#D88E30] hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg">Edit</button>
         </div>
+    </div>
     </div>
 </div>
 
@@ -221,29 +224,46 @@ function openEditStoreModal(storeId) {
 
 function saveEditStore() {
     const storeId = document.getElementById('editStoreForm').dataset.storeId;
-    const productCount = parseInt(document.getElementById('edit-store-product-count').value);
+    const storeCount = parseInt(document.getElementById('edit-store-product-count').value);
 
-    // Ensure product count is a positive integer
-    if (isNaN(productCount) || productCount <= 0) {
+    // Validasi untuk memastikan "Total Produk" adalah bilangan bulat positif
+    if (isNaN(storeCount) || storeCount <= 0) {
         alert("Total Produk harus berupa bilangan bulat positif.");
         return;
     }
 
-    const storeData = {
-        name: document.getElementById('edit-store-name').value,
-        address: document.getElementById('edit-store-address').value,
-        product_count: productCount,
-    };
+    const formData = new FormData();
+    formData.append("name", document.getElementById('edit-store-name').value);
+    formData.append("address", document.getElementById('edit-store-address').value);
+    formData.append("product_count", storeCount);
+
+    // Tambahkan file gambar jika elemen file input ada
+    const fileInput = document.getElementById('edit-store-image-url');
+    console.log("fileInput:", fileInput);  // Debugging: Cek apakah fileInput ada
+
+    if (fileInput) {
+        if (fileInput.files.length > 0) {
+            formData.append("foto", fileInput.files[0]);
+        }
+    } else {
+        console.error("Elemen file input 'edit-store-image-url' tidak ditemukan");
+        alert("Terjadi kesalahan: elemen file input tidak ditemukan.");
+        return;
+    }
 
     fetch(`/catalog/store/edit/${storeId}/`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')  // Make sure CSRF token is provided
+            'X-CSRFToken': getCookie('csrftoken')  // Pastikan CSRF token disertakan
         },
-        body: JSON.stringify(storeData)
+        body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.error) {
             alert(data.error);
@@ -252,8 +272,12 @@ function saveEditStore() {
             location.reload();
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Terjadi kesalahan saat menyimpan data. Silakan coba lagi.");
+    });
 }
+
 
 // Delete Store Function
 function deleteStore(storeId) {

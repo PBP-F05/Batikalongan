@@ -104,27 +104,45 @@ def create_store(request):
         return JsonResponse({"error": str(e)}, status=500)
     
 @admin_required
+@require_http_methods(["GET", "POST"])
 def edit_store(request, store_id):
-    if request.method == 'GET':
-        try:
-            store = Store.objects.get(id=store_id)
-            return JsonResponse({
-                'store': {
-                    'name': store.name,
-                    'address': store.address,
-                    'product_count': store.product_count
-                }
-            })
-        except Store.DoesNotExist:
-            return JsonResponse({'error': 'Store not found'}, status=404)
-    elif request.method == 'POST':
-        data = json.loads(request.body)
+    try:
         store = Store.objects.get(id=store_id)
-        store.name = data['name']
-        store.address = data['address']
-        store.product_count = data['product_count']
-        store.save()
-        return JsonResponse({'message': 'Store updated successfully'})
+    except Store.DoesNotExist:
+        return JsonResponse({'error': 'Store not found'}, status=404)
+
+    if request.method == 'GET':
+        # Mengirim data toko dalam JSON sebagai respons GET
+        return JsonResponse({
+            'store': {
+                'name': store.name,
+                'address': store.address,
+                'product_count': store.product_count
+            }
+        })
+
+    elif request.method == 'POST':
+        try:
+            # Periksa apakah ada file yang diunggah
+            if 'foto' in request.FILES:
+                store.image = request.FILES['foto']
+            
+            # Ambil data dari request.POST (FormData)
+            store.name = request.POST.get('name', store.name)
+            store.address = request.POST.get('address', store.address)
+            product_count = request.POST.get('product_count')
+            
+            # Validasi product_count agar merupakan bilangan bulat positif
+            if product_count.isdigit() and int(product_count) > 0:
+                store.product_count = int(product_count)
+            else:
+                return JsonResponse({'error': 'Total Produk harus berupa bilangan bulat positif.'}, status=400)
+
+            store.save()
+            return JsonResponse({'message': 'Store updated successfully'})
+        
+        except Exception as e:
+            return JsonResponse({'error': f'Gagal memperbarui store: {str(e)}'}, status=500)
 
 @csrf_exempt
 @require_POST
