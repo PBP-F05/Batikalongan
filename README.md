@@ -37,7 +37,7 @@ Modul ini menyimpan **informasi lengkap** mengenai toko-toko batik di Kabupaten 
 - **Pengguna** dapat melihat daftar toko dan produk lengkap dengan detail seperti **nama**, **harga**, dan **deskripsi**.
 
 ### **2. Event**
-Modul ini mencatat **ulasan** dan **penilaian** yang diberikan pelanggan terhadap toko dan produk batik. Fitur yang tersedia:
+Modul ini mencatat **informasi** mengenai acara-acara batik. Fitur yang tersedia:
 - **Admin** dapat menambahkan, memperbarui, atau menghapus informasi event, termasuk tanggal, lokasi, dan deskripsi acara.
 - **Pengguna** dapat melihat daftar event batik yang akan datang dan mengikuti acara sesuai minat mereka.
 
