@@ -2,7 +2,7 @@
 
 <article class="card">
    <figure>
-      <a href="">
+      <a href="{% url 'timeline:post' post.id %}">
          <!-- Cek apakah post.files memiliki file yang diunggah -->
          <!-- Jika post.files berisi file, tampilkan post.files.url -->
          <!-- Jika post.files kosong, tampilkan post.image sebagai fallback -->
@@ -22,7 +22,7 @@
          <a href="" class="bg-gray-200 rounded-full px-3 py-1 hover:bg-gray-800 hover:text-white">Black & White</a> -->
       </div>
       <div class="flex items-center justify-between text-sm px-2">
-         <a class="font-bold hover:underline" href="">
+         <a class="font-bold hover:underline" href="{% url 'timeline:post' post.id %}">
             {% if post.comments.count %}
             Comments
             <span class="font-light text-gray-500 ml-1">{{ post.comments.count }}</span>
@@ -37,8 +37,8 @@
             {% include 'snip/likes.html' %}   
       
             {% if user.is_authenticated and user == post.author %}
-            <a href="">Edit</a>
-            <a href="">Delete</a>
+            <a href="{% url 'timeline:post-edit' post.id %}">Edit</a>
+            <a href="{% url 'timeline:post-delete' post.id %}">Delete</a>
             {% endif %}
 
          </div>

@@ -13,7 +13,7 @@
     {% endif %}
     {% if user.is_authenticated and user != comment.author %}                    
         <a class="cursor-pointer" 
-        hx-get="{% url 'like-comment' comment.id %}"
+        hx-get="{% url 'timeline:like-comment' comment.id %}"
         hx-target="closest div"
         hx-swap="outerHTML">
             {% if user in comment.likes.all %}

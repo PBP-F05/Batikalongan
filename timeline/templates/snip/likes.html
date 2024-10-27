@@ -13,7 +13,7 @@
     {% endif %}
     {% if user.is_authenticated and user != post.author %}                    
         <a class="cursor-pointer" 
-        hx-get=""
+        hx-get="{% url 'timeline:like-post' post.id %}"
         hx-target="closest div"
         hx-swap="outerHTML">
             {% if user in post.likes.all %}

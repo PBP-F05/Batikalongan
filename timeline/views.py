@@ -17,21 +17,18 @@ def post_create_view(request):
         post = form.save(commit=False)
         post.author = request.user
         post.save()
-        return redirect('home') 
+        return redirect('timeline:home') 
     
     return render(request, 'posts/post_create.html', {'form': form})
 
-def post_delete_view(request):
-   # print("hello")
-   return render(request, 'posts/post_delete.html')
-   # post = get_object_or_404(Post, id=pk)
-
-   # if request.method == 'POST':
-   #    post.delete()
-   #    messages.success(request, 'Post deleted')
-   #    return redirect('home')
+def post_delete_view(request, pk):
+   post = get_object_or_404(Post, id=pk)
+   if request.method == 'POST':
+      post.delete()
+      messages.success(request, 'Post deleted')
+      return redirect('timeline:home')
       
-   # return render(request, 'posts/post_delete.html', {'post' : post })
+   return render(request, 'posts/post_delete.html', {'post' : post })
 
 def post_edit_view(request, pk):
    post = Post.objects.get(id=pk)
@@ -42,7 +39,7 @@ def post_edit_view(request, pk):
       if form.is_valid:
          form.save()
          messages.success(request, 'Post updated' )
-         return redirect('home')
+         return redirect('timeline:home')
    
    context = {
       'post' : post,
@@ -76,7 +73,7 @@ def comment_sent(request, pk):
          comment.author = request.user
          comment.parent_post = post            
          comment.save()
-         return redirect('post', post.id)
+         return redirect('timeline:post', post.id)
       else:
          print(form.errors)
 
@@ -95,7 +92,7 @@ def comment_delete_view(request, pk):
    if request.method == 'POST':
       post.delete()
       messages.success(request, 'Comment deleted')
-      return redirect('post', post.parent_post.id)
+      return redirect('timeline:post', post.parent_post.id)
       
    return render(request, 'posts/comment_delete.html', {'comment' : post })
 
@@ -111,7 +108,7 @@ def reply_sent(request, pk):
          reply.parent_comment = comment           
          reply.save()
 
-   return redirect('post', comment.parent_post.id)
+   return redirect('timeline:post', comment.parent_post.id)
 
 def reply_delete_view(request, pk):
    reply = get_object_or_404(Reply, id=pk, author=request.user)
@@ -119,7 +116,7 @@ def reply_delete_view(request, pk):
    if request.method == 'POST':
       reply.delete()
       messages.success(request, 'Reply deleted')
-      return redirect('post', reply.parent_comment.parent_post.id)
+      return redirect('timeline:post', reply.parent_comment.parent_post.id)
       
    return render(request, 'posts/reply_delete.html', {'reply' : reply })
 
