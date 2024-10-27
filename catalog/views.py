@@ -14,6 +14,40 @@ import json
 import logging
 from django.views.decorators.http import require_http_methods
 from.decorators import admin_required
+from flask import Flask, jsonify, request
+
+app = Flask(__name__)
+
+# Data toko dummy untuk contoh
+stores_data = [
+    # Berikan data toko sesuai dengan yang dibutuhkan (contoh gambar, nama, alamat, jumlah produk)
+]
+
+# @app.route('/getStores', methods=['GET'])
+# def get_stores(request):
+#     page = int(request.GET.get('page', 1))
+#     entries = Store.objects.all()
+#     paginator = Paginator(entries, 3)  # 3 entries per page
+#     page_obj = paginator.get_page(page)
+
+#     data = serializers.serialize("json", page_obj.object_list)
+
+#     # Return data along with pagination details
+#     return JsonResponse({
+#         "entries": data,
+#         "has_next": page_obj.has_next(),
+#         "has_previous": page_obj.has_previous(),
+#     })
+
+@app.route('/getStores', methods=['GET'])
+def get_stores():
+    page = int(request.args.get('page', 1))
+    per_page = 3  # Tampilkan 3 toko per halaman
+    start = (page - 1) * per_page
+    end = start + per_page
+    stores = stores_data[start:end]
+    return jsonify({'stores': stores})
+
 
 def show_catalog(request):
     price_filter = request.GET.get('price_filter')
