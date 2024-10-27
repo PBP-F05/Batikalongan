@@ -4,6 +4,7 @@ from .forms import ArticleForm
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from .decorators import admin_required
 
 def home(request):
     return HttpResponse("Hello, welcome to Batik Pekalongan!")
@@ -14,6 +15,7 @@ def article_list(request):
     return render(request, 'article_list.html', {'articles': articles})
 
 # View to add new articles
+@admin_required
 def add_article(request):
     if request.method == 'POST':
         form = ArticleForm(request.POST, request.FILES)
@@ -38,6 +40,7 @@ def add_article(request):
 
     return render(request, 'add_article.html', {'form': form})
 
+@admin_required
 def add_article_fullscreen(request):
     # Sama seperti add_article, tapi menggunakan template fullscreen
     form = ArticleForm()
@@ -49,6 +52,7 @@ def article_detail(request, id):
     article = get_object_or_404(Article, id=id)
     return render(request, 'article_detail.html', {'article': article})
 
+@admin_required
 def edit_article(request, id):
     article = get_object_or_404(Article, id=id)
     
@@ -66,7 +70,7 @@ def edit_article(request, id):
     
     return render(request, 'edit_article.html', {'form': form})
 
-
+@admin_required
 def delete_article(request, id):
     article = get_object_or_404(Article, id=id)
     article.delete()

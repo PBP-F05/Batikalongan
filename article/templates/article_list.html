@@ -8,10 +8,12 @@
     <div class="flex justify-between items-center mb-4">
         <!-- Title with Fabled font -->
         <h2 class="font-family-Fabled text-4xl">Artikel Batik</h2>
-        <!-- Button Tambah Artikel -->
+        <!-- Button Tambah Artikel (only visible to admin users) -->
+        {% if request.session.is_admin %}
         <button id="open-modal" class="flex justify-center items-center h-[46px] px-5 py-3 rounded-lg border-2 border-[#D88E30] text-[#D88E30] text-base font-semibold font-['Poppins'] hover:bg-[#D88E30] hover:text-white transition-colors">
             Tambah Artikel
         </button>
+        {% endif %}
     </div>
 
     <!-- Add margin top to the article list for more space -->
@@ -23,7 +25,8 @@
                 {% if article.image %}
                 <div class="w-full h-full rounded-t-[20px] bg-cover bg-lightgray" style="background-image: url('{{ article.image.url }}');"></div>
                 {% endif %}
-                <!-- Buttons for Edit and Delete positioned inside the image -->
+                <!-- Buttons for Edit and Delete positioned inside the image (only visible to admin users) -->
+                {% if request.session.is_admin %}
                 <div class="absolute top-5 right-0 flex justify-end items-start p-[0px_20px]">
                     <a href="{% url 'article:delete_article' article.id %}" onclick="return confirm('Yakin ingin menghapus artikel ini?');" class="mr-2 group">
                         <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="h-11 w-11 transition-transform duration-300 ease-in-out group-hover:scale-110" />
@@ -32,6 +35,7 @@
                         <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="h-11 w-11 transition-transform duration-300 ease-in-out group-hover:scale-110" />
                     </a>
                 </div>
+                {% endif %}
             </div>
 
             <!-- Box for Title and Introduction -->
@@ -56,7 +60,6 @@
         {% endfor %}
     </div>
 </div>
-
 
 <!-- Include the modal for adding articles -->
 {% include 'add_article.html' %}

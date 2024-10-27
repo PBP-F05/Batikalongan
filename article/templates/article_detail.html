@@ -17,11 +17,13 @@
 <div class="h-full flex flex-col justify-start items-center gap-10 px-[120px] py-10 mb-[150px]">  <!-- Add mb-[150px] here -->
     
     <!-- Edit Button positioned on top-right above the title -->
+    {% if request.session.is_admin %}
     <div class="self-stretch flex justify-end">
         <a href="{% url 'article:edit_article' article.id %}?next=article_detail" class="flex items-center justify-center gap-2 px-4 py-3 mr-10 border-2 border-[#D88E30] rounded-[8px] text-[#D88E30] font-['Poppins'] text-[16px] font-semibold leading-[22.4px] hover:bg-[#D88E30] hover:text-white transition-colors">
             Edit
         </a>
     </div>
+    {% endif %}
 
     <!-- Article Title -->
     <div class="self-stretch text-center text-[#d88e30] text-[52px] font-bold font-['Poppins'] leading-[67.6px]">

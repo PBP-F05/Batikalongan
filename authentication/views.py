@@ -9,8 +9,11 @@ from django.contrib import messages
 from .forms import CreateUser
 from django.shortcuts import redirect
 from django.contrib.auth import logout
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 def register(request):
     form = CreateUser()
@@ -26,15 +29,30 @@ def register(request):
 
 def login_view(request):
     form = LoginForm()
+    UserModel = get_user_model()
+    admin_username = "admin"
+    admin_password = "adminpassword"
+
+    # Cek apakah akun admin sudah ada
+    if not UserModel.objects.filter(username=admin_username).exists():
+        # Buat akun admin baru jika belum ada
+        UserModel.objects.create_user(username=admin_username, password=admin_password)
+
     if request.method == "POST":
         form = LoginForm(data=request.POST)
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-            return redirect(reverse("main:main_landing_page"))  # Redirect to main landing page after login
+            # Periksa kredensial admin
+            if user.username == admin_username and user.check_password(admin_password):
+                # Set variabel session untuk menandakan user adalah admin
+                request.session['is_admin'] = True
+                return redirect(reverse("main:main_landing_page"))  # Redirect ke dashboard admin
+            return redirect(reverse("main:main_landing_page"))  # Redirect ke halaman utama setelah login
         else:
             messages.error(request, "Invalid credentials, please try again.")
     return render(request, "login.html", {"form": form})
+
 
 def logout_user(request):
     logout(request)  # Logs out the user
