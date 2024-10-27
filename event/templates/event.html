@@ -5,40 +5,66 @@
 
 {% block content %}
 {% include 'navbar.html' %}
-<!-- <div class="card text-bg-dark">
-    <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Flifestyle.kompas.com%2Fread%2F2021%2F09%2F30%2F122039820%2Fbatik-tulis-cap-dan-print-bagaimana-membedakannya%3Fpage%3Dall&psig=AOvVaw1XNhGDXKV0qpFili_P-SS1&ust=1729839898832000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCNCx2vi5pokDFQAAAAAdAAAAABAJ" class="card-img" alt="Batik Tulis">
+<!-- <div class="card text-bg-black mx-3 w-100">
+    <img src="https://www.jnjbatik.com/wp-content/uploads/2016/11/kamu-tahu-apa-itu-batik-tulis.jpg" class="card-img w-100 mx-auto" style="height: 10rem; object-fit: cover;" alt="Batik Tulis">
     <div class="card-img-overlay">
         <h5 class="card-title">Workshop Batik Tulis</h5>
         <p class="card-text">Selasa, 5 November 2024</p>
         <p class="card-text">Balai Budaya Pekalongan</p>
     </div>
 </div> -->
-
-<h1>Event Batik</h1>
-<a href="{% url 'event:create_event' %}">
-    Tambah Event
-</a>
-
-{% if not events %}
-<p>No data</p>
-{% else %}
-<div class="d-flex gap-3">
-    {% for event in events %}
-    <div class="card" style="width: 18rem;">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNoKfjbJuH_h1cwBxBFCWmIwdJ1DLP_2akQ&s" class="card-img-top" alt="Placeholder">
-        <div class="card-body">
-            <h5 class="card-title">{{ event.nama }}</h5>
-            <p class="card-text">{{ event.deskripsi }}</p>
-            <div class="d-flex flex-fill">
-                <span class="tag">{{ event.tanggal }}</span>
-                <span class="tag">{{ event.lokasi }}</span>
-            </div>
-            <a href="#" class="btn btn-primary">Daftar</a>
-            <a href="{% url 'event:edit_event' event.pk %}" class="btn btn-primary">Edit</a>
-            <a href="#" class="btn btn-primary">Delete</a>
+<div class=" container text-bg-black mx-3 mt-3 w-100 d-flex flex-column justify-content-center position-relative" style="background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url('https://www.jnjbatik.com/wp-content/uploads/2016/11/kamu-tahu-apa-itu-batik-tulis.jpg') center center; height: 10rem; border-radius: 10px;">
+        <h1 class="text-light font-family-Fabled" style="font-size: 2.5rem;">Workshop Batik Tulis</h1>
+        <div class="text-light d-flex align-items-center gap-1">
+            <img src="{% static 'images/calendar-range.svg' %}" style="width: 1rem; filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);">
+            Selasa, 5 November 2024
         </div>
+        <div class="text-light d-flex align-items-center gap-1">
+            <img src="{% static 'images/map-marker-outline.svg' %}" style="width: 1rem; filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);">
+            Balai Budaya Pekalongan
+        </div>
+
+        <div class="position-absolute d-flex align-items-center gap-3" style="right: 10px; top: 15px;">
+            <a href=""><img src="{% static 'images/edit_icon.svg' %}"></a>
+            <a class="btn btn-primary" style="width: 8rem; background-color: #D88E30 !important; border: 0px solid black;" href="#">Daftar</a>
+        </div>
+</div>
+
+<div class="d-flex flex-column justify-content-center mx-2 mt-5 w-100 container">
+    <div class="d-flex align-items-center vw-auto mb-5">
+        <h1 class="flex-grow-1 font-family-Fabled" style="font-size: 2.5rem;">Event Batik</h1>
+        <a href="{% url 'event:create_event' %}" class="btn" style="border: 2px solid #D88E30; color: #D88E30;">
+            Tambah Event
+        </a>
     </div>
-    {% endfor %}
+
+    {% if not events %}
+    <p>No data</p>
+    {% else %}
+    <div class="d-flex gap-3 ">
+        {% for event in events %}
+        <div class="card" style="width: 32rem;">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNoKfjbJuH_h1cwBxBFCWmIwdJ1DLP_2akQ&s" class="card-img-top" alt="Placeholder">
+            <div class="card-body d-flex flex-column gap-1">
+                <div class="card-title"><b>{{ event.nama }}</b></div>
+                <p class="card-text">{{ event.deskripsi }}</p>
+                <div class="d-flex flex-fill gap-1">
+                    <span class="tag d-flex align-items-center gap-1 px-2">
+                        <img src="{% static 'images/calendar-range.svg' %}" style="width: 15px;">
+                        {{ event.tanggal }}
+                    </span>
+                    <span class="tag d-flex align-items-center gap-1 px-2">
+                        <img src="{% static 'images/map-marker-outline.svg' %}" style="width: 15px;">
+                        {{ event.lokasi }}
+                    </span>
+                </div>
+                <a href="#" class="btn btn-primary form-control" style="background-color: #D88E30 !important; border: 0px solid black;">Daftar</a>
+            </div>
+            <a href="{% url 'event:edit_event' event.pk %}" class="position-absolute" style="right: 68px; top: 10px;"><img src="{% static 'images/edit_icon.svg' %}"></a>
+            <a href="{% url 'event:delete_event' event.pk %}" class="position-absolute" style="right: 10px; top: 10px;"><img src="{% static 'images/delete_icon.svg' %}"></a>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endif %}
 

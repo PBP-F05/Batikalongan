@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
+from django.shortcuts import reverse
 from .models import Event
 from .forms import EventForm
 
@@ -28,3 +30,8 @@ def edit_event(request, id):
 
     context = { "form": form }
     return render(request, "edit_event.html", context)
+
+def delete_event(request, id):
+    event = Event.objects.get(pk = id)
+    event.delete()
+    return HttpResponseRedirect(reverse('event:show_event'))
