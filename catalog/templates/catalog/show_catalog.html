@@ -38,7 +38,7 @@
         <section>
           <div class="flex justify-between items-center">
             <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Toko Batik</div>
-            {% if request.user.is_authenticated and request.user.role == "atmin" %}
+            {% if request.user.is_authenticated and request.user.role == "admin" %}
             <button
               onclick="openAddStoreModal()"
               class="bg-orange-500 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-600 transition"
@@ -47,7 +47,7 @@
             </button>
             {% endif %}
           </div>
-          <div class="flex items-center space-x-4 relative">
+          <div class="flex justify-between items-center space-x-4 relative">
             <!-- Scroll Button Left -->
             <button class="text-2xl absolute left-0 -ml-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 z-10">
               &lt;
@@ -58,11 +58,11 @@
                   <p class="text-center text-gray-600 mt-4">Belum ada toko pada Batikalongan.</p>
               </div>
               {% else %}
-              <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
+              <div class="columns-1 sm:columns-3 lg:columns-3 gap-6 space-y-6 w-full">
                 {% for store in stores %}
                   {% include 'catalog/card_store.html' with store=store %}
                 {% endfor %}
-            </div>
+                </div>
               {% endif %}
               </div>
               </div>
@@ -254,15 +254,15 @@ function addStore() {
               ${data.store.product_count} Produk
             </span>
           </a>`;
-        storeList.insertAdjacentHTML('beforeend', newStoreHTML);
+        // storeList.insertAdjacentHTML('beforeend', newStoreHTML);
 
         closeAddStoreModal();
       } else {
         alert("Gagal menambahkan toko. Silakan coba lagi.");
       }
     })
-    .catch((error) => {
-      console.error("Error:", error);
+    .catch((e) => {
+      console.log("Error:", e);  
       alert("Terjadi kesalahan. Silakan coba lagi.");
     });
 }
