@@ -1,26 +1,24 @@
 import json
-import uuid
 import os
 from django.core.management.base import BaseCommand
-from django.conf import settings
 from catalog.models import Store, Product
 
 class Command(BaseCommand):
-    help = 'Import store and product data from a JSON file in STATIC_ROOT'
+    help = 'Import store and product data from a JSON file in the static directory'
 
     def add_arguments(self, parser):
         parser.add_argument(
             'json_file', 
             type=str, 
-            help="Path to the JSON file relative to STATIC_ROOT, e.g., 'batik_huza.json'"
+            help="File name of the JSON file located in the static directory, e.g., 'batik_huza.json'"
         )
 
     def handle(self, *args, **options):
-        # Construct the full path to the file in STATIC_ROOT
+        # Construct the full path to the file in the 'static' directory
         relative_path = options['json_file']
-        json_file_path = os.path.join(settings.STATIC_ROOT, relative_path)
+        json_file_path = os.path.join('static', relative_path)  # Reference static directly
 
-        # Check if the file exists in STATIC_ROOT
+        # Check if the file exists
         if not os.path.exists(json_file_path):
             self.stdout.write(self.style.ERROR(f"File not found: {json_file_path}"))
             return
@@ -40,7 +38,7 @@ class Command(BaseCommand):
             return
 
         store, created = Store.objects.update_or_create(
-            id=uuid.UUID(store_data.get('id')),
+            id=store_data.get('id'),
             defaults={
                 'name': store_data.get('name'),
                 'address': store_data.get('address'),
@@ -53,7 +51,7 @@ class Command(BaseCommand):
         products_data = data.get('products', [])
         for product_data in products_data:
             product, created = Product.objects.update_or_create(
-                id=uuid.UUID(product_data.get('id')),
+                id=product_data.get('id'),
                 defaults={
                     'name': product_data.get('name'),
                     'price': product_data.get('price'),
