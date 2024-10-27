@@ -58,6 +58,16 @@
                 <input type="number" id="product-price" placeholder="Price" required class="border p-2 mb-2 w-full">
                 <textarea id="product-description" placeholder="Description" required class="border p-2 mb-2 w-full"></textarea>
                 <input type="text" id="product-ia-url" placeholder="Image URL" required class="border p-2 mb-2 w-full">
+                <div id="uploadPhotoModal" class="modal">
+                    <div class="modal-content">
+                      <span class="close">&times;</span>
+                      <h2>Upload Profile Photo</h2>
+                      <form id="uploadPhotoForm" enctype="multipart/form-data">
+                        <input type="file" id="product-image" name="photo" accept="image/*" required>
+                        <button type="submit">Upload</button>
+                      </form>
+                    </div>
+                  </div>
                 <div class="flex justify-end space-x-2 mt-4">
                     <button type="button" onclick="closeProductModal()" class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded">Cancel</button>
                     <button type="button" onclick="addProduct(this)" data-store-id="{{ store.id }}" class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">Add Product</button>
@@ -237,7 +247,7 @@ function getCookie(name) {
         name: document.getElementById('product-name').value,
         price: document.getElementById('product-price').value,
         description: document.getElementById('product-description').value,
-        image_url: document.getElementById('product-image-url').value
+        image_url: document.getElementById('product-image').files[0],
     };
 
     fetch(`/catalog/store/${storeId}/add_product_to_store/`, {

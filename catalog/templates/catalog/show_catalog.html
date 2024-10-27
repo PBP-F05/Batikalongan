@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
 {{ store.name }} - Store Details
 {% endblock title %}
@@ -30,36 +30,39 @@
     <body class="bg-gray-50">
       {% include "navbar.html" %}
       <!-- Main Content -->
-      <main class="container mx-auto py-8">
+      <div class="container mx-auto py-8">
+        <div style="width: 100%; height: 100%; position: relative">
+          <div style="width: 9.75px; height: 19.50px; left: 14.62px; top: 9.75px; position: absolute; border: 3.25px black solid"></div>
+        </div>
         <!-- Toko Batik Section -->
         <section>
           <div class="flex justify-between items-center">
             <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Toko Batik</div>
-            {% if request.user.is_authenticated and request.user.role == "atmin" %}
+            {% if request.user.is_authenticated and request.user.role == "admin" %}
             <button
               onclick="openAddStoreModal()"
-              class="bg-orange-500 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-600 transition"
+              class="h-[46px] px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 inline-flex"
             >
-              Tambah Toko
+              <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">Tambah Toko</div>
             </button>
             {% endif %}
           </div>
-          <div class="flex items-center space-x-4 relative">
+          <div class="flex justify-between items-center space-x-4 relative w-full">
             <!-- Scroll Button Left -->
             <button class="text-2xl absolute left-0 -ml-10 p-2 bg-white rounded-full shadow hover:bg-gray-200 z-10">
               &lt;
             </button>
-            <div class="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-6 border border-gray-200 transform hover:scale-105 transition">
+            <div class="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-6 border border-gray-200">
               {% if not stores %}
               <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
                   <p class="text-center text-gray-600 mt-4">Belum ada toko pada Batikalongan.</p>
               </div>
               {% else %}
-              <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
+              <div class="columns-1 sm:columns-3 lg:columns-3 gap-6 space-y-6 w-full">
                 {% for store in stores %}
                   {% include 'catalog/card_store.html' with store=store %}
                 {% endfor %}
-            </div>
+                </div>
               {% endif %}
               </div>
               </div>
@@ -193,20 +196,7 @@
       </div>
 
 
-      <!-- Footer -->
-      <footer class="bg-orange-500 text-white py-8">
-        <div class="container mx-auto text-center">
-          <div class="text-2xl font-bold mb-4">Batikalongan</div>
-          <p>© 2024 Batikalongan</p>
-          <div class="flex justify-center space-x-4 mt-4">
-            <a class="text-white" href="#"><i class="fab fa-facebook-f"></i></a>
-            <a class="text-white" href="#"><i class="fab fa-tiktok"></i></a>
-            <a class="text-white" href="#"><i class="fab fa-instagram"></i></a>
-            <a class="text-white" href="#"><i class="fab fa-twitter"></i></a>
-          </div>
-        </div>
-      </footer>
-
+      {% include "footer.html" %}
       <!-- Scripts -->
       <script>
 function openAddStoreModal() {
@@ -264,19 +254,79 @@ function addStore() {
               ${data.store.product_count} Produk
             </span>
           </a>`;
-        storeList.insertAdjacentHTML('beforeend', newStoreHTML);
+        // storeList.insertAdjacentHTML('beforeend', newStoreHTML);
 
         closeAddStoreModal();
       } else {
         alert("Gagal menambahkan toko. Silakan coba lagi.");
       }
     })
-    .catch((error) => {
-      console.error("Error:", error);
+    .catch((e) => {
+      console.log("Error:", e);  
       alert("Terjadi kesalahan. Silakan coba lagi.");
     });
 }
+
+function renderPaginationControls(data, page) {
+            let paginationControls = '<div class="pagination-controls flex border border-[#D88E30] rounded-lg overflow-hidden">';
+    
+            // Previous button
+            if (data.has_previous) {
+                paginationControls += `
+                    <a href="#" onclick="refreshGalleryEntries(${page - 1}); return false;" class="px-3 py-2 bg-white text-[#D88E30] font-semibold flex items-center border-r border-[#D88E30]">
+                        <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
+                        Previous
+                    </a>
+                `;
+            } else {
+                paginationControls += `
+                    <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold flex items-center border-r border-[#D88E30]">
+                        <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
+                        Previous
+                    </span>
+                `;
+            }
+    
+            // Page numbers with highlighted current page
+            for (let num = 1; num <= data.num_pages; num++) {
+                if (num === page) {
+                    paginationControls += `
+                        <span class="px-3 py-2 bg-[#D88E30] text-white font-semibold">${num}</span>
+                    `;
+                } else {
+                    paginationControls += `
+                        <a href="#" onclick="refreshGalleryEntries(${num}); return false;" class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l border-[#D88E30]">${num}</a>
+                    `;
+                }
+            }
+    
+            // Next button
+            if (data.has_next) {
+                paginationControls += `
+                    <a href="#" onclick="refreshGalleryEntries(${page + 1}); return false;" class="px-3 py-2 bg-white text-[#D88E30] font-semibold flex items-center border-l border-[#D88E30]">
+                        Next
+                        <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
+                    </a>
+                `;
+            } else {
+                paginationControls += `
+                    <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold flex items-center border-l border-[#D88E30]">
+                        Next
+                        <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
+                    </span>
+                `;
+            }
+    
+            paginationControls += '</div>';
+            document.getElementById("pagination-controls").innerHTML = paginationControls;
+        }
+    
+        // Initialize the gallery with the current page from the URL
+        refreshGalleryEntries();
+
+
       </script>
     </body>
   </html>
+  
   {% endblock content %}

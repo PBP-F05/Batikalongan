@@ -10,12 +10,14 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from .models import GalleryEntry
+from .decorators import admin_required
 
 # Fungsi untuk menampilkan galeri dengan pagination
 def show_gallery(request):
     return render(request, "gallery.html")
     
 # Fungsi untuk menambah entri galeri
+@admin_required
 def add_gallery_entry(request):
     if request.method == 'POST':
         form = GalleryEntryForm(request.POST, request.FILES)
@@ -27,6 +29,7 @@ def add_gallery_entry(request):
     return render(request, 'add_gallery_entry.html', {'form': form})
 
 # Fungsi untuk mengedit entri galeri
+@admin_required
 def edit_gallery_entry(request, id):
     entry = get_object_or_404(GalleryEntry, id=id)
     if request.method == 'POST':
@@ -78,10 +81,8 @@ def show_gallery_json(request):
         "num_pages": paginator.num_pages,
     })
 
-def is_admin(user):
-    return user.is_authenticated and user.is_admin
 
-@user_passes_test(is_admin)
+@admin_required
 def delete_gallery_entry(request, id):
     try:
         entry = get_object_or_404(GalleryEntry, id=id)
@@ -93,7 +94,7 @@ def delete_gallery_entry(request, id):
 
 @csrf_exempt
 @require_POST
-@user_passes_test(is_admin)
+@admin_required
 def add_gallery_entry_ajax(request):
     nama_batik = request.POST.get("nama_batik")
     deskripsi = request.POST.get("deskripsi")
@@ -115,7 +116,7 @@ def add_gallery_entry_ajax(request):
 
 @csrf_exempt
 @require_POST
-@user_passes_test(is_admin)
+@admin_required
 def edit_gallery_entry_ajax(request, id):
     entry = get_object_or_404(GalleryEntry, id=id)
     nama_batik = request.POST.get("nama_batik")
