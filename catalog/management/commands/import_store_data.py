@@ -1,26 +1,28 @@
 import json
 import uuid
+import os
 from django.core.management.base import BaseCommand
-from django.contrib.staticfiles.finders import find
+from django.conf import settings
 from catalog.models import Store, Product
 
 class Command(BaseCommand):
-    help = 'Import store and product data from a JSON file located in the static directory'
+    help = 'Import store and product data from a JSON file in STATIC_ROOT'
 
     def add_arguments(self, parser):
         parser.add_argument(
             'json_file', 
             type=str, 
-            help="Relative path to the JSON file within the static directory, e.g., 'json/batik_huza.json'"
+            help="Path to the JSON file relative to STATIC_ROOT, e.g., 'batik_huza.json'"
         )
 
     def handle(self, *args, **options):
-        # Locate the file within static files
+        # Construct the full path to the file in STATIC_ROOT
         relative_path = options['json_file']
-        json_file_path = find(relative_path)  # Locate the file in static
+        json_file_path = os.path.join(settings.STATIC_ROOT, relative_path)
 
-        if not json_file_path:
-            self.stdout.write(self.style.ERROR(f"File not found in static files: {relative_path}"))
+        # Check if the file exists in STATIC_ROOT
+        if not os.path.exists(json_file_path):
+            self.stdout.write(self.style.ERROR(f"File not found: {json_file_path}"))
             return
 
         # Load the JSON data
@@ -31,40 +33,38 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR("Invalid JSON format"))
             return
 
-        # Extract store information
+        # Process store and product data as usual
         store_data = data.get('store')
         if not store_data:
             self.stdout.write(self.style.ERROR("Missing 'store' data in JSON"))
             return
 
-        # Create or update the Store object without altering the image path
         store, created = Store.objects.update_or_create(
-            id=uuid.UUID(store_data.get('id')),  # Use the UUID from JSON
+            id=uuid.UUID(store_data.get('id')),
             defaults={
                 'name': store_data.get('name'),
                 'address': store_data.get('address'),
                 'product_count': store_data.get('product_count'),
-                'image': store_data.get('image')  # Directly set the path from JSON
+                'image': store_data.get('image')
             }
         )
         
-        # Insert products without altering the image path
+        # Insert products
         products_data = data.get('products', [])
         for product_data in products_data:
-            # Create each product and associate it with the store
             product, created = Product.objects.update_or_create(
-                id=uuid.UUID(product_data.get('id')),  # Use UUID from JSON
+                id=uuid.UUID(product_data.get('id')),
                 defaults={
                     'name': product_data.get('name'),
                     'price': product_data.get('price'),
                     'description': product_data.get('description'),
-                    'image': product_data.get('image'),  # Directly set the path from JSON
+                    'image': product_data.get('image'),
                     'store': store
                 }
             )
-        
-        # Update store's product count based on actual product entries
+
+        # Update store's product count
         store.product_count = store.product_set.count()
         store.save()
 
-        self.stdout.write(self.style.SUCCESS(f"Data imported successfully from static file: {relative_path}"))
+        self.stdout.write(self.style.SUCCESS(f"Data imported successfully from file: {relative_path}"))
