@@ -14,6 +14,40 @@ import json
 import logging
 from django.views.decorators.http import require_http_methods
 from.decorators import admin_required
+from flask import Flask, jsonify, request
+
+app = Flask(__name__)
+
+# Data toko dummy untuk contoh
+stores_data = [
+    # Berikan data toko sesuai dengan yang dibutuhkan (contoh gambar, nama, alamat, jumlah produk)
+]
+
+# @app.route('/getStores', methods=['GET'])
+# def get_stores(request):
+#     page = int(request.GET.get('page', 1))
+#     entries = Store.objects.all()
+#     paginator = Paginator(entries, 3)  # 3 entries per page
+#     page_obj = paginator.get_page(page)
+
+#     data = serializers.serialize("json", page_obj.object_list)
+
+#     # Return data along with pagination details
+#     return JsonResponse({
+#         "entries": data,
+#         "has_next": page_obj.has_next(),
+#         "has_previous": page_obj.has_previous(),
+#     })
+
+@app.route('/getStores', methods=['GET'])
+def get_stores():
+    page = int(request.args.get('page', 1))
+    per_page = 3  # Tampilkan 3 toko per halaman
+    start = (page - 1) * per_page
+    end = start + per_page
+    stores = stores_data[start:end]
+    return jsonify({'stores': stores})
+
 
 def show_catalog(request):
     price_filter = request.GET.get('price_filter')
@@ -104,27 +138,45 @@ def create_store(request):
         return JsonResponse({"error": str(e)}, status=500)
     
 @admin_required
+@require_http_methods(["GET", "POST"])
 def edit_store(request, store_id):
-    if request.method == 'GET':
-        try:
-            store = Store.objects.get(id=store_id)
-            return JsonResponse({
-                'store': {
-                    'name': store.name,
-                    'address': store.address,
-                    'product_count': store.product_count
-                }
-            })
-        except Store.DoesNotExist:
-            return JsonResponse({'error': 'Store not found'}, status=404)
-    elif request.method == 'POST':
-        data = json.loads(request.body)
+    try:
         store = Store.objects.get(id=store_id)
-        store.name = data['name']
-        store.address = data['address']
-        store.product_count = data['product_count']
-        store.save()
-        return JsonResponse({'message': 'Store updated successfully'})
+    except Store.DoesNotExist:
+        return JsonResponse({'error': 'Store not found'}, status=404)
+
+    if request.method == 'GET':
+        # Mengirim data toko dalam JSON sebagai respons GET
+        return JsonResponse({
+            'store': {
+                'name': store.name,
+                'address': store.address,
+                'product_count': store.product_count
+            }
+        })
+
+    elif request.method == 'POST':
+        try:
+            # Periksa apakah ada file yang diunggah
+            if 'foto' in request.FILES:
+                store.image = request.FILES['foto']
+            
+            # Ambil data dari request.POST (FormData)
+            store.name = request.POST.get('name', store.name)
+            store.address = request.POST.get('address', store.address)
+            product_count = request.POST.get('product_count')
+            
+            # Validasi product_count agar merupakan bilangan bulat positif
+            if product_count.isdigit() and int(product_count) > 0:
+                store.product_count = int(product_count)
+            else:
+                return JsonResponse({'error': 'Total Produk harus berupa bilangan bulat positif.'}, status=400)
+
+            store.save()
+            return JsonResponse({'message': 'Store updated successfully'})
+        
+        except Exception as e:
+            return JsonResponse({'error': f'Gagal memperbarui store: {str(e)}'}, status=500)
 
 @csrf_exempt
 @require_POST
