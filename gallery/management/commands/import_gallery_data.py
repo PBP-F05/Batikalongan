@@ -2,7 +2,7 @@ import json
 import os
 import uuid
 from django.core.management.base import BaseCommand
-from catalog.models import GalleryEntry
+from gallery.models import GalleryEntry
 
 class Command(BaseCommand):
     help = 'Import gallery data from a JSON file in the static directory'
