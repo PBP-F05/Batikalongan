@@ -32,28 +32,35 @@
             </div>
         </div>
 
-        <!-- Edit Button (Styled according to the new design) -->
-        <div onclick="openEditStoreModal('{{ store.id }}')" class="px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 flex cursor-pointer">
+        {% if request.session.is_admin %}
+        <div onclick="openEditStoreModal('{{ store.id }}')" class="px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 flex cursor-pointer hover:scale-105 transition">
             <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">
                 Edit
             </div>
         </div>
+        {% endif %}
     </div>
 
+    {% if request.session.is_admin %}
     <!-- Delete Button -->
     <div class="flex justify-end mt-4">
-        <button onclick="deleteStore('{{ store.id }}')" class="bg-red-500 text-white px-4 py-2 rounded">
+        <button onclick="deleteStore('{{ store.id }}')" class="bg-red-500 text-white px-4 py-2 rounded hover:scale-105 transition">
             Delete Store
         </button>
     </div>
-        <!-- Add New Product Button -->
-    <div class="h-[46px] flex-col justify-center items-end gap-2.5 inline-flex mt-4">
-        <div onclick="openProductModal()" class="px-5 py-3 rounded-lg border-2 border-[#d88e30] cursor-pointer justify-center items-center gap-2.5 inline-flex">
+    {% endif %}
+
+
+    {% if request.session.is_admin %}
+    <!-- Add New Product Button -->
+    <div class="h-[46px] flex-col justify-center items-end gap-2.5 inline-flex mt-4 hover:scale-105">
+        <div onclick="openProductModal()" class="px-5 py-3 rounded-lg border-2 border-[#d88e30] cursor-pointer justify-center items-center gap-2.5 inline-flex hover:scale-120 transition">
             <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">
                 Tambah Produk
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
 
 
@@ -255,12 +262,33 @@
         } else {
             products.forEach((item) => {
                 const imagePath = item.fields.image;
+                const productId = item.pk;
+                const productName = item.fields.name
                 htmlString += `
-                    <div class="border rounded-lg shadow-md p-4 flex flex-col">
-                        <img src="${imagePath}" alt="${item.fields.name}" 
-                             class="w-full h-48 object-cover rounded-md mb-4">
+                    <div class="border rounded-lg shadow-md p-4 flex flex-col hover:scale-105 transition">
+                        <img src="${imagePath}" alt="${item.fields.name}" class="w-full h-48 object-cover rounded-md mb-4">
+                        {% if request.session.is_admin %}
+                        <div class="absolute top-4 right-4 flex items-center space-x-2 z-10">
+                            <!-- Delete button opens the delete confirmation modal via JavaScript -->
+                            <button 
+                                class="text-red-500 hover:text-red-600"
+                                data-entry-id="${productId}" 
+                                data-entry-name="${productName}" 
+                                onclick="deleteProduct(this)">
+                                <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="h-10 w-10" />
+                            </button>
+
+                            <!-- Edit button opens the edit modal via JavaScript -->
+                            <button 
+                                class="text-yellow-500 hover:text-yellow-600"
+                                data-entry-id="${productId}" 
+                                onclick="openEditModal(this)">
+                                <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="h-10 w-10" />
+                            </button>
+                        </div>
+                        {% endif %}
                         <h2 class="text-xl font-semibold">${item.fields.name}</h2>
-                        <p class="text-gray-700">${item.fields.description}</p>
+                        <p class="text-gray-700">${item.fields.storeId}</p>
                         <p class="text-lg font-bold mt-2">Rp ${item.fields.price.toLocaleString()}</p>
                     </div>`;
             });
@@ -527,8 +555,9 @@ function openEditModal(productId) {
                 document.getElementById('edit-product-id').value = productId;
                 document.getElementById('edit-product-name').value = data.name;
                 document.getElementById('edit-product-price').value = data.price;
-                document.getElementById('edit-product-description').value = data.description;
                 document.getElementById('editProductModal').classList.remove('hidden');
+                document.getElementById('foto').files[0].value = data.imagePath;
+
             })
             .catch(error => console.error('Error:', error));
     }
@@ -541,7 +570,6 @@ function openEditModal(productId) {
         const productId = document.getElementById('edit-product-id').value;
         const name = document.getElementById('edit-product-name').value;
         const price = document.getElementById('edit-product-price').value;
-        const description = document.getElementById('edit-product-description').value;
         const imageFile = document.getElementById('edit-product-image').files[0];
 
         const formData = new FormData();
