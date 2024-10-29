@@ -7,9 +7,9 @@
 
 {% block content %}
 {% include "navbar.html" %}
-<div class="overflow-x-hidden px-4 md:px-8 pb-8 pt-6 min-h-screen bg-white flex flex-col">
+<div class="overflow-x-hidden px-4 md:px-8 pb-8 pt-24 min-h-screen bg-white flex flex-col">
     <!-- Wrapper untuk judul dan tombol tambah -->
-    <div class="flex items-center justify-between w-full mb-6">
+    <div class="flex items-center justify-between w-full max-w-7xl mx-auto mb-6">
         <h1 class="font-family-Fabled text-left text-black" style="font-size: 40px; font-weight: 400; line-height: 60px;">
             Galeri Batik
         </h1>
@@ -133,7 +133,11 @@
                 <button type="submit" id="submitEditGalleryEntry" form="editGalleryEntryForm" class="bg-[#D88E30] hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg">Save Changes</button>
             </div>
         </div>
-    </div>    
+    </div>
+    
+
+    
+    
 
     <script>
         // Function to get query parameter from URL
@@ -481,8 +485,7 @@ document.getElementById("editGalleryEntryForm").addEventListener("submit", (e) =
     submitEditGalleryEntry();
 });
       </script>
-
-{% include "footer.html" %}
+      
 {% endblock content %}
 
 
