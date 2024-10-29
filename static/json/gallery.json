@@ -1,0 +1,34 @@
+[
+    {
+        "id": "79ff809e-dd07-4258-9257-92dab834a810",
+        "nama_batik": "Batik Pesisir",
+        "deskripsi": "Cerah dan penuh warna, batik pesisir menampilkan kombinasi motif flora, fauna, dan unsur laut. Setiap pola seperti menceritakan tentang kehidupan dinamis para pelaut yang tinggal di pesisir utara Jawa.",
+        "asal_usul": "Berasal dari wilayah pesisir utara Jawa, seperti Pekalongan dan Lasem, yang menjadi pusat perdagangan dan pertukaran budaya.",
+        "makna": "Melambangkan keterbukaan terhadap budaya asing dan kebebasan berkreasi tanpa batasan.",
+        "foto": "gallery/batik_images/79ff809e-dd07-4258-9257-92dab834a810.jpeg"
+    },
+    {
+        "id": "15248753-8eb9-401d-98b2-84b6a7865c1f",
+        "nama_batik": "Batik Lasem",
+        "deskripsi": "Kaya akan warna merah dan corak flora, batik Lasem terkenal dengan gradasi warna yang memukau. Motif ini kerap menggambarkan bunga atau burung phoenix, yang melambangkan kemakmuran.",
+        "asal_usul": "Berasal dari Lasem, Jawa Tengah, yang menjadi persimpangan budaya Jawa dan Tiongkok sejak abad ke-15.",
+        "makna": "Lambang keberanian dan semangat hidup yang menyala-nyala, serta penghormatan pada keindahan alam.",
+        "foto": "gallery/batik_images/15248753-8eb9-401d-98b2-84b6a7865c1f.jpeg"
+    },
+    {
+        "id": "dd16c293-f332-4348-bc8f-c21b5e4018ed",
+        "nama_batik": "Batik Sudagaran",
+        "deskripsi": "Dengan motif yang lebih rumit dan berwarna-warni, batik Sudagaran dibuat untuk memenuhi selera saudagar kaya yang menginginkan sesuatu yang berbeda dan lebih mewah.",
+        "asal_usul": "Berasal dari Solo dan Yogyakarta, batik ini dirancang oleh pengrajin untuk kalangan saudagar yang menginginkan motif yang unik dan mewah.",
+        "makna": "Simbol kekayaan, kemakmuran, dan status sosial tinggi",
+        "foto": "gallery/batik_images/dd16c293-f332-4348-bc8f-c21b5e4018ed.png"
+    },
+    {
+        "id": "4826b7a2-48d3-498a-9618-ed43ded568ef",
+        "nama_batik": "Batik Modang",
+        "deskripsi": "Motif modang menghadirkan pola daun yang teratur dan sederhana, namun penuh makna. Setiap detail dalam motif ini menyiratkan ketenangan dan ketabahan dalam menghadapi kehidupan.",
+        "asal_usul": "Ditemukan di Yogyakarta dan Solo, batik ini sering digunakan dalam acara keagamaan atau pernikahan.",
+        "makna": "Melambangkan keuletan dan ketahanan, layaknya daun yang selalu bertahan meski menghadapi berbagai musim.",
+        "foto": "gallery/batik_images/4826b7a2-48d3-498a-9618-ed43ded568ef.jpg"
+    }
+]
