@@ -94,7 +94,7 @@
         <div id="pagination-controls" class="flex justify-center space-x-2 mt-4"></div>
     
         <!-- Tempat untuk menampilkan daftar produk dengan AJAX -->
-        <div id="gallery_entry_cards" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+        <div id="card_store" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
         
         <div id="pagination-controls" class="flex justify-center space-x-2 mt-4"></div>
       </main>
@@ -294,8 +294,9 @@ function getQueryParam(param) {
 
         if (data.stores && data.stores.length > 0) {
           data.stores.forEach(store => {
-            const storeHTML = `
-              <div class="rounded-[20px] border border-[#d9d9d9] p-4">
+            let storeHTML = `
+            
+              <div class="rounded-[20px] border border-[#d9d9d9] p-4 hover:scale-105 transition">
                 <img src="${store.image_url}" alt="${store.name}" class="rounded-lg w-full mb-4">
                 <h3 class="text-lg font-semibold">${store.name}</h3>
                 <p class="text-sm text-gray-600">${store.address}</p>

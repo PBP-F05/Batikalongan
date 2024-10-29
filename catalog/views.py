@@ -182,7 +182,7 @@ def edit_store(request, store_id):
             'store': {
                 'name': store.name,
                 'address': store.address,
-                'product_count': store.product_count
+                'product_count': store.product_count,
             }
         })
 
@@ -195,8 +195,7 @@ def edit_store(request, store_id):
             # Ambil data dari request.POST (FormData)
             store.name = request.POST.get('name', store.name)
             store.address = request.POST.get('address', store.address)
-            product_count = request.POST.get('product_count')
-            
+            product_count = request.POST.get('product_count', store.product_count)
             # Validasi product_count agar merupakan bilangan bulat positif
             if product_count.isdigit() and int(product_count) > 0:
                 store.product_count = int(product_count)
