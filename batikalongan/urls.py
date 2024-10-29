@@ -32,7 +32,8 @@ urlpatterns = [
     path('timeline/', include('timeline.urls')),
     path('event/', include('event.urls')),
     path('', include('main.urls')),
-] + re_path(r'^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
+re_path(r'^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
+] 
 
 # # Ini digunakan untuk development mode
 # if settings.DEBUG:
