@@ -231,7 +231,7 @@
     }
 
     // Inisialisasi halaman saat ini
-    let currentPage = getQueryParam("page");
+    let thisPage = getQueryParam("page");
 
     // Fungsi untuk mengambil data produk
     async function getProducts(page = 1) {
@@ -242,14 +242,14 @@
     }
 
     // Fungsi untuk memperbarui tampilan produk dan pagination
-    async function refreshProducts(page = currentPage) {
-        currentPage = page;
+    async function refreshProducts(page = thisPage) {
+        thisPage = page;
         document.getElementById("product_cards").innerHTML = "";
 
         // Update URL tanpa reload
-        window.history.replaceState(null, null, `?page=${currentPage}`);
+        window.history.replaceState(null, null, `?page=${thisPage}`);
 
-        const data = await getProducts(currentPage);
+        const data = await getProducts(thisPage);
         const products = data.products;
 
         let htmlString = "";
@@ -297,7 +297,7 @@
         document.getElementById("product_cards").innerHTML = htmlString;
 
         // Render kontrol pagination
-        renderPaginationControls(data, currentPage);
+        renderPaginationControls(data, thisPage);
     }
 
     // Fungsi untuk menampilkan kontrol pagination

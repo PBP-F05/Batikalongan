@@ -124,7 +124,6 @@ logger = logging.getLogger(__name__)  # untuk debugging
 
 @require_POST
 @login_required
-@admin_required
 def create_store(request):
     try:
         # Get data from request.POST and request.FILES
@@ -211,7 +210,6 @@ def edit_store(request, store_id):
 @csrf_exempt
 @require_POST
 @login_required
-@admin_required
 def delete_store(request, store_id):
     store = get_object_or_404(Store, id=store_id)
 
