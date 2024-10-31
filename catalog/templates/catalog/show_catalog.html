@@ -58,7 +58,7 @@
                   <p class="text-center text-gray-600 mt-4">Belum ada toko pada Batikalongan.</p>
                 </div>
               {% else %}
-                <div id="store-content" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6 space-y-6 w-full">
+                <div id="store-content" class="grid grid-cols-1 lg:grid-cols-3 w-full">
                   {% for store in stores %}
                     {% include 'catalog/card_store.html' with store=store %}
                   {% endfor %}
@@ -85,9 +85,12 @@
               <p class="text-center text-gray-600 mt-4">Belum ada produk pada Batikalongan.</p>
             </div>
             {% else %}
+            {% for product in products %}
+            {% include 'catalog/card_product.html' %}
           <div id="product_cards" class="grid grid-cols-4 gap-6 mb-8"></div>
           <div id="pagination-controls" class="flex justify-center mt-8"></div>
-              {% endif %}
+            {% endfor %}
+            {% endif %}
           </div>
         </section>
         <div id="gallery_entry_cards" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
