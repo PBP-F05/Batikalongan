@@ -5,6 +5,8 @@
 {% endblock title %}
 
 {% block content %}
+{% include "navbar.html" %}
+
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -28,16 +30,15 @@
     </head>
 
     <body class="bg-gray-50">
-      {% include "navbar.html" %}
       <!-- Main Content -->
       <div class="container mx-auto py-8">
         <div style="width: 100%; height: 100%; position: relative">
           <div style="width: 9.75px; height: 19.50px; left: 14.62px; top: 9.75px; position: absolute; border: 3.25px black solid"></div>
         </div>
-      <!-- Toko Batik Section -->
+      <!-- Store Section with Pagination -->
       <section>
         <div class="flex justify-between items-center">
-          <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Toko Batik</div>
+          <div style="color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px;">Toko Batik</div>
           {% if request.session.is_admin %}
           <button onclick="openAddStoreModal()" class="h-[46px] px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 inline-flex">
             <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">Tambah Toko</div>
@@ -45,57 +46,60 @@
           {% endif %}
         </div>
 
-        <div class="flex justify-between items-center space-x-4 relative w-full mt-4">
+        <div class="relative w-full mt-4">
           <!-- Scroll Button Left -->
-          <button id="prev-page" class="text-gray-500 px-3 py-2 rounded-full border border-gray-300 hover:bg-gray-200">
-            &lt;
+          <button id="scroll-left" class="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
 
-          <div class="bg-white p-6 rounded-xl shadow-lg flex items-center space-x-6 border border-gray-200 w-full">
-            <div id="store-container" class="flex space-x-4 w-full overflow-hidden">
-              {% if not stores %}
-                <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
-                  <p class="text-center text-gray-600 mt-4">Belum ada toko pada Batikalongan.</p>
+          <!-- Store Container -->
+          <div class="overflow-hidden mx-12">
+            <div id="store-slider" class="flex gap-4 transition-transform duration-300 ease-in-out">
+              {% for store in stores %}
+              <a href="{% url 'catalog:store_detail' store.id %}" class="block bg-white p-4 rounded-lg shadow-md w-80 transform hover:scale-105 transition">
+              <div class="flex-none w-72">
+                <div class="bg-white rounded-[20px] border border-[#d9d9d9] p-4 hover:scale-105 transition">
+                  <img src="{{ store.image.url }}" alt="{{ store.name }}" class="w-full h-48 object-cover rounded-lg mb-4">
+                  <h3 class="text-lg font-semibold">{{ store.name }}</h3>
+                  <p class="text-sm text-gray-600">{{ store.address }}</p>
+                  <div class="mt-2 text-sm bg-[#d88e30] text-white rounded-full px-3 py-1 inline-block">
+                    {{ store.product_count }} Produk
+                  </div>
                 </div>
-              {% else %}
-                <div id="store-content" class="grid grid-cols-1 lg:grid-cols-3 w-full">
-                  {% for store in stores %}
-                    {% include 'catalog/card_store.html' with store=store %}
-                  {% endfor %}
-                </div>
-              {% endif %}
+              </div>
+              </a>
+              {% endfor %}
             </div>
           </div>
-          
+
           <!-- Scroll Button Right -->
-          <button id="next-page" class="text-gray-500 px-3 py-2 rounded-full border border-gray-300 hover:bg-gray-200">
-            &gt;
+          <button id="scroll-right" class="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
           </button>
         </div>
       </section>
 
 
-        <!-- Produk Batik Section -->
-        <section class="mt-8">
-          <div style="width: 100%; color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px; word-wrap: break-word">Produk Batik</div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Loop through products -->
-            {% if not products %}
-            <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
-              <p class="text-center text-gray-600 mt-4">Belum ada produk pada Batikalongan.</p>
-            </div>
-            {% else %}
-            {% for product in products %}
-            {% include 'catalog/card_product.html' %}
+      <div>
+        <label>Filter by Price:</label>
+        <a href="{% url 'catalog:show_catalog' %}?price_filter=above">100,000 and above</a> |
+        <a href="{% url 'catalog:show_catalog' %}?price_filter=below">Below 100,000</a>
+        <a href="{% url 'catalog:show_catalog' %}">Show All</a>
+    </div>
+        <div class="container mx-auto py-8">
+          <!-- Produk Batik Section -->
+          <section class="mt-8">
+            <div class="h-[60px] justify-start items-start inline-flex">
+              <div class="grow shrink basis-0 text-black text-[40px] font-normal font-['Fabled'] leading-[60px]">Produk Batik</div>
+          </div>
           <div id="product_cards" class="grid grid-cols-4 gap-6 mb-8"></div>
           <div id="pagination-controls" class="flex justify-center mt-8"></div>
-            {% endfor %}
-            {% endif %}
-          </div>
-        </section>
-        <div id="gallery_entry_cards" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
-        <div id="pagination-controls" class="flex justify-center space-x-2 mt-4"></div>
-    
+          </section>
+        </div>
         <!-- Tempat untuk menampilkan daftar produk dengan AJAX -->
         <div id="card_store" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
         
@@ -173,9 +177,268 @@
       </div>
 
 
-      {% include "footer.html" %}
       <!-- Scripts -->
       <script>
+
+function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return parseInt(urlParams.get(param)) || 1;  // Default ke 1
+    }
+
+    // Inisialisasi halaman saat ini
+    let thisPage = getQueryParam("page");
+
+    // Fungsi untuk mengambil data produk
+    async function getProducts(page = 1) {
+        const url = `{% url 'catalog:product_list_json' %}?page=${page}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        return data;
+    }
+
+    // Fungsi untuk memperbarui tampilan produk dan pagination
+    async function refreshProducts(page = thisPage) {
+        thisPage = page;
+        document.getElementById("product_cards").innerHTML = "";
+
+        // Update URL tanpa reload
+        window.history.replaceState(null, null, `?page=${thisPage}`);
+
+        const data = await getProducts(thisPage);
+        const products = data.products;
+
+        let htmlString = "";
+
+        if (products.length === 0) {
+            htmlString = `
+                <div class="flex items-center justify-center min-h-[24rem]">
+                    <p class="text-gray-600 text-lg">Belum ada produk di katalog.</p>
+                </div>`;
+        } else {
+            products.forEach((item) => {
+                const imagePath = item.fields.image;
+                const productId = item.pk;
+                const productName = item.fields.name
+                htmlString += `
+                    <div class="border rounded-lg shadow-md p-4 flex flex-col hover:scale-105 transition">
+                        <img src="${imagePath}" alt="${item.fields.name}" class="w-full h-48 object-cover rounded-md mb-4">
+                        {% if request.session.is_admin %}
+                        <div class="absolute top-4 right-4 flex items-center space-x-2 z-10">
+                            <!-- Delete button opens the delete confirmation modal via JavaScript -->
+                            <button 
+                                class="text-red-500 hover:text-red-600"
+                                data-entry-id="${productId}" 
+                                data-entry-name="${productName}" 
+                                onclick="deleteProduct(this)">
+                                <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="h-10 w-10" />
+                            </button>
+
+                            <!-- Edit button opens the edit modal via JavaScript -->
+                            <button 
+                                class="text-yellow-500 hover:text-yellow-600"
+                                data-entry-id="${productId}" 
+                                onclick="openEditModal(this)">
+                                <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="h-10 w-10" />
+                            </button>
+                        </div>
+                        {% endif %}
+                        <h2 class="text-xl font-semibold">${item.fields.name}</h2>
+                        <p class="text-gray-700">${item.fields.storeId}</p>
+                        <p class="text-lg font-bold mt-2">Rp ${item.fields.price.toLocaleString()}</p>
+                    </div>`;
+            });
+        }
+
+        document.getElementById("product_cards").innerHTML = htmlString;
+
+        // Render kontrol pagination
+        renderPaginationControls(data, thisPage);
+    }
+
+    // Fungsi untuk menampilkan kontrol pagination
+    function renderPaginationControls(data, page) {
+        let controls = '<div class="flex border rounded-lg overflow-hidden">';
+
+        // Tombol Previous
+        if (data.has_previous) {
+            controls += `
+                <a href="#" onclick="refreshProducts(${page - 1}); return false;" 
+                   class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-r">
+                    <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
+                    Previous
+                </a>`;
+        } else {
+            controls += `
+                <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold border-r">
+                    <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
+                    Previous
+                </span>`;
+        }
+
+        // Nomor halaman
+        for (let num = 1; num <= data.num_pages; num++) {
+            if (num === page) {
+                controls += `<span class="px-3 py-2 bg-[#D88E30] text-white font-semibold">${num}</span>`;
+            } else {
+                controls += `
+                    <a href="#" onclick="refreshProducts(${num}); return false;" 
+                       class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l">${num}</a>`;
+            }
+        }
+
+        // Tombol Next
+        if (data.has_next) {
+            controls += `
+                <a href="#" onclick="refreshProducts(${page + 1}); return false;" 
+                   class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l">
+                    Next
+                    <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
+                </a>`;
+        } else {
+            controls += `
+                <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold border-l">
+                    Next
+                    <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
+                </span>`;
+        }
+
+        controls += '</div>';
+        document.getElementById("pagination-controls").innerHTML = controls;
+    }
+
+    // Inisialisasi tampilan produk saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => refreshProducts());
+
+document.addEventListener('DOMContentLoaded', function() {
+  const productGrid = document.getElementById('product-grid');
+  const paginationControls = document.getElementById('pagination-controls');
+  let currentPage = 1;
+
+  function loadProducts(page = 1) {
+    fetch(`/products/?page=${page}`, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Render products in the grid
+      productGrid.innerHTML = data.products.map(product => `
+        <div class="border rounded-lg p-4 shadow-md">
+          <img src="${product.image_url}" alt="${product.name}" 
+               class="w-full h-48 object-cover rounded-t-lg mb-4" />
+          <h3 class="text-lg font-semibold">${product.name}</h3>
+          <p class="text-gray-500">Rp${product.store}</p>
+          <p class="text-gray-500">Rp${product.price}</p>
+        </div>
+      `).join('');
+
+      // Render pagination controls
+      paginationControls.innerHTML = generatePagination(data.current_page, data.num_pages);
+      currentPage = data.current_page;
+    })
+    .catch(error => console.error('Error fetching products:', error));
+  }
+
+  function generatePagination(currentPage, numPages) {
+    let buttons = '';
+
+    if (currentPage > 1) {
+      buttons += `<button onclick="loadProducts(${currentPage - 1})" 
+                      class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded-md">
+                      Previous
+                  </button>`;
+    }
+
+    for (let i = 1; i <= numPages; i++) {
+      buttons += `
+        <button onclick="loadProducts(${i})" 
+                class="px-4 py-2 ${i === currentPage ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-black'} rounded-md">
+          ${i}
+        </button>`;
+    }
+
+    if (currentPage < numPages) {
+      buttons += `<button onclick="loadProducts(${currentPage + 1})" 
+                      class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded-md">
+                      Next
+                  </button>`;
+    }
+
+    return buttons;
+  }
+
+  // Load products for the first time
+  loadProducts();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const slider = document.getElementById('store-slider');
+  const scrollLeftBtn = document.getElementById('scroll-left');
+  const scrollRightBtn = document.getElementById('scroll-right');
+  const cardWidth = 288; // 272px width + 16px gap
+  const visibleCards = 3;
+  let currentPosition = 0;
+
+  // Calculate total number of stores
+  const totalStores = slider.children.length;
+  const maxPosition = Math.max(0, totalStores - visibleCards);
+
+  // Update button states
+  function updateButtonStates() {
+    scrollLeftBtn.disabled = currentPosition === 0;
+    scrollRightBtn.disabled = currentPosition >= maxPosition;
+    
+    scrollLeftBtn.style.opacity = scrollLeftBtn.disabled ? '0.5' : '1';
+    scrollRightBtn.style.opacity = scrollRightBtn.disabled ? '0.5' : '1';
+  }
+
+  // Scroll left
+  scrollLeftBtn.addEventListener('click', () => {
+    if (currentPosition > 0) {
+      currentPosition--;
+      slider.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
+      updateButtonStates();
+    }
+  });
+
+  // Scroll right
+  scrollRightBtn.addEventListener('click', () => {
+    if (currentPosition < maxPosition) {
+      currentPosition++;
+      slider.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
+      updateButtonStates();
+    }
+  });
+
+  // Initialize button states
+  updateButtonStates();
+});
+
+// Add touch support for mobile devices
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.getElementById('store-slider').addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+document.getElementById('store-slider').addEventListener('touchend', e => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const SWIPE_THRESHOLD = 50;
+  if (touchStartX - touchEndX > SWIPE_THRESHOLD) {
+    // Swipe left
+    document.getElementById('scroll-right').click();
+  } else if (touchEndX - touchStartX > SWIPE_THRESHOLD) {
+    // Swipe right
+    document.getElementById('scroll-left').click();
+  }
+}
+
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -387,8 +650,6 @@ function closeAddStoreModal() {
 }
 
 function addStore() {
-  console.log("Tombol Tambah Toko diklik");
-
   const formData = new FormData();
   formData.append("name", document.getElementById("storeName").value);
   formData.append("address", document.getElementById("storeAddress").value);
@@ -563,5 +824,5 @@ function renderPaginationControls(data, page) {
       </script>
     </body>
   </html>
-  
+  {% include "footer.html" %}
   {% endblock content %}
