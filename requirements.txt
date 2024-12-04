@@ -9,3 +9,4 @@ pillow
 django-allauth
 bs4
 flask
+django-cors-headers

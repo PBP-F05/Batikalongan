@@ -33,6 +33,7 @@ urlpatterns = [
     path('event/', include('event.urls')),
     path('', include('main.urls')),
 re_path(r'^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
+path('auth/', include('authentication.urls')),
 ] 
 
 # # Ini digunakan untuk development mode
