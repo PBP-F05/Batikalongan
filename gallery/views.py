@@ -95,6 +95,7 @@ def delete_gallery_entry(request, id):
 # @csrf_exempt
 # @require_POST
 # @admin_required
+@csrf_exempt
 def add_gallery_entry_ajax(request):
     nama_batik = request.POST.get("nama_batik")
     deskripsi = request.POST.get("deskripsi")
@@ -117,6 +118,7 @@ def add_gallery_entry_ajax(request):
 # @csrf_exempt
 # @require_POST
 # @admin_required
+@csrf_exempt
 def edit_gallery_entry_ajax(request, id):
     entry = get_object_or_404(GalleryEntry, id=id)
     nama_batik = request.POST.get("nama_batik")
