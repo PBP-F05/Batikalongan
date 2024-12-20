@@ -131,7 +131,7 @@ def api_login(request):
         }, status=405)
 
 
-
+# Flutter
 @csrf_exempt
 def api_register(request):
     """
@@ -186,6 +186,8 @@ def api_register(request):
         "message": "Invalid request method. Use POST."
     }, status=405)
 
+
+# Flutter
 @csrf_exempt
 def admin_login(request):
     admin_username = "admin"
