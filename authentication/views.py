@@ -86,6 +86,7 @@ def api_login(request):
             if user is not None:
                 if user.is_active:
                     auth_login(request, user)
+                    request.session['is_admin'] = True
                     return JsonResponse({
                         "status": True,
                         "message": "Login sukses! Anda masuk sebagai admin.",
