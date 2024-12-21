@@ -17,7 +17,7 @@ def show_gallery(request):
     return render(request, "gallery.html")
     
 # Fungsi untuk menambah entri galeri
-@admin_required
+# @admin_required
 def add_gallery_entry(request):
     if request.method == 'POST':
         form = GalleryEntryForm(request.POST, request.FILES)
@@ -29,7 +29,7 @@ def add_gallery_entry(request):
     return render(request, 'add_gallery_entry.html', {'form': form})
 
 # Fungsi untuk mengedit entri galeri
-@admin_required
+# @admin_required
 def edit_gallery_entry(request, id):
     entry = get_object_or_404(GalleryEntry, id=id)
     if request.method == 'POST':
@@ -82,7 +82,7 @@ def show_gallery_json(request):
     })
 
 
-@admin_required
+# @admin_required
 def delete_gallery_entry(request, id):
     try:
         entry = get_object_or_404(GalleryEntry, id=id)
@@ -92,9 +92,10 @@ def delete_gallery_entry(request, id):
         print(f"Error deleting entry: {e}")
         return JsonResponse({'error': 'Failed to delete entry'}, status=500)
 
+# @csrf_exempt
+# @require_POST
+# @admin_required
 @csrf_exempt
-@require_POST
-@admin_required
 def add_gallery_entry_ajax(request):
     nama_batik = request.POST.get("nama_batik")
     deskripsi = request.POST.get("deskripsi")
@@ -114,9 +115,10 @@ def add_gallery_entry_ajax(request):
         return JsonResponse({'message': 'CREATED'}, status=201)
     return JsonResponse({'message': 'FAILED'}, status=400)
 
+# @csrf_exempt
+# @require_POST
+# @admin_required
 @csrf_exempt
-@require_POST
-@admin_required
 def edit_gallery_entry_ajax(request, id):
     entry = get_object_or_404(GalleryEntry, id=id)
     nama_batik = request.POST.get("nama_batik")
