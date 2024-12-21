@@ -18,4 +18,6 @@ urlpatterns = [
     path('xml/<str:id>/', views.show_xml_by_id, name='show_xml_by_id'),
     path('json/<str:id>/', views.show_json_by_id, name='show_json_by_id'),
     path('products/json/', views.product_list_json, name='product_list_json'),
+    path('store/<uuid:store_id>/products/json/', views.product_list_store_json, name='product_list_store_json'),
+    path('products/json/<str:id>/', views.show_json_by_id_product, name='show_json_by_id_product'),
 ]
