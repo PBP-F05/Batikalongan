@@ -82,7 +82,7 @@ def show_gallery_json(request):
     })
 
 
-# @admin_required
+@admin_required
 def delete_gallery_entry(request, id):
     try:
         entry = get_object_or_404(GalleryEntry, id=id)
@@ -92,9 +92,9 @@ def delete_gallery_entry(request, id):
         print(f"Error deleting entry: {e}")
         return JsonResponse({'error': 'Failed to delete entry'}, status=500)
 
-# @csrf_exempt
-# @require_POST
-# @admin_required
+
+@require_POST
+@admin_required
 @csrf_exempt
 def add_gallery_entry_ajax(request):
     nama_batik = request.POST.get("nama_batik")
@@ -103,7 +103,18 @@ def add_gallery_entry_ajax(request):
     makna = request.POST.get("makna")
     foto = request.FILES.get("foto")
 
-    if nama_batik and deskripsi and asal_usul and makna and foto:
+    if not nama_batik:
+        return JsonResponse({'message': 'Nama batik tidak boleh kosong'}, status=400)
+    if not deskripsi:
+        return JsonResponse({'message': 'Deskripsi tidak boleh kosong'}, status=400)
+    if not asal_usul:
+        return JsonResponse({'message': 'Asal usul tidak boleh kosong'}, status=400)
+    if not makna:
+        return JsonResponse({'message': 'Makna tidak boleh kosong'}, status=400)
+    if not foto:
+        return JsonResponse({'message': 'Foto tidak boleh kosong'}, status=400)
+
+    try:
         new_entry = GalleryEntry(
             nama_batik=nama_batik,
             deskripsi=deskripsi,
@@ -112,14 +123,77 @@ def add_gallery_entry_ajax(request):
             foto=foto
         )
         new_entry.save()
-        return JsonResponse({'message': 'CREATED'}, status=201)
-    return JsonResponse({'message': 'FAILED'}, status=400)
+        return JsonResponse({'message': 'Entri galeri berhasil dibuat'}, status=201)
+    except Exception as e:
+        return JsonResponse({'message': f'Gagal membuat entri galeri: {e}'}, status=500)
 
-# @csrf_exempt
-# @require_POST
-# @admin_required
+
+@require_POST
+@admin_required
 @csrf_exempt
 def edit_gallery_entry_ajax(request, id):
+    entry = get_object_or_404(GalleryEntry, id=id)
+    nama_batik = request.POST.get("nama_batik")
+    deskripsi = request.POST.get("deskripsi")
+    asal_usul = request.POST.get("asal_usul")
+    makna = request.POST.get("makna")
+    foto = request.FILES.get("foto")
+
+    if nama_batik: entry.nama_batik = nama_batik
+    if deskripsi: entry.deskripsi = deskripsi
+    if asal_usul: entry.asal_usul = asal_usul
+    if makna: entry.makna = makna
+    if foto: entry.foto = foto
+
+    entry.save()
+    return JsonResponse({'message': 'Updated successfully'}, status=200)
+
+@csrf_exempt
+def delete_gallery_flutter(request, id):
+    try:
+        entry = get_object_or_404(GalleryEntry, id=id)
+        entry.delete()
+        return JsonResponse({'message': 'Deleted successfully'}, status=200)
+    except Exception as e:
+        print(f"Error deleting entry: {e}")
+        return JsonResponse({'error': 'Failed to delete entry'}, status=500)
+
+
+
+@csrf_exempt
+def add_gallery_entry_flutter(request):
+    nama_batik = request.POST.get("nama_batik")
+    deskripsi = request.POST.get("deskripsi")
+    asal_usul = request.POST.get("asal_usul")
+    makna = request.POST.get("makna")
+    foto = request.FILES.get("foto")
+
+    if not nama_batik:
+        return JsonResponse({'message': 'Nama batik tidak boleh kosong'}, status=400)
+    if not deskripsi:
+        return JsonResponse({'message': 'Deskripsi tidak boleh kosong'}, status=400)
+    if not asal_usul:
+        return JsonResponse({'message': 'Asal usul tidak boleh kosong'}, status=400)
+    if not makna:
+        return JsonResponse({'message': 'Makna tidak boleh kosong'}, status=400)
+    if not foto:
+        return JsonResponse({'message': 'Foto tidak boleh kosong'}, status=400)
+
+    try:
+        new_entry = GalleryEntry(
+            nama_batik=nama_batik,
+            deskripsi=deskripsi,
+            asal_usul=asal_usul,
+            makna=makna,
+            foto=foto
+        )
+        new_entry.save()
+        return JsonResponse({'message': 'Entri galeri berhasil dibuat'}, status=201)
+    except Exception as e:
+        return JsonResponse({'message': f'Gagal membuat entri galeri: {e}'}, status=500)
+
+@csrf_exempt
+def edit_gallery_entry_flutter(request, id):
     entry = get_object_or_404(GalleryEntry, id=id)
     nama_batik = request.POST.get("nama_batik")
     deskripsi = request.POST.get("deskripsi")
