@@ -557,3 +557,65 @@ def update_store_flutter(request, id):
             return JsonResponse({"status": "error", "message": str(e)}, status=400)
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+def update_product_flutter(request, product_id):
+    if request.method == 'POST':
+        try:
+            product = get_object_or_404(Product, pk=product_id)
+            
+            data = json.loads(request.body)
+            
+            name = data.get('name')
+            price = data.get('price')
+            description = data.get('description')
+
+            if name:
+                product.name = name
+            if price:
+                product.price = price
+            if description:
+                product.description = description
+
+            if 'image' in request.FILES:
+                product.image = request.FILES['image']
+
+            product.save()
+
+            return JsonResponse({
+                'success': True,
+                'message': 'Product updated successfully',
+                'product': {
+                    'id': product.id,
+                    'name': product.name,
+                    'price': product.price,
+                    'image_url': product.image.url if product.image else None
+                }
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+    return JsonResponse({'success': False, 'message': 'Invalid HTTP method'}, status=405)
+
+@require_POST
+@csrf_exempt
+def delete_store_flutter(request, store_id):
+    try:
+        store = Store.objects.get(id=store_id)
+        store.delete()
+        return JsonResponse({"message": "Toko berhasil dihapus"}, status=200)
+    except Store.DoesNotExist:
+        return JsonResponse({"message": "Toko tidak ditemukan"}, status=404)
+    except Exception as e:
+        return JsonResponse({"message": f"Gagal menghapus toko: {e}"}, status=500)
+
+@require_POST
+@csrf_exempt
+def delete_product_flutter(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+        product.delete()
+        return JsonResponse({"message": "Produk berhasil dihapus"}, status=200)
+    except Product.DoesNotExist:
+        return JsonResponse({"message": "Produk tidak ditemukan"}, status=404)
+    except Exception as e:
+        return JsonResponse({"message": f"Gagal menghapus produk: {e}"}, status=500)

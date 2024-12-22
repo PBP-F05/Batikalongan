@@ -23,4 +23,8 @@ urlpatterns = [
     path('create-product-flutter/', views.create_product_flutter, name='create_product_flutter'),
     path('create-store-flutter/', views.create_store_flutter, name='create_store_flutter'),
     path('update-store/<uuid:pk>/', views.update_store_flutter, name='update-store'),
+    path('update-product-flutter/<uuid:product_id>/', views.update_product_flutter, name='update-product'),
+    path('delete-store/<uuid:store_id>/', views.delete_store_flutter, name='delete-store'),
+    path('delete-product/<uuid:product_id>/', views.delete_product_flutter, name='delete-product'),
+
 ]
