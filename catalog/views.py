@@ -567,14 +567,11 @@ def update_product_flutter(request, product_id):
             
             name = data.get('name')
             price = data.get('price')
-            description = data.get('description')
 
             if name:
                 product.name = name
             if price:
                 product.price = price
-            if description:
-                product.description = description
 
             if 'image' in request.FILES:
                 product.image = request.FILES['image']
