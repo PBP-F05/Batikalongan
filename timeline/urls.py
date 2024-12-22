@@ -18,6 +18,12 @@ urlpatterns = [
     path('reply-sent/<pk>/', reply_sent, name='reply-sent'),
     path('reply/delete/<pk>/', reply_delete_view, name='reply-delete'),
     path('reply/like/<pk>/', like_reply, name='like-reply'),
+    path('json/', home_view_json, name='home_json'),
+    path('toggle-like/', toggle_like, name='toggle_like'),
+    path('delete-post/', delete_post, name='delete_post'),
+    path('delete-comment/', delete_comment, name='delete_comment'),
+    path('create-post/', create_post, name="create_post"),
+    path('create-comment/', create_comment, name='create_comment'),
 ]
 
 if settings.DEBUG:
