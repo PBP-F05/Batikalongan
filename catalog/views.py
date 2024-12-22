@@ -452,29 +452,46 @@ def show_json_by_id_product(request, id):
 
 
 # Flutter
+@require_POST
 @csrf_exempt
 def create_store_flutter(request):
-    if request.method == 'POST':
-        try:
-            # Parse JSON body
-            data = json.loads(request.body)
-            
-            # Create a new store
-            new_store = Store.objects.create(
-                name=data["name"],
-                address=data["address"],
-                product_count=int(data["product_count"]),
-                image=data["image"]
-            )
-            
-            new_store.save()
-            return JsonResponse({"status": "success", "store_id": new_store.id}, status=200)
+    name = request.POST.get("name")
+    address = request.POST.get("address")
+    product_count = request.POST.get("product_count")
+    image = request.FILES.get("image")
 
-        except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+    # Validasi input
+    if not name:
+        return JsonResponse({'message': 'Nama toko tidak boleh kosong'}, status=400)
+    if not address:
+        return JsonResponse({'message': 'Alamat toko tidak boleh kosong'}, status=400)
+    if not product_count:
+        return JsonResponse({'message': 'Jumlah produk tidak boleh kosong'}, status=400)
+    if not image:
+        return JsonResponse({'message': 'Gambar toko tidak boleh kosong'}, status=400)
 
-    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+    try:
+        # Konversi jumlah produk ke integer
+        product_count = int(product_count)
 
+        # Buat toko baru
+        new_store = Store(
+            name=name,
+            address=address,
+            product_count=product_count,
+            image=image
+        )
+        new_store.save()
+
+        return JsonResponse({'message': 'Toko berhasil dibuat', 'store_id': new_store.id}, status=201)
+
+    except ValueError:
+        return JsonResponse({'message': 'Jumlah produk harus berupa angka'}, status=400)
+    except Exception as e:
+        return JsonResponse({'message': f'Gagal membuat toko: {e}'}, status=500)
+
+
+@require_POST
 @csrf_exempt
 def create_product_flutter(request):
     if request.method == 'POST':
@@ -505,32 +522,33 @@ def create_product_flutter(request):
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
 
 @csrf_exempt
-def update_store(request, pk):
-    if request.method == "PUT":
+def update_store_flutter(request, id):
+    # Get the store object or return a 404 error
+    store = get_object_or_404(Store, id=id)
+
+    if request.method == "POST":
         try:
-            # Parse incoming JSON data
-            data = json.loads(request.body)
+            # Parse JSON body
+            data = json.loads(request.body.decode('utf-8'))
 
-            # Get the store object
-            store = get_object_or_404(Store, pk=pk)
+            # Update store fields if provided in the request
+            name = data.get("name")
+            address = data.get("address")
+            product_count = data.get("product_count")
+            image_path = data.get("image")  # Direct image file path
 
-            # Update fields if provided
-            store.name = data.get("name", store.name)
-            store.address = data.get("address", store.address)
-            store.product_count = data.get("product_count", store.product_count)
+            if name:
+                store.name = name
+            if address:
+                store.address = address
+            if product_count is not None:  # Explicit None check for integer fields
+                store.product_count = product_count
 
-            # If a new image is provided as base64
-            if "image" in data and data["image"]:
-                import base64
-                from django.core.files.base import ContentFile
+            # Handle image update (if file path is provided)
+            if image_path:
+                store.image = image_path
 
-                image_data = data["image"]
-                format, imgstr = image_data.split(";base64,")
-                ext = format.split("/")[-1]
-                image_file = ContentFile(base64.b64decode(imgstr), name=f"{pk}.{ext}")
-                store.image = image_file
-
-            # Save updated store
+            # Save the updated store
             store.save()
 
             return JsonResponse({"status": "success", "message": "Store updated successfully"}, status=200)
