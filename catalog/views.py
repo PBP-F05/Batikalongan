@@ -65,6 +65,7 @@ def product_list_store_json(request, store_id):
             'id': product.pk,
             'name': product.name,
             'price': product.price,
+            'description' : product.description,
             'image': product.image.url if product.image else None,
             'store_id' : product.store.id,
             'store_name': product.store.name,
@@ -448,3 +449,57 @@ def show_json_by_id(request, id):
 def show_json_by_id_product(request, id):
     data = Product.objects.filter(pk=id)
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+
+# Flutter
+@csrf_exempt
+def create_store_flutter(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON body
+            data = json.loads(request.body)
+            
+            # Create a new store
+            new_store = Store.objects.create(
+                name=data["name"],
+                address=data["address"],
+                product_count=int(data["product_count"]),
+                image=data["image"]
+            )
+            
+            new_store.save()
+            return JsonResponse({"status": "success", "store_id": new_store.id}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON body
+            data = json.loads(request.body)
+            
+            # Retrieve the store by ID or raise an error
+            try:
+                store = Store.objects.get(id=data["store_id"])
+            except Store.DoesNotExist:
+                return JsonResponse({"status": "error", "message": "Store not found"}, status=404)
+            
+            # Create a new product
+            new_product = Product.objects.create(
+                name=data["name"],
+                price=float(data["price"]),
+                image=data["image"],
+                store=store  # Foreign key reference
+            )
+            
+            new_product.save()
+            return JsonResponse({"status": "success", "product_id": new_product.id}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
