@@ -452,29 +452,46 @@ def show_json_by_id_product(request, id):
 
 
 # Flutter
+@require_POST
 @csrf_exempt
 def create_store_flutter(request):
-    if request.method == 'POST':
-        try:
-            # Parse JSON body
-            data = json.loads(request.body)
-            
-            # Create a new store
-            new_store = Store.objects.create(
-                name=data["name"],
-                address=data["address"],
-                product_count=int(data["product_count"]),
-                image=data["image"]
-            )
-            
-            new_store.save()
-            return JsonResponse({"status": "success", "store_id": new_store.id}, status=200)
+    name = request.POST.get("name")
+    address = request.POST.get("address")
+    product_count = request.POST.get("product_count")
+    image = request.FILES.get("image")
 
-        except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+    # Validasi input
+    if not name:
+        return JsonResponse({'message': 'Nama toko tidak boleh kosong'}, status=400)
+    if not address:
+        return JsonResponse({'message': 'Alamat toko tidak boleh kosong'}, status=400)
+    if not product_count:
+        return JsonResponse({'message': 'Jumlah produk tidak boleh kosong'}, status=400)
+    if not image:
+        return JsonResponse({'message': 'Gambar toko tidak boleh kosong'}, status=400)
 
-    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+    try:
+        # Konversi jumlah produk ke integer
+        product_count = int(product_count)
 
+        # Buat toko baru
+        new_store = Store(
+            name=name,
+            address=address,
+            product_count=product_count,
+            image=image
+        )
+        new_store.save()
+
+        return JsonResponse({'message': 'Toko berhasil dibuat', 'store_id': new_store.id}, status=201)
+
+    except ValueError:
+        return JsonResponse({'message': 'Jumlah produk harus berupa angka'}, status=400)
+    except Exception as e:
+        return JsonResponse({'message': f'Gagal membuat toko: {e}'}, status=500)
+
+
+@require_POST
 @csrf_exempt
 def create_product_flutter(request):
     if request.method == 'POST':
@@ -503,3 +520,102 @@ def create_product_flutter(request):
             return JsonResponse({"status": "error", "message": str(e)}, status=400)
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+@csrf_exempt
+def update_store_flutter(request, id):
+    # Get the store object or return a 404 error
+    store = get_object_or_404(Store, id=id)
+
+    if request.method == "POST":
+        try:
+            # Parse JSON body
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Update store fields if provided in the request
+            name = data.get("name")
+            address = data.get("address")
+            product_count = data.get("product_count")
+            image_path = data.get("image")  # Direct image file path
+
+            if name:
+                store.name = name
+            if address:
+                store.address = address
+            if product_count is not None:  # Explicit None check for integer fields
+                store.product_count = product_count
+
+            # Handle image update (if file path is provided)
+            if image_path:
+                store.image = image_path
+
+            # Save the updated store
+            store.save()
+
+            return JsonResponse({"status": "success", "message": "Store updated successfully"}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+def update_product_flutter(request, product_id):
+    if request.method == 'POST':
+        try:
+            product = get_object_or_404(Product, pk=product_id)
+            
+            data = json.loads(request.body)
+            
+            name = data.get('name')
+            price = data.get('price')
+            description = data.get('description')
+
+            if name:
+                product.name = name
+            if price:
+                product.price = price
+            if description:
+                product.description = description
+
+            if 'image' in request.FILES:
+                product.image = request.FILES['image']
+
+            product.save()
+
+            return JsonResponse({
+                'success': True,
+                'message': 'Product updated successfully',
+                'product': {
+                    'id': product.id,
+                    'name': product.name,
+                    'price': product.price,
+                    'image_url': product.image.url if product.image else None
+                }
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+    return JsonResponse({'success': False, 'message': 'Invalid HTTP method'}, status=405)
+
+@require_POST
+@csrf_exempt
+def delete_store_flutter(request, store_id):
+    try:
+        store = Store.objects.get(id=store_id)
+        store.delete()
+        return JsonResponse({"message": "Toko berhasil dihapus"}, status=200)
+    except Store.DoesNotExist:
+        return JsonResponse({"message": "Toko tidak ditemukan"}, status=404)
+    except Exception as e:
+        return JsonResponse({"message": f"Gagal menghapus toko: {e}"}, status=500)
+
+@require_POST
+@csrf_exempt
+def delete_product_flutter(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+        product.delete()
+        return JsonResponse({"message": "Produk berhasil dihapus"}, status=200)
+    except Product.DoesNotExist:
+        return JsonResponse({"message": "Produk tidak ditemukan"}, status=404)
+    except Exception as e:
+        return JsonResponse({"message": f"Gagal menghapus produk: {e}"}, status=500)
