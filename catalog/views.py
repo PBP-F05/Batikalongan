@@ -15,36 +15,78 @@ import logging
 from django.views.decorators.http import require_http_methods
 from.decorators import admin_required
 from flask import Flask, jsonify, request
+from uuid import UUID
 
 def product_list_json(request):
-    products = Product.objects.all().order_by('id')  # Urutkan berdasarkan ID
-    page = request.GET.get('page', 1)  # Ambil nomor halaman
-    paginator = Paginator(products, 16)  # 16 produk per halaman
-
-    try:
-        products_page = paginator.page(page)
-    except Exception:
-        products_page = paginator.page(1)
-
-    products_data = [
-        {
+    page = request.GET.get('page', 1)
+    products = Product.objects.select_related('store').all()  # Add select_related to get store info efficiently
+    
+    # Create product data with store information
+    product_list = []
+    for product in products:
+        product_dict = {
             'pk': product.pk,
             'fields': {
                 'name': product.name,
-                'description': product.description,
                 'price': product.price,
                 'image': product.image.url if product.image else '',
+                'store_name': product.store.name,  # Include store name
+                'store_location': product.store.address,  # Include store location
             }
         }
-        for product in products_page
-    ]
+        product_list.append(product_dict)
+    
+    paginator = Paginator(product_list, 12)
+    
+    try:
+        products_page = paginator.page(page)
+    except PageNotAnInteger:
+        products_page = paginator.page(1)
+    except EmptyPage:
+        products_page = paginator.page(paginator.num_pages)
+    
+    return JsonResponse({
+        'products': list(products_page),
+        'has_next': products_page.has_next(),
+        'has_previous': products_page.has_previous(),
+        'num_pages': paginator.num_pages,
+    })
+
+def product_list_store_json(request, store_id):
+    page = request.GET.get('page', 1)
+
+    store = get_object_or_404(Store, pk=store_id)
+
+    products = Product.objects.filter(store=store)
+
+    product_list = []
+    for product in products:
+        product_dict = {
+            'id': product.pk,
+            'name': product.name,
+            'price': product.price,
+            'description' : product.description,
+            'image': product.image.url if product.image else None,
+            'store_id' : product.store.id,
+            'store_name': product.store.name,
+            'store_location': product.store.address,
+        }
+        product_list.append(product_dict)
+
+    paginator = Paginator(product_list, 12)
+
+    try:
+        products_page = paginator.page(page)
+    except PageNotAnInteger:
+        products_page = paginator.page(1)
+    except EmptyPage:
+        products_page = paginator.page(paginator.num_pages)
 
     return JsonResponse({
-        'products': products_data,
-        'has_previous': products_page.has_previous(),
+        'products': list(products_page),
         'has_next': products_page.has_next(),
+        'has_previous': products_page.has_previous(),
         'num_pages': paginator.num_pages,
-        'current_page': products_page.number,
     })
 
 app = Flask(__name__)
@@ -113,9 +155,10 @@ def show_catalog(request):
 
 def store_detail(request, store_id):
     store = get_object_or_404(Store, id=store_id)
-    products = Product.objects.filter(store=store)  # Ambil semua produk terkait dengan store
+    products = Product.objects.filter(store=store)
     
     context = {
+        'store_id': store.id,
         'store': store,
         'products': products,
     }
@@ -271,66 +314,51 @@ def add_product_to_store(request, store_id):
         return JsonResponse({"error": "Store not found."}, status=404)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-
+    
 @csrf_exempt
-@login_required
 @admin_required
 def edit_product(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return JsonResponse({'error': 'Product not found.'}, status=404)
 
-    if request.method == 'GET':
-        # Kirim data produk dalam JSON
-        product_data = {
-            "id": str(product.id),
-            "name": product.name,
-            "price": product.price,
-            "description": product.description,
-            "image": product.image.url if product.image else '',
-        }
-        return JsonResponse({"product": product_data}, status=200)
+    if request.method == 'GET': # Data buat edit
+        return JsonResponse({
+            'product': {
+                'name': product.name,
+                'price': product.price,
+                'description': product.description,
+                'image': product.image.url if product.image else None
+            }
+        })
 
     elif request.method == 'POST':
-        try:
-            product_name = strip_tags(request.POST.get('name', '').strip())
-            price = request.POST.get('price')
-            description = strip_tags(request.POST.get('description', '').strip())
-            image_file = request.FILES.get('image')
+        # Handle product update
+        name = request.POST.get("name")
+        price = request.POST.get("price")
+        description = request.POST.get("description")
+        image = request.FILES.get("image")
 
-            if not product_name or not price or not description:
-                return JsonResponse({"error": "All fields are required."}, status=400)
-
+        if name:
+            product.name = name
+        if price:
             try:
-                price = float(price)
-                if price <= 0:
+                product.price = float(price)
+                if product.price <= 0:
                     return JsonResponse({"error": "Price must be a positive number."}, status=400)
             except ValueError:
                 return JsonResponse({"error": "Invalid price format."}, status=400)
-
-            product.name = product_name
-            product.price = price
+        if description:
             product.description = description
+        if image:
+            product.image = image
 
-            if image_file:
-                product.image = image_file
+        product.save()
+        return JsonResponse({'message': 'Product updated successfully'}, status=200)
 
-            product.save()
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-            return JsonResponse({
-                "message": "Product updated successfully.",
-                "product": {
-                    "id": str(product.id),
-                    "name": product.name,
-                    "price": product.price,
-                    "description": product.description,
-                    "image": product.image.url if product.image else '',
-                }
-            }, status=200)
-
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
-    else:
-        return HttpResponseNotAllowed(['GET', 'POST'])
 
 @csrf_exempt
 @login_required
@@ -391,20 +419,87 @@ def product_list(request):
     return render(request, 'catalog/product_list.html', {'products': products})
 
 def show_xml(request):
-    data = Product.objects.all()
     data_store = Store.objects.all()
-    return HttpResponse(serializers.serialize("xml", data, data_store), content_type="application/xml")
+    return HttpResponse(serializers.serialize("xml", data_store), content_type="application/xml")
+
+def show_xml_product(request):
+    data = Product.objects.all()
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
 
 def show_json(request):
     data_store = Store.objects.all()
     return HttpResponse(serializers.serialize("json", data_store), content_type="application/json")
 
+def show_json_product(request):
+    data = Product.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
 def show_xml_by_id(request, id):
-    data = Product.objects.filter(pk=id)
     data_store = Store.objects.filter(pk=id)
-    return HttpResponse(serializers.serialize("xml", data, data_store), content_type="application/xml")
+    return HttpResponse(serializers.serialize("xml", data_store), content_type="application/xml")
+
+def show_xml_by_id_product(request, id):
+    data = Product.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
 
 def show_json_by_id(request, id):
-    data = Product.objects.filter(pk=id)
     data_store = Store.objects.filter(pk=id)
-    return HttpResponse(serializers.serialize("json", data, data_store), content_type="application/json")
+    return HttpResponse(serializers.serialize("json", data_store), content_type="application/json")
+
+def show_json_by_id_product(request, id):
+    data = Product.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+
+# Flutter
+@csrf_exempt
+def create_store_flutter(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON body
+            data = json.loads(request.body)
+            
+            # Create a new store
+            new_store = Store.objects.create(
+                name=data["name"],
+                address=data["address"],
+                product_count=int(data["product_count"]),
+                image=data["image"]
+            )
+            
+            new_store.save()
+            return JsonResponse({"status": "success", "store_id": new_store.id}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON body
+            data = json.loads(request.body)
+            
+            # Retrieve the store by ID or raise an error
+            try:
+                store = Store.objects.get(id=data["store_id"])
+            except Store.DoesNotExist:
+                return JsonResponse({"status": "error", "message": "Store not found"}, status=404)
+            
+            # Create a new product
+            new_product = Product.objects.create(
+                name=data["name"],
+                price=float(data["price"]),
+                image=data["image"],
+                store=store  # Foreign key reference
+            )
+            
+            new_product.save()
+            return JsonResponse({"status": "success", "product_id": new_product.id}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)

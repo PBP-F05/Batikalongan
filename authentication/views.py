@@ -86,6 +86,7 @@ def api_login(request):
             if user is not None:
                 if user.is_active:
                     auth_login(request, user)
+                    request.session['is_admin'] = True
                     return JsonResponse({
                         "status": True,
                         "message": "Login sukses! Anda masuk sebagai admin.",
@@ -137,55 +138,44 @@ def api_register(request):
     """
     API endpoint for user registration, compatible with Flutter.
     """
+    User = get_user_model()
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)  # Parse JSON data from the request body
-            username = data.get('username')
-            password1 = data.get('password1')
-            password2 = data.get('password2')
+        data = json.loads(request.body)
+        nama = data['nama']
+        username = data['username']
+        password1 = data['password1']
+        password2 = data['password2']
 
-            # Validate required fields
-            if not username or not password1 or not password2:
-                return JsonResponse({
-                    "status": False,
-                    "message": "All fields are required."
-                }, status=400)
-
-            # Check if passwords match
-            if password1 != password2:
-                return JsonResponse({
-                    "status": False,
-                    "message": "Passwords do not match."
-                }, status=400)
-
-            # Check if username is already taken
-            if User.objects.filter(username=username).exists():
-                return JsonResponse({
-                    "status": False,
-                    "message": "Username already exists."
-                }, status=400)
-
-            # Create the new user
-            user = User.objects.create_user(username=username, password=password1)
-            user.save()
-
-            return JsonResponse({
-                "status": True,
-                "message": "User registered successfully!",
-                "username": user.username
-            }, status=201)
-
-        except json.JSONDecodeError:
+        # Check if the passwords match
+        if password1 != password2:
             return JsonResponse({
                 "status": False,
-                "message": "Invalid JSON format."
+                "message": "Passwords do not match."
             }, status=400)
-
-    return JsonResponse({
-        "status": False,
-        "message": "Invalid request method. Use POST."
-    }, status=405)
-
+        
+        # Check if the username is already taken
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({
+                "status": False,
+                "message": "Username already exists."
+            }, status=400)
+        
+        # Create the new user
+        user = User.objects.create_user(nama=nama, username=username, password=password1)
+        user.save()
+        
+        return JsonResponse({
+            "nama": user.nama,
+            "username": user.username,
+            "status": 'success',
+            "message": "User created successfully!"
+        }, status=200)
+    
+    else:
+        return JsonResponse({
+            "status": False,
+            "message": "Invalid request method."
+        }, status=400)
 
 # Flutter
 @csrf_exempt

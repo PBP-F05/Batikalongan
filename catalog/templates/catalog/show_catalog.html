@@ -7,61 +7,65 @@
 {% block content %}
 {% include "navbar.html" %}
 
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8" />
-      <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-      <title>Batikalongan</title>
-      <script src="https://cdn.tailwindcss.com"></script>
-      <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-        rel="stylesheet"
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-        rel="stylesheet"
-      />
-      <style>
-        body {
-          font-family: 'Roboto', sans-serif;
-        }
-      </style>
-    </head>
+<!DOCTYPE html>
+<html lang="en">
 
-    <body class="bg-gray-50">
-      <!-- Main Content -->
-      <div class="container mx-auto py-8">
-        <div style="width: 100%; height: 100%; position: relative">
-          <div style="width: 9.75px; height: 19.50px; left: 14.62px; top: 9.75px; position: absolute; border: 3.25px black solid"></div>
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Batikalongan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50">
+  <!-- Main Content -->
+  <div class="container mx-auto py-8">
+    <div style="width: 100%; height: 100%; position: relative">
+      <div
+        style="width: 9.75px; height: 19.50px; left: 14.62px; top: 9.75px; position: absolute; border: 3.25px black solid">
+      </div>
+    </div>
+    <!-- Store Section with Pagination -->
+    <section>
+      <div class="flex justify-between items-center">
+        <div style="color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px;">Toko Batik
         </div>
-      <!-- Store Section with Pagination -->
-      <section>
-        <div class="flex justify-between items-center">
-          <div style="color: black; font-size: 40px; font-family: Fabled; font-weight: 400; line-height: 60px;">Toko Batik</div>
-          {% if request.session.is_admin %}
-          <button onclick="openAddStoreModal()" class="h-[46px] px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 inline-flex">
-            <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">Tambah Toko</div>
-          </button>
-          {% endif %}
-        </div>
+        {% if request.session.is_admin %}
+        <button onclick="openAddStoreModal()"
+          class="h-[46px] px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 inline-flex">
+          <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">Tambah Toko
+          </div>
+        </button>
+        {% endif %}
+      </div>
 
-        <div class="relative w-full mt-4">
-          <!-- Scroll Button Left -->
-          <button id="scroll-left" class="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
+      <div class="relative w-full mt-4">
+        <!-- Scroll Button Left -->
+        <button id="scroll-left"
+          class="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
 
-          <!-- Store Container -->
-          <div class="overflow-hidden mx-12">
-            <div id="store-slider" class="flex gap-4 transition-transform duration-300 ease-in-out">
-              {% for store in stores %}
-              <a href="{% url 'catalog:store_detail' store.id %}" class="block bg-white p-4 rounded-lg shadow-md w-80 transform hover:scale-105 transition">
+        <!-- Store Container -->
+        <div class="overflow-hidden mx-12">
+          <div id="store-slider" class="flex gap-4 transition-transform duration-300 ease-in-out">
+            {% for store in stores %}
+            <a href="{% url 'catalog:store_detail' store.id %}"
+              class="block bg-white p-4 rounded-lg shadow-md w-80 transform hover:scale-105 transition">
               <div class="flex-none w-72">
                 <div class="bg-white rounded-[20px] border border-[#d9d9d9] p-4 hover:scale-105 transition">
-                  <img src="{{ store.image.url }}" alt="{{ store.name }}" class="w-full h-48 object-cover rounded-lg mb-4">
+                  <img src="{{ store.image.url }}" alt="{{ store.name }}"
+                    class="w-full h-48 object-cover rounded-lg mb-4">
                   <h3 class="text-lg font-semibold">{{ store.name }}</h3>
                   <p class="text-sm text-gray-600">{{ store.address }}</p>
                   <div class="mt-2 text-sm bg-[#d88e30] text-white rounded-full px-3 py-1 inline-block">
@@ -69,48 +73,48 @@
                   </div>
                 </div>
               </div>
-              </a>
-              {% endfor %}
-            </div>
+            </a>
+            {% endfor %}
           </div>
-
-          <!-- Scroll Button Right -->
-          <button id="scroll-right" class="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
         </div>
-      </section>
+
+        <!-- Scroll Button Right -->
+        <button id="scroll-right"
+          class="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </section>
 
 
-      <div>
-        <label>Filter by Price:</label>
-        <a href="{% url 'catalog:show_catalog' %}?price_filter=above">100,000 and above</a> |
-        <a href="{% url 'catalog:show_catalog' %}?price_filter=below">Below 100,000</a>
-        <a href="{% url 'catalog:show_catalog' %}">Show All</a>
+    <div>
+      <label>Filter by Price:</label>
+      <a href="{% url 'catalog:show_catalog' %}?price_filter=above">100,000 and above</a> |
+      <a href="{% url 'catalog:show_catalog' %}?price_filter=below">Below 100,000</a>
+      <a href="{% url 'catalog:show_catalog' %}">Show All</a>
     </div>
-        <div class="container mx-auto py-8">
-          <!-- Produk Batik Section -->
-          <section class="mt-8">
-            <div class="h-[60px] justify-start items-start inline-flex">
-              <div class="grow shrink basis-0 text-black text-[40px] font-normal font-['Fabled'] leading-[60px]">Produk Batik</div>
-          </div>
-          <div id="product_cards" class="grid grid-cols-4 gap-6 mb-8"></div>
-          <div id="pagination-controls" class="flex justify-center mt-8"></div>
-          </section>
+    <div class="container mx-auto py-8">
+      <!-- Produk Batik Section -->
+      <section class="mt-8">
+        <div class="h-[60px] justify-start items-start inline-flex">
+          <div class="grow shrink basis-0 text-black text-[40px] font-normal font-['Fabled'] leading-[60px]">Produk
+            Batik</div>
         </div>
-        <!-- Tempat untuk menampilkan daftar produk dengan AJAX -->
-        <div id="card_store" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
-        
-        <div id="pagination-controls" class="flex justify-center space-x-2 mt-4"></div>
-      </main>
+        <div id="product_cards" class="grid grid-cols-4 gap-6 mb-8"></div>
+        <div id="pagination-controls" class="flex justify-center mt-8"></div>
+      </section>
+    </div>
+    <!-- Tempat untuk menampilkan daftar produk dengan AJAX -->
+    <div id="card_store" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
 
-      <!-- Add Store Modal -->
-      <div
-      id="addStoreModal"
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
-      >
+    <div id="pagination-controls" class="flex justify-center space-x-2 mt-4"></div>
+    </main>
+
+    <!-- Add Store Modal -->
+    <div id="addStoreModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
 
       <div class="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4" style="color: #000; font-family: Fabled; font-size: 40px;">
@@ -120,32 +124,20 @@
           <label style="color: #000; font-family: Poppins; font-size: 20px;">
             Nama Toko
           </label>
-          <input
-            id="storeName"
-            type="text"
-            class="w-full p-2 border border-gray-300 rounded focus:outline-none"
-            style="border-radius: 8px; border: 1px #D88E30 solid;"
-          />
+          <input id="storeName" type="text" class="w-full p-2 border border-gray-300 rounded focus:outline-none"
+            style="border-radius: 8px; border: 1px #D88E30 solid;" />
 
           <label style="color: black; font-size: 20px; font-family: Poppins;">
             Alamat
           </label>
-          <input
-            id="storeAddress"
-            type="text"
-            class="w-full p-2 border border-gray-300 rounded focus:outline-none"
-            style="border-radius: 8px; border: 1px #D88E30 solid;"
-          />
+          <input id="storeAddress" type="text" class="w-full p-2 border border-gray-300 rounded focus:outline-none"
+            style="border-radius: 8px; border: 1px #D88E30 solid;" />
 
           <label style="color: black; font-size: 20px; font-family: Poppins;">
             Produk
           </label>
-          <input
-            id="productCount"
-            type="number"
-            class="w-full p-2 border border-gray-300 rounded focus:outline-none"
-            style="border-radius: 8px; border: 1px #D88E30 solid;"
-          />
+          <input id="productCount" type="number" class="w-full p-2 border border-gray-300 rounded focus:outline-none"
+            style="border-radius: 8px; border: 1px #D88E30 solid;" />
         </div>
         <div id="uploadPhotoModal" class="modal">
           <div class="modal-content">
@@ -160,115 +152,117 @@
 
 
         <div class="flex justify-between mt-6">
-          <button
-            class="bg-gray-500 text-white px-4 py-2 rounded-lg"
-            onclick="closeAddStoreModal()"
-          >
+          <button class="bg-gray-500 text-white px-4 py-2 rounded-lg" onclick="closeAddStoreModal()">
             Batal
           </button>
-          <button
-            class="bg-orange-500 text-white px-4 py-2 rounded-lg"
-            onclick="addStore()"
-          >
+          <button class="bg-orange-500 text-white px-4 py-2 rounded-lg" onclick="addStore()">
             Tambah Toko
           </button>
         </div>
       </div>
-      </div>
+    </div>
 
 
-      <!-- Scripts -->
-      <script>
+    <!-- Scripts -->
+    <script>
 
-function getQueryParam(param) {
+      function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return parseInt(urlParams.get(param)) || 1;  // Default ke 1
-    }
+      }
 
-    // Inisialisasi halaman saat ini
-    let thisPage = getQueryParam("page");
+      // Inisialisasi halaman saat ini
+      let thisPage = getQueryParam("page");
 
-    // Fungsi untuk mengambil data produk
-    async function getProducts(page = 1) {
+      // Fungsi untuk mengambil data produk
+      async function getProducts(page = 1) {
         const url = `{% url 'catalog:product_list_json' %}?page=${page}`;
         const response = await fetch(url);
         const data = await response.json();
         return data;
-    }
+      }
 
-    // Fungsi untuk memperbarui tampilan produk dan pagination
-    async function refreshProducts(page = thisPage) {
-        thisPage = page;
+      async function refreshProducts(page = currentPage) {
+        currentPage = page;
         document.getElementById("product_cards").innerHTML = "";
 
-        // Update URL tanpa reload
-        window.history.replaceState(null, null, `?page=${thisPage}`);
+        window.history.replaceState(null, null, `?page=${currentPage}`);
 
-        const data = await getProducts(thisPage);
+        const data = await getProducts(currentPage);
         const products = data.products;
 
         let htmlString = "";
 
         if (products.length === 0) {
-            htmlString = `
-                <div class="flex items-center justify-center min-h-[24rem]">
-                    <p class="text-gray-600 text-lg">Belum ada produk di katalog.</p>
-                </div>`;
+          htmlString = `
+            <div class="flex items-center justify-center min-h-[24rem]">
+                <p class="text-gray-600 text-lg">Belum ada produk di katalog.</p>
+            </div>`;
         } else {
-            products.forEach((item) => {
-                const imagePath = item.fields.image;
-                const productId = item.pk;
-                const productName = item.fields.name
-                htmlString += `
-                    <div class="border rounded-lg shadow-md p-4 flex flex-col hover:scale-105 transition">
-                        <img src="${imagePath}" alt="${item.fields.name}" class="w-full h-48 object-cover rounded-md mb-4">
-                        {% if request.session.is_admin %}
-                        <div class="absolute top-4 right-4 flex items-center space-x-2 z-10">
-                            <!-- Delete button opens the delete confirmation modal via JavaScript -->
-                            <button 
-                                class="text-red-500 hover:text-red-600"
-                                data-entry-id="${productId}" 
-                                data-entry-name="${productName}" 
-                                onclick="deleteProduct(this)">
-                                <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="h-10 w-10" />
-                            </button>
+          products.forEach((item) => {
+            const imagePath = item.fields.image;
+            const productId = item.pk;
+            const storeName = item.fields.store_name;
+            const storeLocation = item.fields.store_location;
 
-                            <!-- Edit button opens the edit modal via JavaScript -->
-                            <button 
-                                class="text-yellow-500 hover:text-yellow-600"
-                                data-entry-id="${productId}" 
-                                onclick="openEditModal(this)">
-                                <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="h-10 w-10" />
+            htmlString += `
+                <div class="relative bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+                    <div class="relative group">
+                        <img src="${imagePath}" alt="${item.fields.name}" 
+                             class="w-full h-48 object-cover">
+                        <div class="absolute top-2 right-2 flex space-x-2">
+                            <button class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 12v10H4V12"></path>
+                                    <path d="M2 7h20v5H2z"></path>
+                                    <path d="M12 22V7"></path>
+                                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                                </svg>
+                            </button>
+                            <button class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
                             </button>
                         </div>
-                        {% endif %}
-                        <h2 class="text-xl font-semibold">${item.fields.name}</h2>
-                        <p class="text-gray-700">${item.fields.storeId}</p>
-                        <p class="text-lg font-bold mt-2">Rp ${item.fields.price.toLocaleString()}</p>
-                    </div>`;
-            });
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">${item.fields.name}</h3>
+                        <p class="text-xl font-bold text-orange-500 mb-2">Rp${item.fields.price.toLocaleString()}</p>
+                        <div class="flex items-center text-gray-600 text-sm">
+                            <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span>${storeName}</span>
+                        </div>
+                    </div>
+                </div>`;
+          });
         }
 
         document.getElementById("product_cards").innerHTML = htmlString;
+        renderPaginationControls(data, currentPage);
+      }
 
-        // Render kontrol pagination
-        renderPaginationControls(data, thisPage);
-    }
+      // Update the CSS for the product grid container
+      document.querySelector('#product_cards').className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8';
 
-    // Fungsi untuk menampilkan kontrol pagination
-    function renderPaginationControls(data, page) {
+      // Fungsi untuk menampilkan kontrol pagination
+      function renderPaginationControls(data, page) {
         let controls = '<div class="flex border rounded-lg overflow-hidden">';
 
         // Tombol Previous
         if (data.has_previous) {
-            controls += `
+          controls += `
                 <a href="#" onclick="refreshProducts(${page - 1}); return false;" 
                    class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-r">
                     <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
                     Previous
                 </a>`;
         } else {
-            controls += `
+          controls += `
                 <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold border-r">
                     <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
                     Previous
@@ -277,25 +271,25 @@ function getQueryParam(param) {
 
         // Nomor halaman
         for (let num = 1; num <= data.num_pages; num++) {
-            if (num === page) {
-                controls += `<span class="px-3 py-2 bg-[#D88E30] text-white font-semibold">${num}</span>`;
-            } else {
-                controls += `
+          if (num === page) {
+            controls += `<span class="px-3 py-2 bg-[#D88E30] text-white font-semibold">${num}</span>`;
+          } else {
+            controls += `
                     <a href="#" onclick="refreshProducts(${num}); return false;" 
                        class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l">${num}</a>`;
-            }
+          }
         }
 
         // Tombol Next
         if (data.has_next) {
-            controls += `
+          controls += `
                 <a href="#" onclick="refreshProducts(${page + 1}); return false;" 
                    class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l">
                     Next
                     <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
                 </a>`;
         } else {
-            controls += `
+          controls += `
                 <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold border-l">
                     Next
                     <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
@@ -304,26 +298,26 @@ function getQueryParam(param) {
 
         controls += '</div>';
         document.getElementById("pagination-controls").innerHTML = controls;
-    }
+      }
 
-    // Inisialisasi tampilan produk saat halaman dimuat
-    document.addEventListener('DOMContentLoaded', () => refreshProducts());
+      // Inisialisasi tampilan produk saat halaman dimuat
+      document.addEventListener('DOMContentLoaded', () => refreshProducts());
 
-document.addEventListener('DOMContentLoaded', function() {
-  const productGrid = document.getElementById('product-grid');
-  const paginationControls = document.getElementById('pagination-controls');
-  let currentPage = 1;
+      document.addEventListener('DOMContentLoaded', function () {
+        const productGrid = document.getElementById('product-grid');
+        const paginationControls = document.getElementById('pagination-controls');
+        let currentPage = 1;
 
-  function loadProducts(page = 1) {
-    fetch(`/products/?page=${page}`, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-    })
-    .then(response => response.json())
-    .then(data => {
-      // Render products in the grid
-      productGrid.innerHTML = data.products.map(product => `
+        function loadProducts(page = 1) {
+          fetch(`/products/?page=${page}`, {
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+            },
+          })
+            .then(response => response.json())
+            .then(data => {
+              // Render products in the grid
+              productGrid.innerHTML = data.products.map(product => `
         <div class="border rounded-lg p-4 shadow-md">
           <img src="${product.image_url}" alt="${product.name}" 
                class="w-full h-48 object-cover rounded-t-lg mb-4" />
@@ -333,234 +327,264 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
       `).join('');
 
-      // Render pagination controls
-      paginationControls.innerHTML = generatePagination(data.current_page, data.num_pages);
-      currentPage = data.current_page;
-    })
-    .catch(error => console.error('Error fetching products:', error));
-  }
+              // Render pagination controls
+              paginationControls.innerHTML = generatePagination(data.current_page, data.num_pages);
+              currentPage = data.current_page;
+            })
+            .catch(error => console.error('Error fetching products:', error));
+        }
 
-  function generatePagination(currentPage, numPages) {
-    let buttons = '';
+        function generatePagination(currentPage, numPages) {
+          let buttons = '';
 
-    if (currentPage > 1) {
-      buttons += `<button onclick="loadProducts(${currentPage - 1})" 
+          if (currentPage > 1) {
+            buttons += `<button onclick="loadProducts(${currentPage - 1})" 
                       class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded-md">
                       Previous
                   </button>`;
-    }
+          }
 
-    for (let i = 1; i <= numPages; i++) {
-      buttons += `
+          for (let i = 1; i <= numPages; i++) {
+            buttons += `
         <button onclick="loadProducts(${i})" 
                 class="px-4 py-2 ${i === currentPage ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-black'} rounded-md">
           ${i}
         </button>`;
-    }
+          }
 
-    if (currentPage < numPages) {
-      buttons += `<button onclick="loadProducts(${currentPage + 1})" 
+          if (currentPage < numPages) {
+            buttons += `<button onclick="loadProducts(${currentPage + 1})" 
                       class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded-md">
                       Next
                   </button>`;
-    }
+          }
 
-    return buttons;
-  }
-
-  // Load products for the first time
-  loadProducts();
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-  const slider = document.getElementById('store-slider');
-  const scrollLeftBtn = document.getElementById('scroll-left');
-  const scrollRightBtn = document.getElementById('scroll-right');
-  const cardWidth = 288; // 272px width + 16px gap
-  const visibleCards = 3;
-  let currentPosition = 0;
-
-  // Calculate total number of stores
-  const totalStores = slider.children.length;
-  const maxPosition = Math.max(0, totalStores - visibleCards);
-
-  // Update button states
-  function updateButtonStates() {
-    scrollLeftBtn.disabled = currentPosition === 0;
-    scrollRightBtn.disabled = currentPosition >= maxPosition;
-    
-    scrollLeftBtn.style.opacity = scrollLeftBtn.disabled ? '0.5' : '1';
-    scrollRightBtn.style.opacity = scrollRightBtn.disabled ? '0.5' : '1';
-  }
-
-  // Scroll left
-  scrollLeftBtn.addEventListener('click', () => {
-    if (currentPosition > 0) {
-      currentPosition--;
-      slider.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
-      updateButtonStates();
-    }
-  });
-
-  // Scroll right
-  scrollRightBtn.addEventListener('click', () => {
-    if (currentPosition < maxPosition) {
-      currentPosition++;
-      slider.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
-      updateButtonStates();
-    }
-  });
-
-  // Initialize button states
-  updateButtonStates();
-});
-
-// Add touch support for mobile devices
-let touchStartX = 0;
-let touchEndX = 0;
-
-document.getElementById('store-slider').addEventListener('touchstart', e => {
-  touchStartX = e.changedTouches[0].screenX;
-});
-
-document.getElementById('store-slider').addEventListener('touchend', e => {
-  touchEndX = e.changedTouches[0].screenX;
-  handleSwipe();
-});
-
-function handleSwipe() {
-  const SWIPE_THRESHOLD = 50;
-  if (touchStartX - touchEndX > SWIPE_THRESHOLD) {
-    // Swipe left
-    document.getElementById('scroll-right').click();
-  } else if (touchEndX - touchStartX > SWIPE_THRESHOLD) {
-    // Swipe right
-    document.getElementById('scroll-left').click();
-  }
-}
-
-
-document.addEventListener("DOMContentLoaded", function() {
-
-// Fungsi untuk mendapatkan parameter dari URL
-function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return parseInt(urlParams.get(param)) || 1;  // Default ke 1
-    }
-
-    // Inisialisasi halaman saat ini
-    let currentPage = getQueryParam("page");
-
-    // Fungsi untuk mengambil data produk
-    async function getProducts(page = 1) {
-        const url = `{% url 'catalog:product_list_json' %}?page=${page}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        return data;
-    }
-
-    // Fungsi untuk memperbarui tampilan produk dan pagination
-    async function refreshProducts(page = currentPage) {
-        currentPage = page;
-        document.getElementById("product_cards").innerHTML = "";
-
-        // Update URL tanpa reload
-        window.history.replaceState(null, null, `?page=${currentPage}`);
-
-        const data = await getProducts(currentPage);
-        const products = data.products;
-
-        let htmlString = "";
-
-        if (products.length === 0) {
-            htmlString = `
-                <div class="flex items-center justify-center min-h-[24rem]">
-                    <p class="text-gray-600 text-lg">Belum ada produk di katalog.</p>
-                </div>`;
-        } else {
-            products.forEach((item) => {
-                const imagePath = item.fields.image;
-                htmlString += `
-                    <div class="border rounded-lg shadow-md p-4 flex flex-col">
-                        <img src="${imagePath}" alt="${item.fields.name}" 
-                             class="w-full h-48 object-cover rounded-md mb-4">
-                        <h2 class="text-xl font-semibold">${item.fields.name}</h2>
-                        <p class="text-gray-700">${item.fields.description}</p>
-                        <p class="text-lg font-bold mt-2">Rp ${item.fields.price.toLocaleString()}</p>
-                    </div>`;
-            });
+          return buttons;
         }
 
-        document.getElementById("product_cards").innerHTML = htmlString;
+        // Load products for the first time
+        loadProducts();
+      });
 
-        // Render kontrol pagination
-        renderPaginationControls(data, currentPage);
-    }
+      document.addEventListener('DOMContentLoaded', function () {
+        const slider = document.getElementById('store-slider');
+        const scrollLeftBtn = document.getElementById('scroll-left');
+        const scrollRightBtn = document.getElementById('scroll-right');
+        const cardWidth = 288; // 272px width + 16px gap
+        const visibleCards = 3;
+        let currentPosition = 0;
 
-    // Fungsi untuk menampilkan kontrol pagination
-    function renderPaginationControls(data, page) {
-        let controls = '<div class="flex border rounded-lg overflow-hidden">';
+        // Calculate total number of stores
+        const totalStores = slider.children.length;
+        const maxPosition = Math.max(0, totalStores - visibleCards);
 
-        // Tombol Previous
-        if (data.has_previous) {
-            controls += `
-                <a href="#" onclick="refreshProducts(${page - 1}); return false;" 
-                   class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-r">
-                    <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
-                    Previous
-                </a>`;
-        } else {
-            controls += `
-                <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold border-r">
-                    <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
-                    Previous
-                </span>`;
+        // Update button states
+        function updateButtonStates() {
+          scrollLeftBtn.disabled = currentPosition === 0;
+          scrollRightBtn.disabled = currentPosition >= maxPosition;
+
+          scrollLeftBtn.style.opacity = scrollLeftBtn.disabled ? '0.5' : '1';
+          scrollRightBtn.style.opacity = scrollRightBtn.disabled ? '0.5' : '1';
         }
 
-        // Nomor halaman
-        for (let num = 1; num <= data.num_pages; num++) {
-            if (num === page) {
-                controls += `<span class="px-3 py-2 bg-[#D88E30] text-white font-semibold">${num}</span>`;
-            } else {
-                controls += `
-                    <a href="#" onclick="refreshProducts(${num}); return false;" 
-                       class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l">${num}</a>`;
+        // Scroll left
+        scrollLeftBtn.addEventListener('click', () => {
+          if (currentPosition > 0) {
+            currentPosition--;
+            slider.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
+            updateButtonStates();
+          }
+        });
+
+        // Scroll right
+        scrollRightBtn.addEventListener('click', () => {
+          if (currentPosition < maxPosition) {
+            currentPosition++;
+            slider.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
+            updateButtonStates();
+          }
+        });
+
+        // Initialize button states
+        updateButtonStates();
+      });
+
+      // Add touch support for mobile devices
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      document.getElementById('store-slider').addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      document.getElementById('store-slider').addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        const SWIPE_THRESHOLD = 50;
+        if (touchStartX - touchEndX > SWIPE_THRESHOLD) {
+          // Swipe left
+          document.getElementById('scroll-right').click();
+        } else if (touchEndX - touchStartX > SWIPE_THRESHOLD) {
+          // Swipe right
+          document.getElementById('scroll-left').click();
+        }
+      }
+
+
+      document.addEventListener("DOMContentLoaded", function () {
+
+        // Get the current page from URL parameters
+        function getQueryParam(param) {
+          const urlParams = new URLSearchParams(window.location.search);
+          return parseInt(urlParams.get(param)) || 1;  // Default to 1 if not found
+        }
+        // Inisialisasi halaman saat ini
+        let currentPage = getQueryParam("page");
+
+        // Function to fetch products from the server
+        async function getProducts(page = 1) {
+          try {
+            const response = await fetch(`/product_list_json/?page=${page}`);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
+            const data = await response.json();
+            return data;
+          } catch (error) {
+            console.error("Error fetching products:", error);
+            return null;
+          }
+        }
+        // Main function to refresh products display
+        async function refreshProducts(page = currentPage) {
+          currentPage = page;
+          const productContainer = document.getElementById("product_cards");
+          productContainer.innerHTML = '<div class="w-full text-center">Loading...</div>';
+
+          // Update URL without reload
+          window.history.replaceState(null, null, `?page=${currentPage}`);
+
+          const data = await getProducts(currentPage);
+          if (!data) {
+            productContainer.innerHTML = '<div class="text-red-500">Error loading products</div>';
+            return;
+          }
+
+          let htmlString = "";
+
+          if (data.products.length === 0) {
+            htmlString = `
+            <div class="flex items-center justify-center min-h-[24rem]">
+                <p class="text-gray-600 text-lg">No products available.</p>
+            </div>`;
+          } else {
+            data.products.forEach((item) => {
+              htmlString += `
+                <div class="relative bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+                    <div class="relative group">
+                        <img src="${item.fields.image}" alt="${item.fields.name}" 
+                             class="w-full h-48 object-cover">
+                        <div class="absolute top-2 right-2 flex space-x-2">
+                            <button class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                </svg>
+                            </button>
+                            <button class="bg-white p-2 rounded-full shadow hover:bg-gray-100">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">${item.fields.name}</h3>
+                        <p class="text-xl font-bold text-orange-500 mb-2">Rp${item.fields.price.toLocaleString()}</p>
+                        <div class="flex items-center text-gray-600 text-sm">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>${item.fields.store_name}</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+          }
+
+          productContainer.innerHTML = htmlString;
+          renderPaginationControls(data);
+        }
+        // Function to render pagination controls
+        function renderPaginationControls(data) {
+          const paginationContainer = document.getElementById("pagination-controls");
+
+          let paginationHTML = '<div class="flex justify-center items-center gap-2 mt-6">';
+
+          // Previous button
+          paginationHTML += `
+        <button onclick="changePage(${currentPage - 1})" 
+                class="px-4 py-2 ${!data.has_previous ? 'bg-gray-300 cursor-not-allowed' : 'bg-white hover:bg-gray-100'} 
+                text-gray-800 font-semibold border rounded-lg flex items-center gap-2"
+                ${!data.has_previous ? 'disabled' : ''}>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Previous
+        </button>`;
+
+          // Page numbers
+          for (let i = 1; i <= data.num_pages; i++) {
+            paginationHTML += `
+            <button onclick="changePage(${i})" 
+                    class="px-4 py-2 ${currentPage === i ? 'bg-orange-500 text-white' : 'bg-white hover:bg-gray-100'} 
+                    font-semibold border rounded-lg">
+                ${i}
+            </button>`;
+          }
+
+          // Next button
+          paginationHTML += `
+        <button onclick="changePage(${currentPage + 1})" 
+                class="px-4 py-2 ${!data.has_next ? 'bg-gray-300 cursor-not-allowed' : 'bg-white hover:bg-gray-100'} 
+                text-gray-800 font-semibold border rounded-lg flex items-center gap-2"
+                ${!data.has_next ? 'disabled' : ''}>
+            Next
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+        </button>`;
+
+          paginationHTML += '</div>';
+
+          paginationContainer.innerHTML = paginationHTML;
         }
 
-        // Tombol Next
-        if (data.has_next) {
-            controls += `
-                <a href="#" onclick="refreshProducts(${page + 1}); return false;" 
-                   class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l">
-                    Next
-                    <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
-                </a>`;
-        } else {
-            controls += `
-                <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold border-l">
-                    Next
-                    <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
-                </span>`;
+        // Inisialisasi tampilan produk saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => refreshProducts());
+        // Function to handle page changes
+        function changePage(newPage) {
+          refreshProducts(newPage);
         }
 
-        controls += '</div>';
-        document.getElementById("pagination-controls").innerHTML = controls;
-    }
+        // Initialize the product display when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+          refreshProducts();
+        });
 
-    // Inisialisasi tampilan produk saat halaman dimuat
-    document.addEventListener('DOMContentLoaded', () => refreshProducts());
+        function loadStores(page) {
+          fetch(`/stores?page=${page}`)
+            .then(response => response.json())
+            .then(data => {
+              const storeContainer = document.getElementById("store-content");
+              storeContainer.innerHTML = "";
 
-  function loadStores(page) {
-    fetch(`/stores?page=${page}`)
-      .then(response => response.json())
-      .then(data => {
-        const storeContainer = document.getElementById("store-content");
-        storeContainer.innerHTML = "";
-
-        if (data.stores && data.stores.length > 0) {
-          data.stores.forEach(store => {
-            let storeHTML = `
+              if (data.stores && data.stores.length > 0) {
+                data.stores.forEach(store => {
+                  let storeHTML = `
             
               <div class="rounded-[20px] border border-[#d9d9d9] p-4 hover:scale-105 transition">
                 <img src="${store.image_url}" alt="${store.name}" class="rounded-lg w-full mb-4">
@@ -570,42 +594,42 @@ function getQueryParam(param) {
                   ${store.product_count} Produk
                 </div>
               </div>`;
-            storeContainer.insertAdjacentHTML("beforeend", storeHTML);
-          });
-        } else {
-          storeContainer.innerHTML = "<p class='text-center text-gray-600 mt-4'>Belum ada toko pada halaman ini.</p>";
+                  storeContainer.insertAdjacentHTML("beforeend", storeHTML);
+                });
+              } else {
+                storeContainer.innerHTML = "<p class='text-center text-gray-600 mt-4'>Belum ada toko pada halaman ini.</p>";
+              }
+
+              currentPage = page;
+            })
+            .catch(error => console.error("Error loading stores:", error));
         }
 
-        currentPage = page;
-      })
-      .catch(error => console.error("Error loading stores:", error));
-  }
+        document.getElementById("prev-page").addEventListener("click", function () {
+          if (currentPage > 1) {
+            loadStores(currentPage - 1);
+          }
+        });
 
-  document.getElementById("prev-page").addEventListener("click", function() {
-    if (currentPage > 1) {
-      loadStores(currentPage - 1);
-    }
-  });
+        document.getElementById("next-page").addEventListener("click", function () {
+          loadStores(currentPage + 1);
+        });
 
-  document.getElementById("next-page").addEventListener("click", function() {
-    loadStores(currentPage + 1);
-  });
-
-  // Initial load
-  loadStores(currentPage);
-});
+        // Initial load
+        loadStores(currentPage);
+      });
 
 
-        let currentPage = 1;
+      let currentPage = 1;
 
-function loadStores(page) {
-    $.ajax({
-        url: `/getStores?page=${page}`, // Pastikan route ini dikonfigurasi di backend
-        method: 'GET',
-        success: function(data) {
+      function loadStores(page) {
+        $.ajax({
+          url: `/getStores?page=${page}`, // Pastikan route ini dikonfigurasi di backend
+          method: 'GET',
+          success: function (data) {
             $('#store-container').html('');
             data.stores.forEach(store => {
-                $('#store-container').append(`
+              $('#store-container').append(`
                     <div class="store-card border p-4 rounded-lg">
                         <img src="${store.image}" alt="${store.name}" class="rounded-full w-16 h-16 mb-2">
                         <h3 class="font-bold">${store.name}</h3>
@@ -616,69 +640,69 @@ function loadStores(page) {
                     </div>
                 `);
             });
-        },
-        error: function(error) {
+          },
+          error: function (error) {
             console.error("Failed to load stores:", error);
-        }
-    });
-}
-
-// Event listener untuk tombol 'next' dan 'prev'
-$('#next-page').on('click', function() {
-    currentPage++;
-    loadStores(currentPage);
-});
-
-$('#prev-page').on('click', function() {
-    if (currentPage > 1) {
-        currentPage--;
-        loadStores(currentPage);
-    }
-});
-
-// Load data awal ketika halaman pertama kali dimuat
-loadStores(currentPage);
-
-function openAddStoreModal() {
-  // Ensure the modal opens correctly
-  document.getElementById("addStoreModal").classList.remove("hidden");
-}
-
-function closeAddStoreModal() {
-  // Close the modal by adding the hidden class
-  document.getElementById("addStoreModal").classList.add("hidden");
-}
-
-function addStore() {
-  const formData = new FormData();
-  formData.append("name", document.getElementById("storeName").value);
-  formData.append("address", document.getElementById("storeAddress").value);
-  formData.append("product_count", document.getElementById("productCount").value);
-  formData.append("image", document.getElementById("profilePhoto").files[0]); // Get the actual file for the image
-
-  // Check required fields
-  if (!formData.get("name") || !formData.get("address") || !formData.get("product_count")) {
-    alert("Semua field harus diisi!");
-    return;
-  }
-
-  fetch('/catalog/store/add/', {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': '{{ csrf_token }}',  // CSRF token for security
-    },
-    body: formData, // Use FormData directly as the request body
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Request gagal dengan status " + response.status);
+          }
+        });
       }
-      return response.json();
-    })
-    .then((data) => {
-      if (data.store) {
-        const storeList = document.getElementById('storeList');
-        const newStoreHTML = `
+
+      // Event listener untuk tombol 'next' dan 'prev'
+      $('#next-page').on('click', function () {
+        currentPage++;
+        loadStores(currentPage);
+      });
+
+      $('#prev-page').on('click', function () {
+        if (currentPage > 1) {
+          currentPage--;
+          loadStores(currentPage);
+        }
+      });
+
+      // Load data awal ketika halaman pertama kali dimuat
+      loadStores(currentPage);
+
+      function openAddStoreModal() {
+        // Ensure the modal opens correctly
+        document.getElementById("addStoreModal").classList.remove("hidden");
+      }
+
+      function closeAddStoreModal() {
+        // Close the modal by adding the hidden class
+        document.getElementById("addStoreModal").classList.add("hidden");
+      }
+
+      function addStore() {
+        const formData = new FormData();
+        formData.append("name", document.getElementById("storeName").value);
+        formData.append("address", document.getElementById("storeAddress").value);
+        formData.append("product_count", document.getElementById("productCount").value);
+        formData.append("image", document.getElementById("profilePhoto").files[0]); // Get the actual file for the image
+
+        // Check required fields
+        if (!formData.get("name") || !formData.get("address") || !formData.get("product_count")) {
+          alert("Semua field harus diisi!");
+          return;
+        }
+
+        fetch('/catalog/store/add/', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',  // CSRF token for security
+          },
+          body: formData, // Use FormData directly as the request body
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Request gagal dengan status " + response.status);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.store) {
+              const storeList = document.getElementById('storeList');
+              const newStoreHTML = `
           <a href="/catalog/store/${data.store.id}/" class="block bg-white p-4 rounded-lg shadow-md w-80 transform hover:scale-105 transition">
             <img
               alt="${data.store.name}"
@@ -692,85 +716,83 @@ function addStore() {
               ${data.store.product_count} Produk
             </span>
           </a>`;
-        // storeList.insertAdjacentHTML('beforeend', newStoreHTML);
+              // storeList.insertAdjacentHTML('beforeend', newStoreHTML);
 
-        closeAddStoreModal();
-      } else {
-        alert("Gagal menambahkan toko. Silakan coba lagi.");
+              closeAddStoreModal();
+            } else {
+              alert("Gagal menambahkan toko. Silakan coba lagi.");
+            }
+          })
+          .catch((e) => {
+            console.log("Error:", e);
+            alert("Terjadi kesalahan. Silakan coba lagi.");
+          });
       }
-    })
-    .catch((e) => {
-      console.log("Error:", e);  
-      alert("Terjadi kesalahan. Silakan coba lagi.");
-    });
-}
 
-function renderPaginationControls(data, page) {
-            let paginationControls = '<div class="pagination-controls flex border border-[#D88E30] rounded-lg overflow-hidden">';
-    
-            // Previous button
-            if (data.has_previous) {
-                paginationControls += `
+      function renderPaginationControls(data, page) {
+        let paginationControls = '<div class="pagination-controls flex border border-[#D88E30] rounded-lg overflow-hidden">';
+
+        // Previous button
+        if (data.has_previous) {
+          paginationControls += `
                     <a href="#" onclick="refereshCatalogEntries(${page - 1}); return false;" class="px-3 py-2 bg-white text-[#D88E30] font-semibold flex items-center border-r border-[#D88E30]">
                         <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
                         Previous
                     </a>
                 `;
-            } else {
-                paginationControls += `
+        } else {
+          paginationControls += `
                     <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold flex items-center border-r border-[#D88E30]">
                         <img src="{% static 'images/circle-chevron-left.svg' %}" alt="Previous" class="h-5 w-5 mr-2">
                         Previous
                     </span>
                 `;
-            }
-    
-            // Page numbers with highlighted current page
-            for (let num = 1; num <= data.num_pages; num++) {
-                if (num === page) {
-                    paginationControls += `
+        }
+
+        // Page numbers with highlighted current page
+        for (let num = 1; num <= data.num_pages; num++) {
+          if (num === page) {
+            paginationControls += `
                         <span class="px-3 py-2 bg-[#D88E30] text-white font-semibold">${num}</span>
                     `;
-                } else {
-                    paginationControls += `
-                        <a href="#" onclick="refreshGalleryEntries(${num}); return false;" class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l border-[#D88E30]">${num}</a>
+          } else {
+            paginationControls += `
+                        <a href="#" onclick="refreshProducts(${num}); return false;" class="px-3 py-2 bg-white text-[#D88E30] font-semibold border-l border-[#D88E30]">${num}</a>
                     `;
-                }
-            }
-    
-            // Next button
-            if (data.has_next) {
-                paginationControls += `
-                    <a href="#" onclick="refreshGalleryEntries(${page + 1}); return false;" class="px-3 py-2 bg-white text-[#D88E30] font-semibold flex items-center border-l border-[#D88E30]">
+          }
+        }
+
+        // Next button
+        if (data.has_next) {
+          paginationControls += `
+                    <a href="#" onclick="refreshProducts(${page + 1}); return false;" class="px-3 py-2 bg-white text-[#D88E30] font-semibold flex items-center border-l border-[#D88E30]">
                         Next
                         <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
                     </a>
                 `;
-            } else {
-                paginationControls += `
+        } else {
+          paginationControls += `
                     <span class="px-3 py-2 bg-gray-200 text-gray-500 font-semibold flex items-center border-l border-[#D88E30]">
                         Next
                         <img src="{% static 'images/circle-chevron-right.svg' %}" alt="Next" class="h-5 w-5 ml-2">
                     </span>
                 `;
-            }
-    
-            paginationControls += '</div>';
-            document.getElementById("pagination-controls").innerHTML = paginationControls;
         }
-    
-        // Initialize the gallery with the current page from the URL
-        refreshGalleryEntries();
 
-   // Fungsi untuk memuat produk melalui AJAX
-   function loadProducts(page = 1) {
+        paginationControls += '</div>';
+        document.getElementById("pagination-controls").innerHTML = paginationControls;
+      }
+
+
+      // Fungsi untuk memuat produk melalui AJAX
+      function loadProducts(page = 1) {
         fetch(`/products/?page=${page}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-            },
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+          },
         })
-        .then(response => response.json())
-        .then(data => {
+          .then(response => response.json())
+          .then(data => {
             // Render produk di grid
             const productGrid = document.getElementById('product-grid');
             productGrid.innerHTML = data.products.map(product => `
@@ -785,23 +807,23 @@ function renderPaginationControls(data, page) {
             // Render kontrol pagination
             const paginationControls = document.getElementById('pagination-controls');
             paginationControls.innerHTML = generatePagination(data.current_page, data.num_pages);
-        })
-        .catch(error => console.error('Error fetching products:', error));
-    }
+          })
+          .catch(error => console.error('Error fetching products:', error));
+      }
 
-    // Fungsi untuk membuat pagination HTML
-    function generatePagination(currentPage, numPages) {
+      // Fungsi untuk membuat pagination HTML
+      function generatePagination(currentPage, numPages) {
         let buttons = '';
 
         if (currentPage > 1) {
-            buttons += `<button onclick="loadProducts(${currentPage - 1})" 
+          buttons += `<button onclick="loadProducts(${currentPage - 1})" 
                             class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded-md">
                             Previous
                         </button>`;
         }
 
         for (let i = 1; i <= numPages; i++) {
-            buttons += `
+          buttons += `
                 <button onclick="loadProducts(${i})" 
                         class="px-4 py-2 ${i === currentPage ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-black'} rounded-md">
                     ${i}
@@ -809,20 +831,21 @@ function renderPaginationControls(data, page) {
         }
 
         if (currentPage < numPages) {
-            buttons += `<button onclick="loadProducts(${currentPage + 1})" 
+          buttons += `<button onclick="loadProducts(${currentPage + 1})" 
                             class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded-md">
                             Next
                         </button>`;
         }
 
         return buttons;
-    }
+      }
 
-    // Muat produk pertama kali saat halaman dibuka
-    document.addEventListener('DOMContentLoaded', () => loadProducts());
+      // Muat produk pertama kali saat halaman dibuka
+      document.addEventListener('DOMContentLoaded', () => loadProducts());
 
-      </script>
-    </body>
-  </html>
-  {% include "footer.html" %}
-  {% endblock content %}
+    </script>
+</body>
+
+</html>
+{% include "footer.html" %}
+{% endblock content %}

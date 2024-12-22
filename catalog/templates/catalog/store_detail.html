@@ -11,7 +11,7 @@
     <div class="w-[1440px] h-[152px] justify-end items-start gap-10 inline-flex">
         <!-- Store Image -->
         <img class="w-[152px] h-[152px] rounded-full" src="{{ store.image.url }}" alt="{{ store.name }}">
-        
+
         <!-- Store Info -->
         <div class="grow shrink basis-0 self-stretch flex-col justify-center items-start gap-5 inline-flex">
             <div class="self-stretch h-[72px] flex-col justify-start items-start flex">
@@ -33,7 +33,8 @@
         </div>
 
         {% if request.session.is_admin %}
-        <div onclick="openEditStoreModal('{{ store.id }}')" class="px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 flex cursor-pointer hover:scale-105 transition">
+        <div onclick="openEditStoreModal('{{ store.id }}')"
+            class="px-5 py-3 rounded-lg border-2 border-[#d88e30] justify-center items-center gap-2.5 flex cursor-pointer hover:scale-105 transition">
             <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">
                 Edit
             </div>
@@ -44,7 +45,8 @@
     {% if request.session.is_admin %}
     <!-- Delete Button -->
     <div class="flex justify-end mt-4">
-        <button onclick="deleteStore('{{ store.id }}')" class="bg-red-500 text-white px-4 py-2 rounded hover:scale-105 transition">
+        <button onclick="deleteStore('{{ store.id }}')"
+            class="bg-red-500 text-white px-4 py-2 rounded hover:scale-105 transition">
             Delete Store
         </button>
     </div>
@@ -54,7 +56,8 @@
     {% if request.session.is_admin %}
     <!-- Add New Product Button -->
     <div class="h-[46px] flex-col justify-center items-end gap-2.5 inline-flex mt-4 hover:scale-105">
-        <div onclick="openProductModal()" class="px-5 py-3 rounded-lg border-2 border-[#d88e30] cursor-pointer justify-center items-center gap-2.5 inline-flex hover:scale-120 transition">
+        <div onclick="openProductModal()"
+            class="px-5 py-3 rounded-lg border-2 border-[#d88e30] cursor-pointer justify-center items-center gap-2.5 inline-flex hover:scale-120 transition">
             <div class="text-center text-[#d88e30] text-base font-semibold font-['Poppins'] leading-snug">
                 Tambah Produk
             </div>
@@ -65,113 +68,137 @@
 
 
 
-    <div class="h-[60px] justify-start items-start inline-flex">
-        <div class="grow shrink basis-0 text-black text-[40px] font-normal font-['Fabled'] leading-[60px]">Produk Batik</div>
+<div class="h-[60px] justify-start items-start inline-flex">
+    <div class="grow shrink basis-0 text-black text-[40px] font-normal font-['Fabled'] leading-[60px]">Produk Batik
     </div>
-    <div id="product_cards" class="grid grid-cols-4 gap-6 mb-8"></div>
-    <div id="pagination-controls" class="flex justify-center mt-8"></div>
+</div>
+<div id="product_cards" class="grid grid-cols-4 gap-6 mb-8"></div>
+<div id="pagination-controls" class="flex justify-center mt-8"></div>
 
-    <!-- Modal -->
-    <div id="productModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden px-6 py-4 z-10">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full form-style">
-            <!-- Title with adjustable font size -->
-            <h3 class="text-left font-family-Fabled text-gray-900" style="font-size: 24px; line-height: 32px;">
-                Tambah Produk
-            </h3>
-            <form id="productForm" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="mb-4">
-                    <label for="product-name" class="block text-sm font-medium text-gray-700">Nama Batik</label>
-                    <input type="text" id="product-name" name="nama_produk" placeholder="Masukkan nama batik" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" required>
-                </div>
-                <div class="mb-4">
-                    <label for="product-price" class="block text-sm font-medium text-gray-700">Harga</label>
-                    <input type="number" id="product-price" name="harga" placeholder="Masukkan harga batik" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" required min="1">
-                </div>
-                <div class="mb-4">
-                    <label for="product-description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
-                    <textarea id="product-description" name="deskripsi" placeholder="Masukkan deskripsi batik" rows="3" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3 resize-none" required></textarea>
-                </div>
-                <div class="mb-4">
-                    <label for="foto" class="block text-sm font-medium text-gray-700">Foto</label>
-                    <input type="file" id="foto" name="foto" class="mt-1 block w-full border-2 border-dashed border-[#D88E30] rounded-lg p-3" required accept="image/*">
-                </div>
-                <div class="flex justify-end space-x-2 mt-4">
-                    <button type="button" onclick="closeProductModal()" class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded">Cancel</button>
-                    <button type="button" onclick="addProduct(this)" data-store-id="{{ store.id }}" class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">Add Product</button>
-                </div>
-            </form>
-        </div>
+<!-- Modal -->
+<div id="productModal"
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden px-6 py-4 z-10">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full form-style">
+        <!-- Title with adjustable font size -->
+        <h3 class="text-left font-family-Fabled text-gray-900" style="font-size: 24px; line-height: 32px;">
+            Tambah Produk
+        </h3>
+        <form id="productForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="product-name" class="block text-sm font-medium text-gray-700">Nama Batik</label>
+                <input type="text" id="product-name" name="nama_produk" placeholder="Masukkan nama batik"
+                    class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" required>
+            </div>
+            <div class="mb-4">
+                <label for="product-price" class="block text-sm font-medium text-gray-700">Harga</label>
+                <input type="number" id="product-price" name="harga" placeholder="Masukkan harga batik"
+                    class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" required min="1">
+            </div>
+            <div class="mb-4">
+                <label for="product-description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
+                <textarea id="product-description" name="deskripsi" placeholder="Masukkan deskripsi batik" rows="3"
+                    class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3 resize-none" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="foto" class="block text-sm font-medium text-gray-700">Foto</label>
+                <input type="file" id="foto" name="foto"
+                    class="mt-1 block w-full border-2 border-dashed border-[#D88E30] rounded-lg p-3" required
+                    accept="image/*">
+            </div>
+            <div class="flex justify-end space-x-2 mt-4">
+                <button type="button" onclick="closeProductModal()"
+                    class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded">Cancel</button>
+                <button type="button" onclick="addProduct(this)" data-store-id="{{ store.id }}"
+                    class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">Add Product</button>
+            </div>
+        </form>
     </div>
-    
+</div>
 
-    <!-- Modal for adding product -->
-    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-            <h2 class="text-2xl font-bold mb-4">Tambah Produk</h2>
-            <form id="productModal">
-                {% csrf_token %}
-                <input type="text" id="product-name" placeholder="Product Name" required class="border p-2 mb-2 w-full">
-                <input type="number" id="product-price" placeholder="Price" required class="border p-2 mb-2 w-full">
-                <textarea id="product-description" placeholder="Description" required class="border p-2 mb-2 w-full"></textarea>
-                <div id="uploadPhotoModal" class="modal">
-                    <div class="modal-content">
-                      <span class="close">&times;</span>
-                      <h2>Foto</h2>
-                      <form id="product-image" enctype="multipart/form-data">
+
+<!-- Modal for adding product -->
+<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h2 class="text-2xl font-bold mb-4">Tambah Produk</h2>
+        <form id="productModal">
+            {% csrf_token %}
+            <input type="text" id="product-name" placeholder="Product Name" required class="border p-2 mb-2 w-full">
+            <input type="number" id="product-price" placeholder="Price" required class="border p-2 mb-2 w-full">
+            <textarea id="product-description" placeholder="Description" required
+                class="border p-2 mb-2 w-full"></textarea>
+            <div id="uploadPhotoModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Foto</h2>
+                    <form id="product-image" enctype="multipart/form-data">
                         <input type="file" id="product-image" name="photo" accept="image/*" required>
                         <button type="submit">Upload</button>
-                      </form>
-                    </div>
-                  </div>
-                <div class="flex justify-end space-x-2 mt-4">
-                    <button type="button" onclick="closeProductModal()" class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded">Cancel</button>
-                    <button type="button" onclick="addProduct(this)" data-store-id="{{ store.id }}" class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">Add Product</button>
+                    </form>
                 </div>
-            </form>
-        </div>
+            </div>
+            <div class="flex justify-end space-x-2 mt-4">
+                <button type="button" onclick="closeProductModal()"
+                    class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded">Cancel</button>
+                <button type="button" onclick="addProduct(this)" data-store-id="{{ store.id }}"
+                    class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">Add Product</button>
+            </div>
+        </form>
     </div>
+</div>
 
 
-    <!-- Modal Edit Produk -->
-    <div id="editProductModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-10">
-        <div class="w-[848px] h-[700px] px-10 py-[52px] rounded-[20px] bg-white border border-[#d9d9d9]/90 flex-col justify-start items-center gap-10 inline-flex">
-            <div class="self-stretch h-[510px] flex-col justify-start items-center gap-5 flex">
-                <div class="text-black text-[40px] font-normal font-['Fabled'] leading-[56px]">Edit Produk</div>
+<!-- Modal Edit Produk -->
+<div id="editProductModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-10">
+    <div
+        class="w-[848px] h-[700px] px-10 py-[52px] rounded-[20px] bg-white border border-[#d9d9d9]/90 flex-col justify-start items-center gap-10 inline-flex">
+        <div class="self-stretch h-[510px] flex-col justify-start items-center gap-5 flex">
+            <div class="text-black text-[40px] font-normal font-['Fabled'] leading-[56px]">Edit Produk</div>
 
             <form id="editProductForm" class="self-stretch flex-col gap-5">
                 <input type="hidden" id="edit-product-id">
 
                 <!-- Nama Batik -->
                 <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
-                    <label for="edit-product-name" class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Nama Batik</label>
+                    <label for="edit-product-name"
+                        class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Nama
+                        Batik</label>
                     <div class="self-stretch h-[58px] rounded-lg border border-[#d88e30]">
-                        <input type="text" id="edit-product-name" class="w-full h-full px-4 rounded-lg border-none outline-none">
+                        <input type="text" id="edit-product-name"
+                            class="w-full h-full px-4 rounded-lg border-none outline-none">
                     </div>
                 </div>
 
                 <!-- Harga -->
                 <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
-                    <label for="edit-product-price" class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Harga</label>
+                    <label for="edit-product-price"
+                        class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Harga</label>
                     <div class="self-stretch h-[58px] rounded-lg border border-[#d88e30]">
-                        <input type="number" id="edit-product-price" class="w-full h-full px-4 rounded-lg border-none outline-none">
+                        <input type="number" id="edit-product-price"
+                            class="w-full h-full px-4 rounded-lg border-none outline-none">
                     </div>
                 </div>
 
                 <!-- Deskripsi -->
                 <div class="self-stretch h-[94px] flex-col justify-start items-start gap-2 flex">
-                    <label for="edit-product-description" class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Deskripsi</label>
-                    <div class="self-stretch h-[58px] px-6 rounded-lg border border-[#d88e30] flex-col justify-center items-end gap-2.5 flex">
-                        <textarea id="edit-product-description" class="w-full h-full px-4 rounded-lg border-none outline-none"></textarea>
+                    <label for="edit-product-description"
+                        class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Deskripsi</label>
+                    <div
+                        class="self-stretch h-[58px] px-6 rounded-lg border border-[#d88e30] flex-col justify-center items-end gap-2.5 flex">
+                        <textarea id="edit-product-description"
+                            class="w-full h-full px-4 rounded-lg border-none outline-none"></textarea>
                     </div>
                 </div>
 
                 <!-- Foto -->
                 <div class="self-stretch h-[92px] flex-col justify-start items-start gap-2 flex">
-                    <label for="edit-product-image" class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Foto</label>
-                    <div class="px-6 py-4 rounded-lg border border-[#d88e30] justify-end items-center gap-2.5 inline-flex">
+                    <label for="edit-product-image"
+                        class="self-stretch text-black text-xl font-normal font-['Poppins'] leading-7">Foto</label>
+                    <div
+                        class="px-6 py-4 rounded-lg border border-[#d88e30] justify-end items-center gap-2.5 inline-flex">
                         <input type="file" id="edit-product-image" class="hidden">
-                        <button onclick="document.getElementById('edit-product-image').click()" type="button" class="text-black text-base font-normal font-['Poppins'] leading-snug">Edit Foto</button>
+                        <button onclick="document.getElementById('edit-product-image').click()" type="button"
+                            class="text-black text-base font-normal font-['Poppins'] leading-snug">Edit Foto</button>
                     </div>
                 </div>
             </form>
@@ -179,17 +206,21 @@
 
         <!-- Tombol Save dan Cancel -->
         <div class="self-stretch h-[46px] px-5 flex justify-end gap-4">
-            <button type="button" onclick="closeEditModal()" class="bg-gray-500 text-white py-2 px-4 rounded-lg">Cancel</button>
-            <button type="button" onclick="saveProductChanges()" class="bg-[#d88e30] text-white py-2 px-4 rounded-lg">Save Changes</button>
+            <button type="button" onclick="closeEditModal()"
+                class="bg-gray-500 text-white py-2 px-4 rounded-lg">Cancel</button>
+            <button type="button" onclick="saveProductChanges()"
+                class="bg-[#d88e30] text-white py-2 px-4 rounded-lg">Save Changes</button>
         </div>
     </div>
 </div>
 
 
 
-    <!-- Edit Store Modal -->
-    <div id="editStoreModal" class="px-6 py-4 space-y-6 form-style fixed inset-0 border-[#d9d9d9]/90 flex-col justify-start flex items-center justify-center hidden z-10" >
-        <div class="w-[400px] h-[600px] px-10 py-[52px] rounded-[20px] border border-[#d9d9d9]/90 flex-col justify-start items-center gap-2 bg-white inline-flex">
+<!-- Edit Store Modal -->
+<div id="editStoreModal"
+    class="px-6 py-4 space-y-6 form-style fixed inset-0 border-[#d9d9d9]/90 flex-col justify-start flex items-center justify-center hidden z-10">
+    <div
+        class="w-[400px] h-[600px] px-10 py-[52px] rounded-[20px] border border-[#d9d9d9]/90 flex-col justify-start items-center gap-2 bg-white inline-flex">
         <span onclick="closeEditStoreModal()" class="close">&times;</span>
         <h3 class="text-left font-family-Fabled text-gray-900" style="font-size: 24px; line-height: 32px;">
             Edit Toko
@@ -198,26 +229,32 @@
             <input type="hidden" id="edit_entry_id" name="id" />
             <div class="mb-4">
                 <label for="edit-store-name" class="block text-sm font-medium text-gray-700">Nama Toko</label>
-                <input type="text" id="edit-store-name" name="nama_toko" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" required>
+                <input type="text" id="edit-store-name" name="nama_toko"
+                    class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" required>
             </div>
             <div class="mb-4">
                 <label for="edit-store-address" class="block text-sm font-medium text-gray-700">Alamat</label>
-                <textarea id="edit-store-address" name="alamat" rows="3" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3 resize-none" required></textarea>
+                <textarea id="edit-store-address" name="alamat" rows="3"
+                    class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3 resize-none" required></textarea>
             </div>
             <div class="mb-4">
-                <label for="edit-store-product-count" class="block text-sm font-medium text-gray-700">Total Produk</label>
-                <input type="number" id="edit-store-product-count" name="produk" class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" min="1" required>
+                <label for="edit-store-product-count" class="block text-sm font-medium text-gray-700">Total
+                    Produk</label>
+                <input type="number" id="edit-store-product-count" name="produk"
+                    class="mt-1 block w-full border-2 border-[#D88E30] rounded-lg p-3" min="1" required>
             </div>
             <div class="mb-4">
                 <label for="edit-store-image-url" class="block text-sm font-medium text-gray-700">Foto</label>
-                <input type="file" id="edit-store-image-url" name="foto" class="mt-1 block w-full border-2 border-dashed border-[#D88E30] rounded-lg p-3">
+                <input type="file" id="edit-store-image-url" name="foto"
+                    class="mt-1 block w-full border-2 border-dashed border-[#D88E30] rounded-lg p-3">
             </div>
         </form>
         <div class="flex justify-center p-6 border-t border-gray-200 rounded-b">
-            <button type="button" onclick="saveEditStore()" class="bg-[#D88E30] hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg">Edit</button>
+            <button type="button" onclick="saveEditStore()"
+                class="bg-[#D88E30] hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg">Edit</button>
         </div>
     </div>
-    </div>
+</div>
 </div>
 
 </div>
@@ -233,9 +270,9 @@
     // Inisialisasi halaman saat ini
     let thisPage = getQueryParam("page");
 
-    // Fungsi untuk mengambil data produk
-    async function getProducts(page = 1) {
-        const url = `{% url 'catalog:product_list_json' %}?page=${page}`;
+    // Fungsi untuk mengambil data produk dari toko tertentu
+    async function getProducts(storeId, page = 1) {
+        const url = `/catalog/store/${storeId}/products/json/?page=${page}`;
         const response = await fetch(url);
         const data = await response.json();
         return data;
@@ -249,7 +286,7 @@
         // Update URL tanpa reload
         window.history.replaceState(null, null, `?page=${thisPage}`);
 
-        const data = await getProducts(thisPage);
+        const data = await getProducts('{{store.id}}', thisPage);
         const products = data.products;
 
         let htmlString = "";
@@ -261,12 +298,13 @@
                 </div>`;
         } else {
             products.forEach((item) => {
-                const imagePath = item.fields.image;
-                const productId = item.pk;
-                const productName = item.fields.name
+                const imagePath = item.image;
+                const productId = item.id;
+                const storeName = item.store_name;
+                const productName = item.name;
                 htmlString += `
                     <div class="border rounded-lg shadow-md p-4 flex flex-col hover:scale-105 transition">
-                        <img src="${imagePath}" alt="${item.fields.name}" class="w-full h-48 object-cover rounded-md mb-4">
+                        <img src="${imagePath}" alt="${item.name}" class="w-full h-48 object-cover rounded-md mb-4">
                         {% if request.session.is_admin %}
                         <div class="absolute top-4 right-4 flex items-center space-x-2 z-10">
                             <!-- Delete button opens the delete confirmation modal via JavaScript -->
@@ -274,7 +312,7 @@
                                 class="text-red-500 hover:text-red-600"
                                 data-entry-id="${productId}" 
                                 data-entry-name="${productName}" 
-                                onclick="deleteProduct(this)">
+                                onclick="deleteProduct('${productId}')">
                                 <img src="{% static 'images/delete_icon.svg' %}" alt="Delete" class="h-10 w-10" />
                             </button>
 
@@ -282,14 +320,14 @@
                             <button 
                                 class="text-yellow-500 hover:text-yellow-600"
                                 data-entry-id="${productId}" 
-                                onclick="openEditModal(this)">
+                                onclick="openEditModal('${productId}')">
                                 <img src="{% static 'images/edit_icon.svg' %}" alt="Edit" class="h-10 w-10" />
                             </button>
                         </div>
                         {% endif %}
-                        <h2 class="text-xl font-semibold">${item.fields.name}</h2>
-                        <p class="text-gray-700">${item.fields.storeId}</p>
-                        <p class="text-lg font-bold mt-2">Rp ${item.fields.price.toLocaleString()}</p>
+                        <h2 class="text-xl font-semibold">${item.name}</h2>
+                        <p class="text-gray-700">${storeName}</p>
+                        <p class="text-lg font-bold mt-2">Rp ${item.price.toLocaleString()}</p>
                     </div>`;
             });
         }
@@ -353,223 +391,268 @@
 
     // Inisialisasi tampilan produk saat halaman dimuat
     document.addEventListener('DOMContentLoaded', () => refreshProducts());
-function closeEditStoreModal() {
-    document.getElementById('editStoreModal').classList.add('hidden');
-}
-
-// Open Edit Store Modal
-function openEditStoreModal(storeId) {
-    fetch(`/catalog/store/edit/${storeId}/`, { 
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert(data.error);
-        } else {
-            document.getElementById('edit-store-name').value = data.store.name;
-            document.getElementById('edit-store-address').value = data.store.address;
-            document.getElementById('edit-store-product-count').value = data.store.product_count;
-            document.getElementById('editStoreForm').dataset.storeId = storeId;
-            document.getElementById('editStoreModal').classList.remove('hidden');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-function saveEditStore() {
-    const storeId = document.getElementById('editStoreForm').dataset.storeId;
-    const storeCount = parseInt(document.getElementById('edit-store-product-count').value);
-
-    // Validasi untuk memastikan "Total Produk" adalah bilangan bulat positif
-    if (isNaN(storeCount) || storeCount <= 0) {
-        alert("Total Produk harus berupa bilangan bulat positif.");
-        return;
+    function closeEditStoreModal() {
+        document.getElementById('editStoreModal').classList.add('hidden');
     }
 
-    const formData = new FormData();
-    formData.append("name", document.getElementById('edit-store-name').value);
-    formData.append("address", document.getElementById('edit-store-address').value);
-    formData.append("product_count", storeCount);
-
-    // Tambahkan file gambar jika elemen file input ada
-    const fileInput = document.getElementById('edit-store-image-url');
-    console.log("fileInput:", fileInput);  // Debugging: Cek apakah fileInput ada
-
-    if (fileInput) {
-        if (fileInput.files.length > 0) {
-            formData.append("foto", fileInput.files[0]);
-        }
-    } else {
-        console.error("Elemen file input 'edit-store-image-url' tidak ditemukan");
-        alert("Terjadi kesalahan: elemen file input tidak ditemukan.");
-        return;
-    }
-
-    fetch(`/catalog/store/edit/${storeId}/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken')  // Pastikan CSRF token disertakan
-        },
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.error) {
-            alert(data.error);
-        } else {
-            alert(data.message);
-            location.reload();
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert("Terjadi kesalahan saat menyimpan data. Silakan coba lagi.");
-    });
-}
-
-
-// Delete Store Function
-function deleteStore(storeId) {
-    fetch(`/catalog/store/delete/${storeId}/`, { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert(data.error);
-        } else {
-            alert(data.message);
-            location.reload();
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-// Fungsi untuk menghapus store
-function deleteStore(storeId) {
-    if (confirm('Are you sure you want to delete this store?')) {
-        fetch(`/catalog/store/delete/${storeId}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            }
+    // Open Edit Store Modal
+    function openEditStoreModal(storeId) {
+        fetch(`/catalog/store/edit/${storeId}/`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                alert(data.error);
-            } else {
-                alert(data.message);
-                // Redirect ke halaman utama setelah menghapus
-                window.location.href = '/catalog/';
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-}
-
-// Fungsi untuk mendapatkan CSRF token dari cookie
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-    // CSRF token extraction from the form in Django
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    
-// Open modal for adding product
-function openProductModal() {
-    document.getElementById("productModal").classList.remove("hidden");
-}
-
-// Close modal for adding product
-function closeProductModal() {
-    document.getElementById("productModal").classList.add("hidden");
-}
-
-// Function to add product with form data and validation
-function addProduct(button) {
-    const storeId = button.getAttribute('data-store-id');
-    const productName = document.getElementById('product-name').value;
-    const productPrice = document.getElementById('product-price').value;
-    const productDescription = document.getElementById('product-description').value;
-    const productImage = document.getElementById('foto').files[0];
-
-    // Validate price to be a positive integer
-    if (!Number.isInteger(parseFloat(productPrice)) || parseInt(productPrice) <= 0) {
-        alert("Harga harus berupa bilangan bulat positif.");
-        return;
-    }
-
-    // Prepare form data
-    const formData = new FormData();
-    formData.append('name', productName);
-    formData.append('price', productPrice);
-    formData.append('description', productDescription);
-    formData.append('foto', productImage);
-
-    fetch(`/catalog/store/${storeId}/add_product_to_store/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert(data.error);
-        } else {
-            alert('Product added successfully!');
-            closeProductModal();
-            location.reload();
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-    
-function openEditModal(productId) {
-        // Fetch product data using AJAX and populate the form
-        fetch(`/catalog/product/${productId}/edit/`)
             .then(response => response.json())
             .then(data => {
-                document.getElementById('edit-product-id').value = productId;
-                document.getElementById('edit-product-name').value = data.name;
-                document.getElementById('edit-product-price').value = data.price;
-                document.getElementById('editProductModal').classList.remove('hidden');
-                document.getElementById('foto').files[0].value = data.imagePath;
-
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    document.getElementById('edit-store-name').value = data.store.name;
+                    document.getElementById('edit-store-address').value = data.store.address;
+                    document.getElementById('edit-store-product-count').value = data.store.product_count;
+                    document.getElementById('editStoreForm').dataset.storeId = storeId;
+                    document.getElementById('editStoreModal').classList.remove('hidden');
+                }
             })
             .catch(error => console.error('Error:', error));
+    }
+
+    function saveEditStore() {
+        const storeId = document.getElementById('editStoreForm').dataset.storeId;
+        const storeCount = parseInt(document.getElementById('edit-store-product-count').value);
+
+        // Validasi untuk memastikan "Total Produk" adalah bilangan bulat positif
+        if (isNaN(storeCount) || storeCount <= 0) {
+            alert("Total Produk harus berupa bilangan bulat positif.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("name", document.getElementById('edit-store-name').value);
+        formData.append("address", document.getElementById('edit-store-address').value);
+        formData.append("product_count", storeCount);
+
+        // Tambahkan file gambar jika elemen file input ada
+        const fileInput = document.getElementById('edit-store-image-url');
+        console.log("fileInput:", fileInput);  // Debugging: Cek apakah fileInput ada
+
+        if (fileInput) {
+            if (fileInput.files.length > 0) {
+                formData.append("foto", fileInput.files[0]);
+            }
+        } else {
+            console.error("Elemen file input 'edit-store-image-url' tidak ditemukan");
+            alert("Terjadi kesalahan: elemen file input tidak ditemukan.");
+            return;
+        }
+
+        fetch(`/catalog/store/edit/${storeId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')  // Pastikan CSRF token disertakan
+            },
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Terjadi kesalahan saat menyimpan data. Silakan coba lagi.");
+            });
+    }
+
+
+    // Delete Store Function
+    function deleteStore(storeId) {
+        fetch(`/catalog/store/delete/${storeId}/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Fungsi untuk menghapus store
+    function deleteStore(storeId) {
+        if (confirm('Are you sure you want to delete this store?')) {
+            fetch(`/catalog/store/delete/${storeId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        alert(data.message);
+                        // Redirect ke halaman utama setelah menghapus
+                        window.location.href = '/catalog/';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    }
+
+    // Fungsi untuk mendapatkan CSRF token dari cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    // CSRF token extraction from the form in Django
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // Open modal for adding product
+    function openProductModal() {
+        document.getElementById("productModal").classList.remove("hidden");
+    }
+
+    // Close modal for adding product
+    function closeProductModal() {
+        document.getElementById("productModal").classList.add("hidden");
+    }
+
+    // Function to add product with form data and validation
+    function addProduct(button) {
+        const storeId = button.getAttribute('data-store-id');
+        const productName = document.getElementById('product-name').value;
+        const productPrice = document.getElementById('product-price').value;
+        const productDescription = document.getElementById('product-description').value;
+        const productImage = document.getElementById('foto').files[0];
+
+        // Validate price to be a positive integer
+        if (!Number.isInteger(parseFloat(productPrice)) || parseInt(productPrice) <= 0) {
+            alert("Harga harus berupa bilangan bulat positif.");
+            return;
+        }
+
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('name', productName);
+        formData.append('price', productPrice);
+        formData.append('description', productDescription);
+        formData.append('foto', productImage);
+
+        fetch(`/catalog/store/${storeId}/add_product_to_store/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('Product added successfully!');
+                    closeProductModal();
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+
+    // Function to fetch entry data and populate the edit form
+    async function fetchEntryData(entryId) {
+        console.log(`Fetching data for entry ID: ${entryId}`);
+        try {
+            const response = await fetch(`/catalog/product/json/${entryId}/`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch data for entry ID: ${entryId}`);
+            }
+            const data = await response.json();
+            const entry = data[0].fields;
+
+            // Populate form fields
+            document.getElementById('edit-product-id').value = productId;
+            document.getElementById('edit-product-name').value = data.product.name;
+            document.getElementById('edit-product-price').value = data.product.price;
+            document.getElementById('edit-product-description').value = data.product.description;
+
+            console.log(`Data for entry ID ${entryId} populated in the form.`);
+        } catch (error) {
+            console.error("Error fetching entry data:", error);
+        }
+    }
+
+    function openEditModal(productId) {
+        if (!productId) {
+            console.error('Product ID is missing.');
+            return;
+        }
+
+        console.log(`Fetching product data for ID: ${productId}`);
+
+        fetch(`/catalog/product/${productId}/edit/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch product data');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('edit-product-id').value = productId;
+                document.getElementById('edit-product-name').value = data.product.name;
+                document.getElementById('edit-product-price').value = data.product.price;
+                document.getElementById('edit-product-description').value = data.product.description;
+
+                if (data.product.image) {
+                    const imgPreview = document.getElementById('edit-product-image');
+                    imgPreview.src = data.product.image;
+                    imgPreview.classList.remove('hidden');
+                } else {
+                    document.getElementById('edit-product-image-preview').classList.add('hidden');
+                }
+
+                // Tampilkan modal
+                document.getElementById('editProductModal').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error fetching product data:', error);
+            });
     }
 
     function closeEditModal() {
         document.getElementById('editProductModal').classList.add('hidden');
     }
-
     function saveProductChanges() {
         const productId = document.getElementById('edit-product-id').value;
         const name = document.getElementById('edit-product-name').value;
         const price = document.getElementById('edit-product-price').value;
+        const description = document.getElementById('edit-product-description').value;
         const imageFile = document.getElementById('edit-product-image').files[0];
 
         const formData = new FormData();
@@ -580,30 +663,34 @@ function openEditModal(productId) {
             formData.append('image', imageFile);
         }
 
-        fetch(`/catalog/product/${productId}/edit/`, {
+        fetch(`/catalog/product/${productId}/edit/`, { // URL diperbarui
             method: 'POST',
             headers: {
-                'X-CSRFToken': getCookie('csrftoken')  // Pastikan CSRF token disertakan
+                'X-CSRFToken': getCookie('csrftoken'),  // Pastikan CSRF token disertakan
             },
-            body: formData
+            body: formData,
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                alert(data.error);
-            } else {
-                alert(data.message);
-                location.reload();  // Reload page to reflect changes
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                    location.reload(); // Reload halaman untuk merefleksikan perubahan
+                }
+            })
+            .catch(error => {
+                console.error('Error saving product changes:', error);
+            });
 
         closeEditModal();
     }
 
-function closeEditModal() {
-    document.getElementById('editProductModal').classList.add('hidden');
-}
+
+    document.getElementById('closeEditModalBtn').addEventListener('click', closeEditModal);
+    function closeEditModal() {
+        document.getElementById('editProductModal').classList.add('hidden');
+    }
 
     // Function to delete a product via AJAX
     function deleteProduct(productId) {
@@ -615,21 +702,21 @@ function closeEditModal() {
                     'X-CSRFToken': csrftoken
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    alert('Product deleted successfully!');
-                    location.reload();
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        alert('Product deleted successfully!');
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
     }
-    </script>
+</script>
 
 {% include "footer.html" %}
 {% endblock content %}
