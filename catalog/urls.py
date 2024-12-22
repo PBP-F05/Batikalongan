@@ -22,4 +22,5 @@ urlpatterns = [
     path('products/json/<str:id>/', views.show_json_by_id_product, name='show_json_by_id_product'),
     path('create-product-flutter/', views.create_product_flutter, name='create_product_flutter'),
     path('create-store-flutter/', views.create_store_flutter, name='create_store_flutter'),
+    path("update-store/<uuid:pk>/", views.update_store, name="update-store"),
 ]

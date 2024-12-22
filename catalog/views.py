@@ -503,3 +503,39 @@ def create_product_flutter(request):
             return JsonResponse({"status": "error", "message": str(e)}, status=400)
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+@csrf_exempt
+def update_store(request, pk):
+    if request.method == "PUT":
+        try:
+            # Parse incoming JSON data
+            data = json.loads(request.body)
+
+            # Get the store object
+            store = get_object_or_404(Store, pk=pk)
+
+            # Update fields if provided
+            store.name = data.get("name", store.name)
+            store.address = data.get("address", store.address)
+            store.product_count = data.get("product_count", store.product_count)
+
+            # If a new image is provided as base64
+            if "image" in data and data["image"]:
+                import base64
+                from django.core.files.base import ContentFile
+
+                image_data = data["image"]
+                format, imgstr = image_data.split(";base64,")
+                ext = format.split("/")[-1]
+                image_file = ContentFile(base64.b64decode(imgstr), name=f"{pk}.{ext}")
+                store.image = image_file
+
+            # Save updated store
+            store.save()
+
+            return JsonResponse({"status": "success", "message": "Store updated successfully"}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
