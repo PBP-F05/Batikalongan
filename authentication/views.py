@@ -177,6 +177,23 @@ def api_register(request):
             "message": "Invalid request method."
         }, status=400)
 
+@csrf_exempt
+def api_logout(request):
+    username = request.user.username
+
+    try:
+        logout(request)
+        return JsonResponse({
+            "username": username,
+            "status": True,
+            "message": "Logout berhasil!"
+        }, status=200)
+    except:
+        return JsonResponse({
+        "status": False,
+        "message": "Logout gagal."
+        }, status=401)
+
 # Flutter
 @csrf_exempt
 def admin_login(request):
